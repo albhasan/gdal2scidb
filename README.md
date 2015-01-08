@@ -39,10 +39,10 @@ Python scripts for exporting a raster (supported by GDAL) to SciDB binary format
 
 <h3>Notes</h3>
 <ul>
-<li>The GDALDataType and the array's attribite data type must match. For example, when uploading a 3 band-TIF image, note below the array's uint8 attributes and the parameter gdalDatatype GDT_Byte:</li>
+<li>The <em>GDALDataType</em> and the array's attribute data-type must match. For example, when uploading a 3 band-TIF image, note below the array's <em>uint8</em> attributes and the parameter <em>gdalDatatype GDT_Byte</em>:</li>
 	<ul>
 	<li><code>CREATE ARRAY ANDRE_ROT &lt;band01:uint8,band02:uint8,band03:uint8&gt; [col_id=0:14840,502,5,row_id=0:10915,502,5,time_id=0:20000,1,0]</code></li>
 	<li><code>python /home/scidb/andre/gdal2scidb/gdalAdd2bin.py --log INFO --gdalDatatype GDT_Byte /home/scidb/andre/data/Aerial_Image/rot.tif /home/scidb/andre/data/Aerial_Image/rot.sdbbin</code></li>
-	<li><code>python /home/scidb/andre/gdal2scidb/gdalLoad2scidb.py /home/scidb/andre/data/Aerial_Image/rot.sdbbin ANDRE_RO<T/code></li>
+	<li><code>python /home/scidb/andre/gdal2scidb/gdalLoad2scidb.py /home/scidb/andre/data/Aerial_Image/rot.sdbbin ANDRE_ROT</code></li>
 	</ul>
 </ul>
