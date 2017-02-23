@@ -3,6 +3,7 @@ import collections
 import os
 import re
 import sys
+import struct
 import logging
 
 
@@ -29,6 +30,62 @@ reNewLandsatExt = re.compile('^L[A-Z][0-9]{2}_[A-Z][0-9][A-Z]{2}_[0-9]{6}_[0-9]{
 
 
 
+## Get some pixels from an image
+#
+# @param filepath		A string. The path of the file
+# @return				A numpy array
+def getPixels(filepath):
+	try:
+		raster = filepath
+		ds = gdal.Open(raster)
+		pixarr = []
+		for bandid in range(1, ds.RasterCount + 1):
+			band = ds.GetRasterBand(bandid)
+			array = band.ReadAsArray(x, y, xchunk, ychunk)
+			pixarr.append(array)
+	except:
+		e = sys.exc_info()[0]
+		logging.exception("Unknown exception:\n" + str(e.message) + " " + filepath)
+		raise()
+	finally:
+		band = None
+		ds = None
+	return(array)
+
+
+
+
+
+
+
+
+
+
+## Get some pixels from an image
+#
+# @param filepath		A string. The path of the file
+# @param idband			A number. The id of the band to retrieve data from
+# @param x				A number. The position of the first pixel in x
+# @param y				A number. The position of the first pixel in y
+# @param xchunk			A number. The size of the window in x
+# @param ychunk			A number. The size of the window in y
+# @return				A numpy array
+def getBandPixels(filepath, idband, x, y, xchunk, ychunk):
+	try:
+		raster = filepath
+		ds = gdal.Open(raster)
+		band = ds.GetRasterBand(idband)
+		array = band.ReadAsArray(x, y, xchunk, ychunk)
+	except:
+		e = sys.exc_info()[0]
+		logging.exception("Unknown exception:\n" + str(e.message) + " " + filepath)
+		raise()
+	finally:
+		band = None
+		ds = None
+	return(array)
+
+
 
 ## Get GDAL metadata from the image
 #
@@ -41,7 +98,7 @@ def getImageMetadata(filepath):
 		driver = dataset.GetDriver().LongName
 		ncol = dataset.RasterXSize
 		nrow = dataset.RasterYSize
-		geotransform = dataset.GetGeoTransform() 
+		geotransform = dataset.GetGeoTransform()
 		#GeoTransform[0] /* top left x */
 		#GeoTransform[1] /* w-e pixel resolution */
 		#GeoTransform[2] /* rotation, 0 if image is "north up" */
@@ -117,6 +174,7 @@ def mapGdal2python(gdalType):
 	return res
 
 
+
 ## Match the GDAL to a datatype
 #
 # @param gdalType	A string. The name of the GDAL datatype
@@ -144,41 +202,6 @@ def mapGdaldatatype2(gdalType):
 
 
 
-## Get some pixels from an image
-#
-# @param filepath		A string. The path of the file
-# @param lineMin		A number. The minumim line to read (including)
-# @param lineMax		A number. The maximum line to read (including)
-# @param sampMin		A number. The minimum column to read (including)
-# @param sampMax		A number. The maximum column to read (including)
-# @param deltaCol_id	A number. The colum id of the first pixel in the image
-# @param deltaRow_id	A number. The row id of the first pixel in the image
-# @return
-def getPixels(filepath, block):
-	try:
-		path, filename = os.path.split(filepath)
-		dataset = gdal.Open(filepath, GA_ReadOnly)								# open dataset
-		for i in range(dataset.RasterCount):
-			band = dataset.GetRasterBand(band)
-			# stats = band.GetStatistics( True, True )
-			block_sizes = band.GetBlockSize()
-			x_block_size = block_sizes[0]
-			y_block_size = block_sizes[1]
-			print(band.GetStatistics( True, True ))
-			
-			use bytearray to write 
-			
-			
-	except RuntimeError, e:
-		print(e)
-		raise()
-	finally:
-		src_ds = None															# close dataset
-
-	
-
-
-
 ## From a file name, returns the image name
 #
 # @param filename A string. The name of the file (no path!)
@@ -195,9 +218,7 @@ def getImageName(filename):
 
 
 
-
-
-## Fixes the band number in the file's name (padding zeros)
+## Fix the band number in the file's name (padding zeros)
 #
 # @param filename A string. The name of the file (no path!)
 # @return A dict
@@ -210,8 +231,6 @@ def completeBandNumber(filename):
 		if(len(filename) == 47):
 			res = filename[:42] + '0' + filename[42:]
 	return res
-
-
 
 
 
@@ -256,7 +275,6 @@ def getFileNameMetadata(filename):
 
 
 
-
 #********************************************************
 # MAIN
 #********************************************************
@@ -295,13 +313,13 @@ def main(argv):
 	lastimg = ""
 	for key in imgfiles:
 		# same image, different band (file)
-		print(getImageMetadata(imgfiles[key]))
 		print("--------------------------------")
-		
-		if lastimg == getImageName(os.path.basename(imgfiles[key])):
-			pixels = getPixels(imgfiles[key], 1)
-		else:
-			lastimg = getImageName(os.path.basename(imgfiles[key]))
+		#print(getImageMetadata(imgfiles[key]))
+		pixels = getPixels(imgfiles[key], 1)
+		# if lastimg == getImageName(os.path.basename(imgfiles[key])):
+			
+		#else:			
+			#lastimg = getImageName(os.path.basename(imgfiles[key]))
 
 
 
