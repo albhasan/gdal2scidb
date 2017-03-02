@@ -33,8 +33,12 @@ reNewLandsatExt = re.compile('^L[A-Z][0-9]{2}_[A-Z][0-9][A-Z]{2}_[0-9]{6}_[0-9]{
 ## Get some pixels from an image
 #
 # @param filepath		A string. The path of the file
+# @param x				A number. The position of the first pixel in x
+# @param y				A number. The position of the first pixel in y
+# @param xchunk			A number. The size of the window in x
+# @param ychunk			A number. The size of the window in y
 # @return				A numpy array
-def getPixels(filepath):
+def getPixels(filepath, x, y, xchunk, ychunk):
 	try:
 		raster = filepath
 		ds = gdal.Open(raster)
@@ -50,14 +54,7 @@ def getPixels(filepath):
 	finally:
 		band = None
 		ds = None
-	return(array)
-
-
-
-
-
-
-
+	return(pixarr)
 
 
 
@@ -314,12 +311,14 @@ def main(argv):
 	for key in imgfiles:
 		# same image, different band (file)
 		print("--------------------------------")
-		#print(getImageMetadata(imgfiles[key]))
-		pixels = getPixels(imgfiles[key], 1)
-		# if lastimg == getImageName(os.path.basename(imgfiles[key])):
-			
-		#else:			
-			#lastimg = getImageName(os.path.basename(imgfiles[key]))
+		# group images
+		imgmetadata = getImageMetadata(imgfiles[key])
+		print(len(imgmetadata["bandtype"]))
+		pixels = getBandPixels(imgfiles[key], 1, 3000, 4000, 40, 40)
+		#print(pixels)
+
+		#getPixels(filepath, x, y, xchunk, ychunk)
+
 
 
 
