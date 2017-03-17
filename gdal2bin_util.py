@@ -2,6 +2,7 @@ import collections
 import os
 import re
 import sys
+import numpy
 # import struct
 from gdalconst import *
 from osgeo import gdal # from osgeo import ogr, osr, gdal
@@ -14,28 +15,56 @@ reNewLandsatExt = re.compile('^L[A-Z][0-9]{2}_[A-Z][0-9][A-Z]{2}_[0-9]{6}_[0-9]{
 
 
 
-## Get some pixels from an image
+## Get the pixels at the same positions from several images
+#
+# @param filepaths		A string of vector. The paths of the files
+# @param x				A number. The position of the first pixel in x
+# @param y				A number. The position of the first pixel in y
+# @param xchunk			A number. The size of the window in x
+# @param ychunk			A number. The size of the window in y
+# @param dimpos			A numner. Position of the new dimension in the array: 0 at the biginning, -1 at the end
+# @return				A numpy array
+def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos = 0):
+	res = []
+	try:
+		pixlist = []
+		for filepath in filepaths:
+			pixlist.append(getPixels(filepath, x, y, xchunk, ychunk))
+		res = numpy.stack(pixlist, axis = dimpos)
+	except:
+		raise
+	return(res)
+
+
+
+## Get pixels from an image
 #
 # @param filepath		A string. The path of the file
 # @param x				A number. The position of the first pixel in x
 # @param y				A number. The position of the first pixel in y
 # @param xchunk			A number. The size of the window in x
 # @param ychunk			A number. The size of the window in y
-# @return				A numpy array. One array per band
-def getPixels(filepath, x, y, xchunk, ychunk):
+# @param dimpos			A numner. Position of the new dimension in the array: 0 at the biginning, -1 at the end
+# @return				A numpy array
+def getPixels(filepath, x, y, xchunk, ychunk, dimpos = 0):
+	res = []
 	try:
 		ds = gdal.Open(filepath)
-		pixarr = []
+		pixlist = []
 		for bandid in range(1, ds.RasterCount + 1):
 			band = ds.GetRasterBand(bandid)
-			array = band.ReadAsArray(x, y, xchunk, ychunk)
-			pixarr.append(array)
+			pixs = band.ReadAsArray(x, y, xchunk, ychunk)
+			pixlist.append(pixs)
+		if len(pixlist) == 1:
+			res = pixlist[0]
+		elif len(pixlist) > 1:
+			res = numpy.stack(pixlist, axis = dimpos)
 	except:
-		raise()
+		raise
 	finally:
 		band = None
 		ds = None
-	return(pixarr)
+	return(res)
 
 
 
@@ -176,9 +205,6 @@ def mapGdaldatatype2(gdalType):
 
 
 
-
-
-
 ## From a file name, returns the image name
 #
 # @param filename A string. The name of the file (no path!)
@@ -213,16 +239,17 @@ def completeBandNumber(filename):
 
 ## Get the metadata from a file's name
 #
-# @param filename A string. The name of the file (no path!)
+# @param filepath A string. The path to the file
 # @return A dict
-def getFileNameMetadata(filename):
+def getFileNameMetadata(filepath):
+	filename = os.path.basename(filepath)
 	landsatSensor = {'C':'OLI/TIRS Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
 	landsatSatellite = {'7':'Landsat7', '8':'Landsat8'}
 	landsatProcessingLevel = {'L1TP':'Precision Terrain', 'L1GP':'Systematic Terrain', 'L1GS':'Systematic'}
 	landsatCollectionCategory = {'RT':'Real Time', 'T1':'Tier 1', 'T2':'Tier 2'}
 	res = {'type': 'Unknown'}
 	fband = ''
-	if reOldLandsatExt.match(filename):
+	if reOldLandsatExt.search(filename):
 		# example LC80090452014008LGN00_B1.TIF
 		ftype		= "Landsat untiered"
 		fimage		= filename[0:21]
@@ -236,8 +263,21 @@ def getFileNameMetadata(filename):
 		farchive	= filename[19:21]
 		if len(filename) > 25:
 			fband = filename.split("_")[1].split('.')[0][1:]
-		res = {'image': fimage, 'type': ftype, 'sensor': fsensor, 'satellite': fsatellite, 'path': fpath, 'row': frow, 'year': fyear, 'doy': fdoy, 'stationId': fstationId, 'archive':farchive, 'band':fband}
-	elif reNewLandsatExt.match(filename):
+		res = {
+		'filepath': 	filepath, 
+		'image': 		fimage, 
+		'type': 		ftype, 
+		'sensor': 		fsensor, 
+		'satellite': 	fsatellite, 
+		'path': 		fpath, 
+		'row': 			frow, 
+		'year': 		fyear, 
+		'doy': 			fdoy, 
+		'stationId': 	fstationId, 
+		'archive':		farchive, 
+		'band':			fband
+		}
+	elif reNewLandsatExt.search(filename):
 		# example LC08_L1TP_140041_20130503_20161018_01_T1_B5.TIF
 		ftype = "Landsat tiered"
 		fimage		= filename[0:40]
@@ -252,8 +292,24 @@ def getFileNameMetadata(filename):
 		fcolcat		= landsatCollectionCategory[filename[38:40]]				# collection category
 		if len(filename) > 43:
 			fband = filename.split("_")[7].split('.')[0][1:]
-		res = {'image': fimage, 'type': ftype, 'sensor': fsensor, 'satellite': fsatellite, 'level': fproclev, 'path': fpath, 'row': frow, 'acquisition':facqdate, 'processing': fprodate, 'collection': fcolnum, 'category': fcolcat, 'band':fband}
+		res = {
+		'filepath': filepath, 
+		'image': fimage, 
+		'type': ftype, 
+		'sensor': fsensor, 
+		'satellite': fsatellite, 
+		'level': fproclev, 
+		'path': fpath, 
+		'row': frow, 
+		'acquisition':facqdate, 
+		'processing': fprodate, 
+		'collection': fcolnum, 
+		'category': fcolcat, 
+		'band':fband
+		}
 	return res
 	
+
+
 
 
