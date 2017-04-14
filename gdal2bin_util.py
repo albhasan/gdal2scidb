@@ -49,7 +49,7 @@ def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos = 0):
 def getPixels(filepath, x, y, xchunk, ychunk, dimpos = 0):
 	res = []
 	try:
-		ds = gdal.Open(filepath)
+		ds = gdal.Open(filepath, GA_ReadOnly)
 		pixlist = []
 		for bandid in range(1, ds.RasterCount + 1):
 			band = ds.GetRasterBand(bandid)
@@ -117,7 +117,7 @@ def getImageMetadata(filepath):
 			bandtype.append(gdal.GetDataTypeName(band.DataType))
 		res = {'file':filepath, 'driver':driver, 'ncol':ncol, 'nrow':nrow, 'bandtype':bandtype, 'geotransform':geotransform}	
 	except:
-		raise()
+		raise RuntimeError("Could not get image metadata")
 	finally:
 		dataset = None															# close dataset
 	return res
@@ -311,5 +311,19 @@ def getFileNameMetadata(filepath):
 	
 
 
-
+## Get the number of consequtive repetitions in a vector
+#
+# @param vec A list of values that could repeat themselvec along the list
+# @return Two lists. One made of elements found and the other with their respective last positions
+def findrep(vec):
+	el = []
+	pos = []
+	if len(vec) > 0:
+		el.append(vec[0])
+		for i in range(len(vec)):
+			if(vec[i] != el[len(el) - 1]):
+				pos.append(i - 1)
+				el.append(vec[i])
+		pos.append(i)
+	return el, pos
 
