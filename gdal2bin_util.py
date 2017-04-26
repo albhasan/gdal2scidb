@@ -28,14 +28,14 @@ reModis = re.compile('^MOD[0-9]{2}[A-Z][0-9]\.A[0-9]{7}\.h[0-9]{2}v[0-9]{2}\.[0-
 # @param y          A number. The position of the first pixel in y
 # @param xchunk     A number. The size of the window in x
 # @param ychunk     A number. The size of the window in y
-# @param dimpos     A numner. Position of the new dimension in the array: 0 at the biginning, -1 at the end
+# @param dimpos     A number. Position of the new dimension in the array: 0 at the biginning, -1 at the end
 # @return           A numpy array
-def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos = 0):
+def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos):
     res = []
     try:
         pixlist = []
         for filepath in filepaths:
-            pixlist.append(getPixels(filepath, x, y, xchunk, ychunk))
+            pixlist.append(getPixels(filepath, x, y, xchunk, ychunk, dimpos))
         res = numpy.stack(pixlist, axis = dimpos)
     except:
         raise
