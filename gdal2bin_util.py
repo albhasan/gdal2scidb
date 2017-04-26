@@ -5,10 +5,14 @@ import sys
 import numpy
 import datetime
 # import struct
-from gdalconst import *
-from osgeo import gdal # from osgeo import ogr, osr, gdal
+try:
+    from osgeo import gdal # ogr, osr
+    from gdalconst import *
+    gdal.UseExceptions()	                                                    # use GDAL's error messages #gdal.DontUseExceptions()
+except:
+    sys.exit('ERROR: cannot find GDAL/OGR modules')
 
-gdal.UseExceptions()                                                                                                                        # use GDAL's error messages #gdal.DontUseExceptions()
+
 
 # regular expressions used to identify the type of image from its file name
 reLandsat = re.compile('^L[CETM][0-9]{14}(LGN|EDC|XXX|AAA)[0-9]{2}.+\.(tif|TIF)$')
@@ -420,9 +424,9 @@ def sortFiles(filepaths):
 def imgseries2imgfp(imgseriesmd):
     imgfiles = []
     ifiles = []
-    if len(filesmd) > 1:
-        lastimg = filesmd[0]['image']
-        for fmd in filesmd:
+    if len(imgseriesmd) > 1:
+        lastimg = imgseriesmd[0]['image']
+        for fmd in imgseriesmd:
             if lastimg != fmd['image']:
                 imgfiles.append([lastimg, ifiles])
                 ifiles = []
