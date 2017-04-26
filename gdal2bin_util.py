@@ -272,55 +272,6 @@ def n2pos(n, dims):
 
 
 
-# Is the given year a leap year?
-#
-# @param year   An integer. The year to test
-# @return       A boolean
-def isLeapYear(year):
-        leapyear = False
-        if year % 4 != 0:
-                leapyear = False
-        elif year % 100 != 0:
-                leapyear = True
-        elif year % 400 == 0:
-                leapyear = True
-        return(leapyear)
-
-
-
-# Transform a date into year-day-of-the-year
-#
-# @param d  A datetime.date object
-# @return   An integer YYYYDOY
-def date2ydoy(d):
-        return(d.year * 1000 + int(d.strftime('%j')))
-
-
-
-# Transform year-day-of-the-year into a date
-#
-# @param yyyydoy    An int YYYYDOY
-# @return           An integer YYYYMMDD
-def ydoy2ymd(yyyydoy):
-        year = yyyydoy/1000
-        doy = yyyydoy - year * 1000
-        d = datetime.datetime(year, 1, 1) + datetime.timedelta(doy - 1)
-        return(d.year * 10000 + d.month * 100 + d.day)
-
-
-
-# Transform date into a year-day-of-the-year
-#
-# @param ymd    An int YYYYMMDD
-# @return       An integer YYYYDOY
-def ymd2ydoy(ymd):
-        y = ymd/10000
-        m = (ymd - y * 10000)/100
-        d = (ymd - y * 10000 - m * 100)
-        return(date2ydoy(datetime.date(y, m, d)))
-
-
-
 ## Get the metadata from a file's name
 #
 # @param filepath   A string. The path to the file
@@ -437,6 +388,83 @@ def imgseries2imgfp(imgseriesmd):
 
 
 
+# Transform a date into year-day-of-the-year
+#
+# @param d  A datetime.date object
+# @return   An integer YYYYDOY
+def date2ydoy(d):
+    return(d.year * 1000 + int(d.strftime('%j')))
+
+
+
+# Transform year-day-of-the-year into a date
+#
+# @param yyyydoy    An int YYYYDOY
+# @return           An datetime object
+def ydoy2date(yyyydoy):
+    year = yyyydoy/1000
+    doy = yyyydoy - year * 1000
+    return datetime.datetime(year, 1, 1) + datetime.timedelta(doy - 1)
+
+
+
+# Transform year-day-of-the-year into a date
+#
+# @param yyyydoy    An int YYYYDOY
+# @return           An integer YYYYMMDD
+def ydoy2ymd(yyyydoy):
+    d = ydoy2date(yyyydoy)
+    return(d.year * 10000 + d.month * 100 + d.day)
+
+
+
+# Split a date into its parts
+#
+# @param ymd    An int YYYYMMDD
+# @return       Three integers year, month, day
+def ymd2ymd(ymd):
+    y = ymd/10000
+    m = (ymd - y * 10000)/100
+    d = (ymd - y * 10000 - m * 100)
+    return(y, m, d)
+
+
+
+# Transform date into a year-day-of-the-year
+#
+# @param ymd    An int YYYYMMDD
+# @return       An integer YYYYDOY
+def ymd2ydoy(ymd):
+    y,m,d = ymd2ymd(ymd)
+    return(date2ydoy(datetime.date(y, m, d)))
+
+
+
+# Transform a date into a time_id index
+#
+# @param ymd    An int YYYYMMDD
+# @param origin An int YYYYMMDD. The day of when the time_id == 0
+# @param period An int. The number of days between observations
+# @param yearly A boolean. Do the dates yearly match January the 1st?
+# @return       An integer. The time_id matching ymd or -1 is ymd doesn't match
+def ymd2tid(ymd, origin, period, yearly):
+    res = -1
+    dy = 0
+    ny = 0
+    # cast YYYYDDMMs to dates
+    ymdy,ymdm,ymdd = ymd2ymd(ymd)
+    ory,orm,or_d = ymd2ymd(origin)
+    dtymd = datetime.datetime(ymdy, ymdm, ymdd)
+    dtor = datetime.datetime(ory, orm, or_d)
+    #
+    if yearly:
+        dy = 365/period                                                         # periods per year
+        dtor = datetime.datetime(ymdy, 1, 1)
+        ny = ymdy - ory
+    ndays = (dtymd - dtor).days                                                 # days from origin to ymd
+    if ndays % period == 0:
+        res = ndays/period + (ymdy - ory) * dy + ny
+    return(res)
 
 
 
