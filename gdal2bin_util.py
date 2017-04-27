@@ -440,6 +440,28 @@ def ymd2ydoy(ymd):
 
 
 
+# Transform a a time_id index into a date YYYMMDD
+#
+# @param tid    An int. The time_id to transform
+# @param origin An int YYYYMMDD. The day of when the time_id == 0
+# @param period An int. The number of days between observations
+# @param yearly A boolean. Do the dates yearly match January the 1st?
+# @return       An int representing a date YYYYMMDD
+def tid2ymd(tid, origin, period, yearly):
+    ppy = 0
+    ny = 0
+    ntids = tid
+    # cast YYYYDDMMs to date ints
+    ory,orm,or_d = ymd2ymd(origin)
+    if yearly:
+        ppy = 1 + 365/period                                                    # periods per year
+        ny = tid / ppy                                                          # number of years
+        ntids = tid % ppy 
+    d = datetime.datetime(ory + ny, orm, or_d) + datetime.timedelta(days = ntids * period)
+    return(d.year * 10000 + d.month * 100 + d.day)
+
+
+
 # Transform a date into a time_id index
 #
 # @param ymd    An int YYYYMMDD
@@ -448,23 +470,23 @@ def ymd2ydoy(ymd):
 # @param yearly A boolean. Do the dates yearly match January the 1st?
 # @return       An integer. The time_id matching ymd or -1 is ymd doesn't match
 def ymd2tid(ymd, origin, period, yearly):
+    # image, origin, period, yearly
+    # [MOD09Q1, 20000101, 8, True]
+    # [MOD13Q1, 20000101, 16, True]
+    # [LD5Original-DigitalNumber, 19840411, 16, False]
+    # [LD8Original-DigitalNumber, 20130418, 16, False]
     res = -1
     dy = 0
-    ny = 0
     # cast YYYYDDMMs to dates
     ymdy,ymdm,ymdd = ymd2ymd(ymd)
     ory,orm,or_d = ymd2ymd(origin)
     dtymd = datetime.datetime(ymdy, ymdm, ymdd)
     dtor = datetime.datetime(ory, orm, or_d)
-    #
     if yearly:
-        dy = 365/period                                                         # periods per year
+        dy = 1 + 365/period                                                     # periods per year
         dtor = datetime.datetime(ymdy, 1, 1)
-        ny = ymdy - ory
     ndays = (dtymd - dtor).days                                                 # days from origin to ymd
     if ndays % period == 0:
-        res = ndays/period + (ymdy - ory) * dy + ny
+        res = ndays/period + (ymdy - ory) * dy
     return(res)
-
-
 
