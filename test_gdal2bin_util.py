@@ -28,6 +28,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(ymd2ydoy(20010301), 2001060)
 
 
+
         self.assertEqual(ymd2tid(20000101, 20000101, 8, True), 0)
         self.assertEqual(ymd2tid(20000109, 20000101, 8, True), 1)
         self.assertEqual(ymd2tid(20000117, 20000101, 8, True), 2)
@@ -47,6 +48,21 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(ymd2tid(20010101, 20000101, 16, True), 23)
         self.assertEqual(ymd2tid(20011219, 20000101, 16, True), 45)
         self.assertEqual(ymd2tid(20020101, 20000101, 16, True), 46)
+
+
+        # tid2ymd and ymd2tid are complementary
+        ori = 20000101
+        per = 16
+        y = True
+        self.assertEqual(tid2ymd(ymd2tid(20000101, ori, per, y), ori, per, y), 20000101)
+        self.assertEqual(tid2ymd(ymd2tid(20001218, ori, per, y), ori, per, y), 20001218)
+        self.assertEqual(tid2ymd(ymd2tid(20010101, ori, per, y), ori, per, y), 20010101)
+        self.assertEqual(tid2ymd(ymd2tid(20011219, ori, per, y), ori, per, y), 20011219)
+        self.assertEqual(tid2ymd(ymd2tid(20020101, ori, per, y), ori, per, y), 20020101)
+
+
+
+
 
 
         self.assertEqual('foo'.upper(), 'FOO')
