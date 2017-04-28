@@ -490,3 +490,28 @@ def ymd2tid(ymd, origin, period, yearly):
         res = ndays/period + (ymdy - ory) * dy
     return(res)
 
+
+
+# Get the parameters of the time_id index
+#
+# @param ymd    An string. The type of image imagetype
+# @return       An list of parameters: A string id, an int (YYYYMMDD) representing the date of the first image (time_id == 0),  the period (int, number of days between images) and a boolean flag if the dates resatrt yearly (i.e the first image of each year matches January the 1st) [string, int, int, boolean]
+def gettimeidparameters(imagetype):
+    res = 'Unknown'
+    if imagetype == 'MOD09Q1':
+        res = [MOD09Q1, 20000101, 8, True]
+    elif imagetype == 'MOD13Q1':
+        res = [MOD13Q1, 20000101, 16, True]
+    elif imagetype == 'Landsat5' or imagetype == 'LC5' or imagetype == 'LC05':
+        res = [LD5Original-DigitalNumber, 19840411, 16, False]
+    elif imagetype == 'Landsat8' or imagetype == 'LC8' or imagetype == 'LC08':
+        res = [LD8Original-DigitalNumber, 20130418, 16, False]
+    return(res)
+
+
+
+
+
+
+
+
