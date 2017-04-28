@@ -499,13 +499,13 @@ def ymd2tid(ymd, origin, period, yearly):
 def gettimeidparameters(imagetype):
     res = 'Unknown'
     if imagetype == 'MOD09Q1':
-        res = [MOD09Q1, 20000101, 8, True]
+        res = ['MOD09Q1', 20000101, 8, True]
     elif imagetype == 'MOD13Q1':
-        res = [MOD13Q1, 20000101, 16, True]
+        res = ['MOD13Q1', 20000101, 16, True]
     elif imagetype == 'Landsat5' or imagetype == 'LC5' or imagetype == 'LC05':
-        res = [LD5Original-DigitalNumber, 19840411, 16, False]
+        res = ['LD5Original-DigitalNumber', 19840411, 16, False]
     elif imagetype == 'Landsat8' or imagetype == 'LC8' or imagetype == 'LC08':
-        res = [LD8Original-DigitalNumber, 20130418, 16, False]
+        res = ['LD8Original-DigitalNumber', 20130418, 16, False]
     return(res)
 
 
