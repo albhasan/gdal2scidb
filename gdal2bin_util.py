@@ -64,7 +64,7 @@ def getPixels(filepath, x, y, xchunk, ychunk, dimpos):
         if len(pixlist) == 1:
             res = pixlist[0]
         elif len(pixlist) > 1:
-        res = numpy.stack(pixlist, axis = dimpos)
+            res = numpy.stack(pixlist, axis = dimpos)
     except:
         raise RuntimeError("Could not get the pixels of a file")
     finally:
