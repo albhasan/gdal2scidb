@@ -203,8 +203,8 @@ def findrep(vec):
 # @param dims   An integer array. The number of positions on each dimension in the multi-dimensional array
 # @return       An integer array >= 0. The position of n in an array of len(dims)-dimensions. The dimension to the right changes faster
 def n2pos(n, dims):
-        pos = [0] * len(dims)                                                                                                                # position of n in the array
-        top = [0] * len(dims)                                                                                                                 # maximum number of elements on each dimension
+    pos = [0] * len(dims)                                                       # position of n in the array
+    top = [0] * len(dims)                                                       # maximum number of elements on each dimension
     for i in reversed(range(len(dims))):
         tot = 1
         for j in range(i, len(dims)):
