@@ -53,24 +53,24 @@ def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos):
 # @param dimpos     A number. Position of the new dimension in the array: 0 at the biginning, -1 at the end
 # @return           A numpy array
 def getPixels(filepath, x, y, xchunk, ychunk, dimpos):
-        res = []
-        try:
-                ds = gdal.Open(filepath, GA_ReadOnly)
-                pixlist = []
-                for bandid in range(1, ds.RasterCount + 1):
-                        band = ds.GetRasterBand(bandid)
-                        pixs = band.ReadAsArray(x, y, xchunk, ychunk)
-                        pixlist.append(pixs)
-                if len(pixlist) == 1:
-                        res = pixlist[0]
-                elif len(pixlist) > 1:
-                        res = numpy.stack(pixlist, axis = dimpos)
-        except:
-                raise
-        finally:
-                band = None
-                ds = None
-        return(res)
+    res = []
+    try:
+        ds = gdal.Open(filepath, GA_ReadOnly)
+        pixlist = []
+        for bandid in range(1, ds.RasterCount + 1):
+            band = ds.GetRasterBand(bandid)
+            pixs = band.ReadAsArray(x, y, xchunk, ychunk)
+            pixlist.append(pixs)
+        if len(pixlist) == 1:
+            res = pixlist[0]
+        elif len(pixlist) > 1:
+        res = numpy.stack(pixlist, axis = dimpos)
+    except:
+        raise RuntimeError("Could not get the pixels of a file")
+    finally:
+        band = None
+        ds = None
+    return(res)
 
 
 
@@ -84,49 +84,17 @@ def getPixels(filepath, x, y, xchunk, ychunk, dimpos):
 # @param ychunk     A number. The size of the window in y
 # @return           A numpy array
 def getBandPixels(filepath, idband, x, y, xchunk, ychunk):
-        try:
-                raster = filepath
-                ds = gdal.Open(raster)
-                band = ds.GetRasterBand(idband)
-                array = band.ReadAsArray(x, y, xchunk, ychunk)
-        except:
-                raise()
-        finally:
-                band = None
-                ds = None
-        return(array)
-
-
-
-## Get GDAL metadata from the image
-#
-# @param filepath   A string.
-# @return           A dict
-def getGdalMetadata(filepath):
-        res = {}
-        try:
-                path, filename = os.path.split(filepath)
-                dataset = gdal.Open(filepath, GA_ReadOnly)                      # open dataset
-                driver = dataset.GetDriver().LongName
-                ncol = dataset.RasterXSize
-                nrow = dataset.RasterYSize
-                geotransform = dataset.GetGeoTransform()
-                #GeoTransform[0] /* top left x */
-                #GeoTransform[1] /* w-e pixel resolution */
-                #GeoTransform[2] /* rotation, 0 if image is "north up" */
-                #GeoTransform[3] /* top left y */
-                #GeoTransform[4] /* rotation, 0 if image is "north up" */
-                #GeoTransform[5] /* n-s pixel resolution */ 
-                bandtype = []
-                for bandid in range(1, dataset.RasterCount + 1):
-                        band = dataset.GetRasterBand(bandid)
-                        bandtype.append(gdal.GetDataTypeName(band.DataType))
-                res = {'file':filepath, 'driver':driver, 'ncol':ncol, 'nrow':nrow, 'bandtype':bandtype, 'geotransform':geotransform}        
-        except:
-                raise RuntimeError("Could not get image metadata")
-        finally:
-                dataset = None                                                  # close dataset
-        return res
+    try:
+        raster = filepath
+        ds = gdal.Open(raster)
+        band = ds.GetRasterBand(idband)
+        array = band.ReadAsArray(x, y, xchunk, ychunk)
+    except:
+        raise RuntimeError("Could not get the pixels of a band")
+    finally:
+        band = None
+        ds = None
+    return(array)
 
 
 
@@ -211,40 +179,21 @@ def mapGdaldatatype2(gdalType):
 
 
 
-## Fix the band number in the file's name (padding zeros)
-#
-# @param filename   A string. The name of the file (no path!)
-# @return           A dict
-def completeBandNumber(filename):
-        res = filename
-        if reLandsat.match(filename):
-                if(len(filename) == 28):
-                        res = filename[:23] + '0' + filename[23:]
-        elif reLandsatCol1.match(filename):
-                if(len(filename) == 47):
-                        res = filename[:42] + '0' + filename[42:]
-        return res
-
-
-
-        
-
-
 ## Get the number of consequtive repetitions in a vector
 #
 # @param vec    A list of values that could repeat themselvec along the list
 # @return       Two lists. One made of elements found and the other with their respective last positions
 def findrep(vec):
-        el = []
-        pos = []
-        if len(vec) > 0:
-                el.append(vec[0])
-                for i in range(len(vec)):
-                        if(vec[i] != el[len(el) - 1]):
-                                pos.append(i - 1)
-                                el.append(vec[i])
-                pos.append(i)
-        return el, pos
+    el = []
+    pos = []
+    if len(vec) > 0:
+        el.append(vec[0])
+        for i in range(len(vec)):
+            if(vec[i] != el[len(el) - 1]):
+                pos.append(i - 1)
+                el.append(vec[i])
+        pos.append(i)
+    return el, pos
 
 
 
@@ -256,19 +205,19 @@ def findrep(vec):
 def n2pos(n, dims):
         pos = [0] * len(dims)                                                                                                                # position of n in the array
         top = [0] * len(dims)                                                                                                                 # maximum number of elements on each dimension
-        for i in reversed(range(len(dims))):
-                tot = 1
-                for j in range(i, len(dims)):
-                        tot = tot * dims[j]
-                top[i] = tot
-        if n > top[0] or n < 0:
-                raise ValueError('Invalid index n')
-        top.append(1)
-        test = n
-        for i in range(len(pos)):
-                pos[i] = test // top[i + 1]
-                test = test - (pos[i] * top[i + 1])
-        return(pos)
+    for i in reversed(range(len(dims))):
+        tot = 1
+        for j in range(i, len(dims)):
+            tot = tot * dims[j]
+        top[i] = tot
+    if n > top[0] or n < 0:
+        raise ValueError('Invalid index n')
+    top.append(1)
+    test = n
+    for i in range(len(pos)):
+        pos[i] = test // top[i + 1]
+        test = test - (pos[i] * top[i + 1])
+    return(pos)
 
 
 
@@ -277,80 +226,110 @@ def n2pos(n, dims):
 # @param filepath   A string. The path to the file
 # @return           A dict
 def getFileNameMetadata(filepath):
-        filename = os.path.basename(filepath)
-        sensorLandsat = {'C':'OLI/TIRS Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
-        satelliteLandsat = {'7':'Landsat7', '8':'Landsat8'}
-        processingLevelLandsat = {'L1TP':'Precision Terrain', 'L1GP':'Systematic Terrain', 'L1GS':'Systematic'}
-        collectionCategoryLandsat = {'RT':'Real Time', 'T1':'Tier 1', 'T2':'Tier 2'}
-        sensorModis = {'MOD':'Terra', 'MYD':'Aqua'}
-        #
-        ftype = 'Unknown'
-        fsensor = ''
-        fsatellite = ''
-        fpath = ''
-        frow = ''
-        fstationId = ''
-        farchive = ''
-        fband = ''
-        fproclev = ''                                                           # processing correction level
-        facqdate = 0                                                            # acquisition date
-        fprodate = 0                                                            # processing date
-        fcolnum = ''                                                            # collection number
-        fcolcat = ''                                                            # collection category
-        #
-        if reLandsat.search(filename):
-                # example LC80090452014008LGN00_B1.TIF
-                ftype       = "Landsat_untiered"
-                fsensor     = sensorLandsat[filename[1]]
-                fsatellite  = satelliteLandsat[str(int(filename[2]))]
-                fpath       = filename[3:6]
-                frow        = filename[6:9]
-                facqdate    = ydoy2ymd(int(filename[9:13]) * 1000 + int(filename[13:16]))
-                fstationId  = filename[16:19]
-                farchive    = filename[19:21]
-                if len(filename) > 24:
-                    fband = filename[22:].split('.')[0]
-        elif reLandsatCol1.search(filename):
-                # example LC08_L1TP_140041_20130503_20161018_01_T1_B5.TIF
-                ftype       = "Landsat_tiered"
-                fsensor     = sensorLandsat[filename[1]]
-                fsatellite  = satelliteLandsat[str(int(filename[2:4]))]
-                fproclev    = processingLevelLandsat[filename[5:9]]                                                
-                fpath       = filename[10:13]
-                frow        = filename[13:16]
-                facqdate    = int(filename[17:25])
-                fprodate    = int(filename[26:34])
-                fcolnum     = filename[35:37]
-                fcolcat     = collectionCategoryLandsat[filename[38:40]]
-                if len(filename) > 44:
-                    fband = filename[42:].split('.')[0]
-        elif reModis.search(filename):
-                # example MOD13Q1.A2015353.h14v10.005.2016007192511.hdf
-                ftype                 = "Modis"
-                fsensor                = filename[3:7]
-                fsatellite        = filename[0:3]
-                fpath                = filename[18:20]
-                frow                = filename[21:23]
-                facqdate        = ydoy2ymd(int(filename[9:16]))
-                fprodate        = ydoy2ymd(int(filename[28:35]))
-                fcolnum                = filename[24:27]
-        return({
-        'filepath':     filepath, 
-        'image':        fsatellite + fsensor + fpath + frow + str(facqdate), 
-        'type':         ftype, 
-        'sensor':       fsensor, 
-        'satellite':    fsatellite, 
-        'level':        fproclev, 
-        'path':         fpath, 
-        'row':          frow, 
-        'acquisition':  facqdate, 
-        'processing':   fprodate, 
-        'collection':   fcolnum, 
-        'category':     fcolcat, 
-        'stationId':    fstationId, 
-        'archive':      farchive, 
-        'band':         fband
-        })
+    filename = os.path.basename(filepath)
+    sensorLandsat = {'C':'OLI/TIRS Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
+    satelliteLandsat = {'4':'Landsat4','5':'Landsat5','7':'Landsat7', '8':'Landsat8'}
+    processingLevelLandsat = {'L1TP':'Precision Terrain', 'L1GP':'Systematic Terrain', 'L1GS':'Systematic'}
+    collectionCategoryLandsat = {'RT':'Real Time', 'T1':'Tier 1', 'T2':'Tier 2'}
+    sensorModis = {'MOD':'Terra', 'MYD':'Aqua'}
+    #
+    ftype = 'Unknown'
+    fsensor = ''
+    fsatellite = ''
+    fpath = ''
+    frow = ''
+    fstationId = ''
+    farchive = ''
+    fband = ''
+    fproclev = ''                                                           # processing correction level
+    facqdate = 0                                                            # acquisition date
+    fprodate = 0                                                            # processing date
+    fcolnum = ''                                                            # collection number
+    fcolcat = ''                                                            # collection category
+    fprod = ''                                                              # product
+    #
+    if reLandsat.search(filename):
+        # example LC80090452014008LGN00_B1.TIF
+        ftype       = "Landsat_untiered"
+        fsensor     = sensorLandsat[filename[1]]
+        fsatellite  = satelliteLandsat[str(int(filename[2]))]
+        fpath       = filename[3:6]
+        frow        = filename[6:9]
+        facqdate    = ydoy2ymd(int(filename[9:13]) * 1000 + int(filename[13:16]))
+        fstationId  = filename[16:19]
+        farchive    = filename[19:21]
+        if len(filename) > 24:
+            fprod, fband = processLBand(filename[22:].split('.')[0])
+    elif reLandsatCol1.search(filename):
+        # example             LC08_L1TP_140041_20130503_20161018_01_T1_B5.TIF
+        #                     LC08_L1TP_220071_20170207_20170216_01_T1
+        # TOA Reflectance     LC08_L1TP_018060_20140904_20160101_01_T1_toa_*.
+        # Surface reflectance LC08_L1TP_233013_2014265LGN00_sr_*.
+        #                     LXSS_LLLL_PPPRRR_YYYYMMDD_yyyymmdd_CX_TX_prod_band.ext
+        #                     LE07_L1TP_231064_20160109_20161016_01_T1_sr_band1.tif
+        ftype       = "Landsat_tiered"
+        fsensor     = sensorLandsat[filename[1]]
+        fsatellite  = satelliteLandsat[str(int(filename[2:4]))]
+        fproclev    = processingLevelLandsat[filename[5:9]]                                                
+        fpath       = filename[10:13]
+        frow        = filename[13:16]
+        facqdate    = int(filename[17:25])
+        fprodate    = int(filename[26:34])
+        fcolnum     = filename[35:37]
+        fcolcat     = collectionCategoryLandsat[filename[38:40]]
+        if len(filename) > 44:
+            fprod, fband = processLBand(filename[41:].split('.')[0])
+    elif reModis.search(filename):
+        # example MOD13Q1.A2015353.h14v10.005.2016007192511.hdf
+        ftype       = "Modis"
+        fsensor     = filename[3:7]
+        fsatellite  = filename[0:3]
+        fpath       = filename[18:20]
+        frow        = filename[21:23]
+        facqdate    = ydoy2ymd(int(filename[9:16]))
+        fprodate    = ydoy2ymd(int(filename[28:35]))
+        fcolnum     = filename[24:27]
+    return({
+    'filepath':     filepath, 
+    'image':        fsatellite + fsensor + fpath + frow + str(facqdate), 
+    'type':         ftype, 
+    'sensor':       fsensor, 
+    'satellite':    fsatellite, 
+    'level':        fproclev, 
+    'path':         fpath, 
+    'row':          frow, 
+    'acquisition':  facqdate, 
+    'processing':   fprodate, 
+    'collection':   fcolnum, 
+    'category':     fcolcat, 
+    'stationId':    fstationId, 
+    'archive':      farchive, 
+    'band':         fband, 
+    'product':      fprod
+    })
+
+
+
+## Process the metadata related to the band in a landsat filename
+#
+# @param filename   A string. The string regarding band or product/band information (no file extension)
+# @return           A dict
+def processLBand(band):
+# test if the band contains product information
+    fprod = ''
+    fband = ''
+    if band.count('_') == 0:
+        fband = band
+    elif band.count('_') == 1:
+        fprod = band.split('_')[0]
+        fband = band.split('_')[1]
+    elif band.count('_') == 2:
+        fprod = band.split('_')[0] + '_' + band.split('_')[1]
+        fband = band.split('_')[2]
+    if fband.find('band') != -1 and len(fband) == 5:                            # add a padding 0 to the band number
+        fbnum = '0' + fband[4]
+        fband = fband[0:4] + fbnum
+    return(fprod, fband)
 
 
 
@@ -359,12 +338,12 @@ def getFileNameMetadata(filepath):
 # @param filepaths  A list. The paths to the files
 # @ return          An OrderedDict image-band and filepaths 
 def sortFiles(filepaths):
-        imgfiles = {}
-        for filepath in filepaths:
-                fmd = getFileNameMetadata(filepath)
-                if fmd['type'] != 'Unknown':
-                        imgfiles[fmd['image'] + fmd['band']] = filepath
-        return(collections.OrderedDict(sorted(imgfiles.items())))
+    imgfiles = {}
+    for filepath in filepaths:
+        fmd = getFileNameMetadata(filepath)
+        if fmd['type'] != 'Unknown':
+            imgfiles[fmd['image'] + fmd['band']] = filepath
+    return(collections.OrderedDict(sorted(imgfiles.items())))
 
 
 
@@ -510,8 +489,43 @@ def gettimeidparameters(imagetype):
 
 
 
-
-
+## Get GDAL metadata from the image
+#
+# @param filepath   A string.
+# @return           A dict
+def getGdalMetadata(filepath):
+    res = {}
+    try:
+        path, filename = os.path.split(filepath)
+        ext = os.path.splitext(filename)[1][1:]
+        dataset = gdal.Open(filepath, GA_ReadOnly)                              # open dataset
+        driver = dataset.GetDriver().LongName
+        ncol = dataset.RasterXSize
+        nrow = dataset.RasterYSize
+        geotransform = dataset.GetGeoTransform()
+        #GeoTransform[0] /* top left x */
+        #GeoTransform[1] /* w-e pixel resolution */
+        #GeoTransform[2] /* rotation, 0 if image is "north up" */
+        #GeoTransform[3] /* top left y */
+        #GeoTransform[4] /* rotation, 0 if image is "north up" */
+        #GeoTransform[5] /* n-s pixel resolution */ 
+        bandtype = []
+        if(ext == 'hdf'):                                                        # modis
+            for sdsname in dataset.GetSubDatasets:
+                sds = gdal.Open(sdsname[0])
+                for bandid in range(1, sds.RasterCount + 1):
+                    band = sds.GetRasterBand(bandid)
+                    bandtype.append(gdal.GetDataTypeName(band.DataType))
+        else:                                                                   # landsat?
+            for bandid in range(1, dataset.RasterCount + 1):
+                band = dataset.GetRasterBand(bandid)
+                bandtype.append(gdal.GetDataTypeName(band.DataType))
+        res = {'file':filepath, 'driver':driver, 'ncol':ncol, 'nrow':nrow, 'bandtype':bandtype, 'geotransform':geotransform}        
+    except:
+        raise RuntimeError("Could not get image metadata")
+    finally:
+        dataset = None                                                  # close dataset
+    return res
 
 
 
