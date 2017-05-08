@@ -241,15 +241,17 @@ def getFileNameMetadata(filepath):
     fstationId = ''
     farchive = ''
     fband = ''
-    fproclev = ''                                                           # processing correction level
-    facqdate = 0                                                            # acquisition date
-    fprodate = 0                                                            # processing date
-    fcolnum = ''                                                            # collection number
-    fcolcat = ''                                                            # collection category
-    fprod = ''                                                              # product
+    fproclev = ''                                                               # processing correction level
+    facqdate = 0                                                                # acquisition date
+    fprodate = 0                                                                # processing date
+    fcolnum = ''                                                                # collection number
+    fcolcat = ''                                                                # collection category
+    fprod = ''                                                                  # product
+    sname = ''                                                                  # short name
     #
     if reLandsat.search(filename):
         # example LC80090452014008LGN00_B1.TIF
+        sname       = filename[0:2] + "0"+  filename[2]
         ftype       = "Landsat_untiered"
         fsensor     = sensorLandsat[filename[1]]
         fsatellite  = satelliteLandsat[str(int(filename[2]))]
@@ -267,6 +269,7 @@ def getFileNameMetadata(filepath):
         # Surface reflectance LC08_L1TP_233013_2014265LGN00_sr_*.
         #                     LXSS_LLLL_PPPRRR_YYYYMMDD_yyyymmdd_CX_TX_prod_band.ext
         #                     LE07_L1TP_231064_20160109_20161016_01_T1_sr_band1.tif
+        sname       = filename[0:4]
         ftype       = "Landsat_tiered"
         fsensor     = sensorLandsat[filename[1]]
         fsatellite  = satelliteLandsat[str(int(filename[2:4]))]
@@ -281,6 +284,7 @@ def getFileNameMetadata(filepath):
             fprod, fband = processLBand(filename[41:].split('.')[0])
     elif reModis.search(filename):
         # example MOD13Q1.A2015353.h14v10.005.2016007192511.hdf
+        cname       = filename[0:7]
         ftype       = "Modis"
         fsensor     = filename[3:7]
         fsatellite  = filename[0:3]
@@ -305,7 +309,8 @@ def getFileNameMetadata(filepath):
     'stationId':    fstationId, 
     'archive':      farchive, 
     'band':         fband, 
-    'product':      fprod
+    'product':      fprod,
+    'sname':        sname
     })
 
 
@@ -471,24 +476,6 @@ def ymd2tid(ymd, origin, period, yearly):
 
 
 
-# Get the parameters of the time_id index
-#
-# @param ymd    An string. The type of image imagetype
-# @return       An dict of parameters: A string id, an int (YYYYMMDD) representing the date of the first image (time_id == 0),  the period (int, number of days between images) and a boolean flag if the dates resatrt yearly (i.e the first image of each year matches January the 1st)
-def gettimeidparameters(imagetype):
-    res = {'Unknown'}
-    if imagetype == 'MOD09Q1':
-        res = {'id':'MOD09Q1', 'origin':20000101, 'period':8, 'yearly':True}
-    elif imagetype == 'MOD13Q1':
-        res = {'id':'MOD13Q1', 'origin':20000101, 'period':16, 'yearly':True}
-    elif imagetype == 'Landsat5' or imagetype == 'LC5' or imagetype == 'LC05':
-        res = {'id':'LD5Original-DigitalNumber', 'origin':19840411, 'period':16, 'yearly':False}
-    elif imagetype == 'Landsat8' or imagetype == 'LC8' or imagetype == 'LC08':
-        res = {'id':'LD8Original-DigitalNumber', 'origin':20130418, 'period':16, 'yearly':False}
-    return(res)
-
-
-
 ## Get GDAL metadata from the image
 #
 # @param filepath   A string.
@@ -522,4 +509,20 @@ def getGdalMetadata(filepath):
     return res
 
 
+
+# Get the parameters of the time_id index
+#
+# @param ymd    An string. The type of image imagetype
+# @return       An dict of parameters: A string id, an int (YYYYMMDD) representing the date of the first image (time_id == 0),  the period (int, number of days between images) and a boolean flag if the dates resatrt yearly (i.e the first image of each year matches January the 1st)
+def gettimeidparameters(imagetype):
+    res = {'Unknown'}
+    if imagetype == 'MOD09Q1':
+        res = {'id':'MOD09Q1', 'origin':20000101, 'period':8, 'yearly':True}
+    elif imagetype == 'MOD13Q1':
+        res = {'id':'MOD13Q1', 'origin':20000101, 'period':16, 'yearly':True}
+    elif imagetype == 'Landsat5' or imagetype == 'LC5' or imagetype == 'LC05':
+        res = {'id':'LD5Original-DigitalNumber', 'origin':19840411, 'period':16, 'yearly':False}
+    elif imagetype == 'Landsat8' or imagetype == 'LC8' or imagetype == 'LC08':
+        res = {'id':'LD8Original-DigitalNumber', 'origin':20130418, 'period':16, 'yearly':False}
+    return(res)
 
