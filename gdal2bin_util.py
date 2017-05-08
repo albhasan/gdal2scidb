@@ -503,15 +503,9 @@ def getGdalMetadata(filepath):
         ncol = dataset.RasterXSize
         nrow = dataset.RasterYSize
         geotransform = dataset.GetGeoTransform()
-        #GeoTransform[0] /* top left x */
-        #GeoTransform[1] /* w-e pixel resolution */
-        #GeoTransform[2] /* rotation, 0 if image is "north up" */
-        #GeoTransform[3] /* top left y */
-        #GeoTransform[4] /* rotation, 0 if image is "north up" */
-        #GeoTransform[5] /* n-s pixel resolution */ 
         bandtype = []
         if(ext == 'hdf'):                                                        # modis
-            for sdsname in dataset.GetSubDatasets:
+            for sdsname in dataset.GetSubDatasets():
                 sds = gdal.Open(sdsname[0])
                 for bandid in range(1, sds.RasterCount + 1):
                     band = sds.GetRasterBand(bandid)
