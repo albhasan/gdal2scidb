@@ -284,7 +284,7 @@ def getFileNameMetadata(filepath):
             fprod, fband = processLBand(filename[41:].split('.')[0])
     elif reModis.search(filename):
         # example MOD13Q1.A2015353.h14v10.005.2016007192511.hdf
-        cname       = filename[0:7]
+        sname       = filename[0:7]
         ftype       = "Modis"
         fsensor     = filename[3:7]
         fsatellite  = filename[0:3]
