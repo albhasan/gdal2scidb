@@ -89,7 +89,7 @@ def main(argv):
         bandtypes.append(getGdalMetadata(fp)['bandtype'])
     bandtypes = sum(bandtypes, []) if isinstance(bandtypes[0], list) else bandtypes
     # get time_id parameters
-    tidparam = gettimeidparameters(filesmd[0]['satellite'])
+    tidparam = gettimeidparameters(filesmd[0]['sname'])
     # get pixels from each image
     for ifiles in imgfiles:
         tid = ymd2tid(ifiles[0][-8:], tidparam['origin'], tidparam['period'], tidparam['yearly'])
