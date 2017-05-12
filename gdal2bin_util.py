@@ -21,59 +21,6 @@ reModis = re.compile('^MOD[0-9]{2}[A-Z][0-9]\.A[0-9]{7}\.h[0-9]{2}v[0-9]{2}\.[0-
 
 
 
-## Get the pixels at the same positions from several images
-#
-# @param filepaths  A string vector. The paths of the files
-# @param x          A number. The position of the first pixel in x
-# @param y          A number. The position of the first pixel in y
-# @param xchunk     A number. The size of the window in x
-# @param ychunk     A number. The size of the window in y
-# @param dimpos     A number. Position of the new dimension in the array: 0 at the biginning, -1 at the end
-# @return           A numpy array
-def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos):
-    res = []
-    try:
-        pixlist = []
-        for filepath in filepaths:
-            pixlist.append(getPixels(filepath, x, y, xchunk, ychunk, dimpos))
-        res = numpy.stack(pixlist, axis = dimpos)
-    except:
-        raise
-    return(res)
-
-
-
-## Get pixels from an image
-#
-# @param filepath   A string. The path of the file
-# @param x          A number. The position of the first pixel in x
-# @param y          A number. The position of the first pixel in y
-# @param xchunk     A number. The size of the window in x
-# @param ychunk     A number. The size of the window in y
-# @param dimpos     A number. Position of the new dimension in the array: 0 at the biginning, -1 at the end
-# @return           A numpy array
-def getPixels(filepath, x, y, xchunk, ychunk, dimpos):
-    res = []
-    try:
-        ds = gdal.Open(filepath, GA_ReadOnly)
-        pixlist = []
-        for bandid in range(1, ds.RasterCount + 1):
-            band = ds.GetRasterBand(bandid)
-            pixs = band.ReadAsArray(x, y, xchunk, ychunk)
-            pixlist.append(pixs)
-        if len(pixlist) == 1:
-            res = pixlist[0]
-        elif len(pixlist) > 1:
-            res = numpy.stack(pixlist, axis = dimpos)
-    except:
-        raise RuntimeError("Could not get the pixels of a file")
-    finally:
-        band = None
-        ds = None
-    return(res)
-
-
-
 ## Get some pixels from an image
 #
 # @param filepath   A string. The path of the file
@@ -352,26 +299,6 @@ def sortFiles(filepaths):
 
 
 
-# Sort files' metadata into images and file-paths
-#
-# @param imgseriesmd    A list of file metadata of a image series
-# @ return              A list of images and ther matching filepaths [img, [filepaths]]
-def imgseries2imgfp(imgseriesmd):
-    imgfiles = []
-    ifiles = []
-    if len(imgseriesmd) > 1:
-        lastimg = imgseriesmd[0]['image']
-        for fmd in imgseriesmd:
-            if lastimg != fmd['image']:
-                imgfiles.append([lastimg, ifiles])
-                ifiles = []
-            ifiles.append(fmd['filepath'])
-            lastimg = fmd['image']
-        imgfiles.append([lastimg, ifiles])
-    return(imgfiles)
-
-
-
 # Transform a date into year-day-of-the-year
 #
 # @param d  A datetime.date object
@@ -399,18 +326,6 @@ def ydoy2date(yyyydoy):
 def ydoy2ymd(yyyydoy):
     d = ydoy2date(yyyydoy)
     return(d.year * 10000 + d.month * 100 + d.day)
-
-
-
-# Split a date into its parts
-#
-# @param ymd    An int YYYYMMDD
-# @return       Three integers year, month, day
-def ymd2ymd(ymd):
-    y = ymd/10000
-    m = (ymd - y * 10000)/100
-    d = (ymd - y * 10000 - m * 100)
-    return(y, m, d)
 
 
 
@@ -443,6 +358,36 @@ def tid2ymd(tid, origin, period, yearly):
         ntids = tid % ppy 
     d = datetime.datetime(ory + ny, orm, or_d) + datetime.timedelta(days = ntids * period)
     return(d.year * 10000 + d.month * 100 + d.day)
+
+
+
+# Get the parameters of the time_id index
+#
+# @param ymd    An string. The type of image imagetype
+# @return       An dict of parameters: A string id, an int (YYYYMMDD) representing the date of the first image (time_id == 0),  the period (int, number of days between images) and a boolean flag if the dates resatrt yearly (i.e the first image of each year matches January the 1st)
+def gettimeidparameters(imagetype):
+    res = {'Unknown'}
+    if imagetype == 'MOD09Q1':
+        res = {'id':'MOD09Q1', 'origin':20000101, 'period':8, 'yearly':True}
+    elif imagetype == 'MOD13Q1':
+        res = {'id':'MOD13Q1', 'origin':20000101, 'period':16, 'yearly':True}
+    elif imagetype == 'Landsat5' or imagetype == 'LC5' or imagetype == 'LC05':
+        res = {'id':'LD5Original-DigitalNumber', 'origin':19840411, 'period':16, 'yearly':False}
+    elif imagetype == 'Landsat8' or imagetype == 'LC8' or imagetype == 'LC08':
+        res = {'id':'LD8Original-DigitalNumber', 'origin':20130418, 'period':16, 'yearly':False}
+    return(res)
+
+
+
+# Split a date into its parts
+#
+# @param ymd    An int YYYYMMDD
+# @return       Three integers year, month, day
+def ymd2ymd(ymd):
+    y = ymd/10000
+    m = (ymd - y * 10000)/100
+    d = (ymd - y * 10000 - m * 100)
+    return(y, m, d)
 
 
 
@@ -491,7 +436,7 @@ def getGdalMetadata(filepath):
         nrow = dataset.RasterYSize
         geotransform = dataset.GetGeoTransform()
         bandtype = []
-        if(ext == 'hdf'):                                                        # modis
+        if(ext == 'hdf'):                                                       # modis
             for sdsname in dataset.GetSubDatasets():
                 sds = gdal.Open(sdsname[0])
                 for bandid in range(1, sds.RasterCount + 1):
@@ -502,27 +447,101 @@ def getGdalMetadata(filepath):
                 band = dataset.GetRasterBand(bandid)
                 bandtype.append(gdal.GetDataTypeName(band.DataType))
         res = {'file':filepath, 'driver':driver, 'ncol':ncol, 'nrow':nrow, 'bandtype':bandtype, 'geotransform':geotransform}        
+    except IOError: 
+        raise IOError("Cannot open:" + filepath)
     except:
-        raise RuntimeError("Could not get image metadata")
+        raise RuntimeError("Could not get image metadata from: " + filepath)
     finally:
-        dataset = None                                                  # close dataset
+        dataset = None                                                          # close dataset
     return res
 
 
 
-# Get the parameters of the time_id index
+## Get pixels from an image
 #
-# @param ymd    An string. The type of image imagetype
-# @return       An dict of parameters: A string id, an int (YYYYMMDD) representing the date of the first image (time_id == 0),  the period (int, number of days between images) and a boolean flag if the dates resatrt yearly (i.e the first image of each year matches January the 1st)
-def gettimeidparameters(imagetype):
-    res = {'Unknown'}
-    if imagetype == 'MOD09Q1':
-        res = {'id':'MOD09Q1', 'origin':20000101, 'period':8, 'yearly':True}
-    elif imagetype == 'MOD13Q1':
-        res = {'id':'MOD13Q1', 'origin':20000101, 'period':16, 'yearly':True}
-    elif imagetype == 'Landsat5' or imagetype == 'LC5' or imagetype == 'LC05':
-        res = {'id':'LD5Original-DigitalNumber', 'origin':19840411, 'period':16, 'yearly':False}
-    elif imagetype == 'Landsat8' or imagetype == 'LC8' or imagetype == 'LC08':
-        res = {'id':'LD8Original-DigitalNumber', 'origin':20130418, 'period':16, 'yearly':False}
+# @param filepath   A string. The path of the file
+# @param x          A number. The position of the first pixel in x
+# @param y          A number. The position of the first pixel in y
+# @param xchunk     A number. The size of the window in x
+# @param ychunk     A number. The size of the window in y
+# @param dimpos     A number. Position of the new dimension in the array: 0 at the biginning, -1 at the end
+# @return           A numpy array
+def getPixels(filepath, x, y, xchunk, ychunk, dimpos):
+    res = []
+    try:
+        path, filename = os.path.split(filepath)
+        ext = os.path.splitext(filename)[1][1:]
+        ds = gdal.Open(filepath, GA_ReadOnly)
+        pixlist = []
+        if(ext == 'hdf'):                                                       
+            for sdsname in ds.GetSubDatasets():
+                sds = gdal.Open(sdsname[0])
+                for bandid in range(1, sds.RasterCount + 1):
+                    band = sds.GetRasterBand(bandid)
+                    pixs = band.ReadAsArray(x, y, xchunk, ychunk)
+                    pixlist.append(pixs)
+        else:
+            for bandid in range(1, ds.RasterCount + 1):
+                band = ds.GetRasterBand(bandid)
+                pixs = band.ReadAsArray(x, y, xchunk, ychunk)
+                pixlist.append(pixs)
+        if len(pixlist) == 1:
+            res = pixlist[0]
+        elif len(pixlist) > 1:
+            res = numpy.stack(pixlist, axis = dimpos)
+    except:
+        raise RuntimeError("Could not get the pixels from: " + filepath)
+    finally:
+        band = None
+        ds = None
     return(res)
+
+
+
+# Build a list of images and filepaths out of metadata
+#
+# @param imgseriesmd    A list of file metadata of a image series
+# @return               A list of images and ther matching filepaths [img, [filepaths]]
+def imgseries2imgfp(imgseriesmd):
+    res = []
+    imgfiles = []
+    ifiles = []
+    for i in range(len(imgseriesmd)):
+        fl = []
+        fmd = imgseriesmd[i]
+        if fmd['image'] in imgfiles:
+            imgpos = [j for j, x in enumerate(imgfiles) if x == 1]              # get the image position in teh list
+            fl = ifiles[imgpos[0]]                                              # get the file list of the image
+            fl.append(fmd['filepath'])
+            ifiles[imgpos[0]] = fl                                              # update the file list
+        else:
+            imgfiles.append(fmd['image'])
+            ifiles.append([fmd['filepath']])
+    for i in range(len(imgfiles)):
+        tl =  [imgfiles[i], ifiles[i]]
+        res.append(tl)
+    return(res)
+
+
+
+## Get the pixels at the same positions from several images
+#
+# @param filepaths  A string vector. The paths of the files
+# @param x          A number. The position of the first pixel in x
+# @param y          A number. The position of the first pixel in y
+# @param xchunk     A number. The size of the window in x
+# @param ychunk     A number. The size of the window in y
+# @param dimpos     A number. Position of the new dimension in the array: 0 at the biginning, -1 at the end
+# @return           A numpy array
+def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos):
+    res = []
+    try:
+        pixlist = []
+        for filepath in filepaths:
+            pixlist.append(getPixels(filepath, x, y, xchunk, ychunk, dimpos))
+        res = numpy.stack(pixlist, axis = dimpos)
+    except:
+        raise
+    return(res)
+
 
