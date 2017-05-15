@@ -510,7 +510,7 @@ def imgseries2imgfp(imgseriesmd):
         fl = []
         fmd = imgseriesmd[i]
         if fmd['image'] in imgfiles:
-            imgpos = [j for j, x in enumerate(imgfiles) if x == 1]              # get the image position in teh list
+            imgpos = [j for j, x in enumerate(imgfiles) if x == fmd['image']]   # get the image position in the list
             fl = ifiles[imgpos[0]]                                              # get the file list of the image
             fl.append(fmd['filepath'])
             ifiles[imgpos[0]] = fl                                              # update the file list
