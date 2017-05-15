@@ -30,6 +30,7 @@ def main(argv):
     parser.add_argument("rowbuf", help = "Number of additional rows to get data from.")
     parser.add_argument("coltrans", help = "Translation applied to the column index.")
     parser.add_argument("rowtrans", help = "Translation applied to the row index.")
+    parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
     parser.add_argument("--log", help = "Log level. Default = WARNING", default = 'WARNING')
     #Get paramters
     args = parser.parse_args()
@@ -40,6 +41,7 @@ def main(argv):
     rowbuf = int(args.rowbuf)
     coltrans = int(args.coltrans)
     rowtrans = int(args.rowtrans)
+    d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     log = args.log
     ####################################################
     # CONFIG
@@ -87,71 +89,32 @@ def main(argv):
     bandtypes = []                                                              # GDAL band types of an image's bands
     for fp in imgfiles[0][1]:
         bandtypes.append(getGdalMetadata(fp)['bandtype'])
+    #
     bandtypes = sum(bandtypes, []) if isinstance(bandtypes[0], list) else bandtypes
     # get time_id parameters
     tidparam = gettimeidparameters(filesmd[0]['sname'])
-    # get pixels from each image
+    # get pixels from each image    
+    tid = -1
     for ifiles in imgfiles:
-        tid = ymd2tid(ifiles[0][-8:], tidparam['origin'], tidparam['period'], tidparam['yearly'])
+        if d2tid:
+            tid = ymd2tid(int(ifiles[0][-8:]), int(tidparam['origin']), int(tidparam['period']), tidparam['yearly'])
+        else:
+            tid = tid + 1
         imgpixs = getPixelImages(ifiles[1], col, row, colbuf, rowbuf, -1)       # pixels of the bands of an image. A numpy.ndarray object
-        for i in range(colbuf):
+        for i in range(imgpixs.shape[0]): # rowbuf
             rid = i + rowtrans
-            for j in range(rowbuf):
+            for j in range(imgpixs.shape[1]): # colbuf
                 cid = j + coltrans
                 pixval = imgpixs[i, j]
-
-
-
-
-                idxa = array('L',[cid, rid, tid])                                 # sdb's array dimensions - L unsigned long
+                # write the dimensions as binary
+                idxa = array('L',[cid, rid, tid])                               # sdb's array dimensions - L unsigned long
                 idxa.tofile(sys.stdout)
-
-
-
-
-
-
-    # TODO: write the numpy array
-
-
-
-
-
-
-
-        
-
-
-
-            
-
+                # write the data as binary
+                for k in range(len(pixval)):
+                    dt = bandtypes[k]
+                    idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
+                    idxv.tofile(sys.stdout)
     
-    
-    
-    
-    
-################################################################################
-
-
-    pixarrays = numpy.transpose(numpy.stack(imgpixlist, axis = -1))         # cast list to array
-    #pixarray = numpy.stack(imgpixlist, axis = 0)
-
-
-
-
-    # write
-    bandtyp, bandpos = findrep(bandtypes)                                        # lists of consequetive band types and their positions
-    for cid in range(pixarrays.shape[0]):
-        for rid in range(pixarrays.shape[1]):
-            for tid in range(pixarrays.shape[2]):
-                idxa = array('L',[cid, rid, tid])                                 # sdb's array dimensions - L unsigned long
-                idxa.tofile(sys.stdout)
-                s = 0
-                for i in range(len(bandtyp)):
-                    valsa = array(mapGdal2python(bandtyp[i]), pixarrays[cid, rid, tid][s:bandpos[i]])
-                    valsa.tofile(sys.stdout)
-                    s = bandpos[i] + 1
-
 
     
 if __name__ == "__main__":
