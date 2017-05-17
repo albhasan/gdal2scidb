@@ -12,10 +12,16 @@ from gdal2bin_util import *
 #
 #-------------------------------------------------------------------------------
 #
-# find /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013 -name 'LC822606*tif'
+# find /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013 -name 'LC8226061*tif'
 # find /home/scidb/MODIS -type f -name '*h12v10*'
 #
-# python gdal2bin_chunk.py "/home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_solar_zenith_band4.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_solar_azimuth_band4.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_radsat_qa.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sr_band1.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_pixel_qa.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sr_band4.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sr_band7.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sr_band3.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sr_band5.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sr_band2.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sr_cloud_qa.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sr_atmos_opacity.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sensor_zenith_band4.tif /home/alber/landsat/collection1/LE072310652016012501T1-SC20170407161252/LE07_L1TP_231065_20160125_20161015_01_T1_sensor_azimuth_band4.tif" 75 75 75 75
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_cloud.tif" 0 0 2 2 10 10 >> res.sdbbin
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif" 0 0 2 2 10 10 >> res.sdbbin
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/MODIS/2012/MOD13Q1.A2012049.h12v10.005.2012067111445.hdf /home/scidb/MODIS/2012/MOD13Q1.A2012257.h12v10.005.2012275105908.hdf" 0 0 3 3 10 10 >> res.sdbbin
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band7.tif" 0 0 3 3 10 10 >> res.sdbbin
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif"  7500 7320 3 3 10 10 >> res.sdbbin
+#
+# python gdal2bin_chunk.py --d2tid "false" "/home/alber/Desktop/MOD13Q1.A2010081.h12v10.005.2010101105440.hdf"  4799 4799 3 3 0 0 >> res.sdbbin
 #
 # Ubuntu uses an old version of numpy
 # sudo easy_install --upgrade numpy
@@ -91,7 +97,7 @@ def main(argv):
         bandtypes.append(getGdalMetadata(fp)['bandtype'])
     #
     bandtypes = sum(bandtypes, []) if isinstance(bandtypes[0], list) else bandtypes
-    # get time_id parameters
+    # get time_id transformation parameters
     tidparam = gettimeidparameters(filesmd[0]['sname'])
     # get pixels from each image    
     tid = -1
@@ -101,9 +107,12 @@ def main(argv):
         else:
             tid = tid + 1
         imgpixs = getPixelImages(ifiles[1], col, row, colbuf, rowbuf, -1)       # pixels of the bands of an image. A numpy.ndarray object
-        for i in range(imgpixs.shape[0]): # rowbuf
+        if len(imgpixs.shape) < 3:                                              # not enough pixels left to be read
+            logging.warn("Insufficient pixels to read")
+            continue
+        for i in range(imgpixs.shape[0]):
             rid = i + rowtrans
-            for j in range(imgpixs.shape[1]): # colbuf
+            for j in range(imgpixs.shape[1]):
                 cid = j + coltrans
                 pixval = imgpixs[i, j]
                 # write the dimensions as binary
@@ -114,9 +123,9 @@ def main(argv):
                     dt = bandtypes[k]
                     idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
                     idxv.tofile(sys.stdout)
-    
 
-    
+
+
 if __name__ == "__main__":
    main(sys.argv[1:])
 
