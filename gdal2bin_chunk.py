@@ -13,7 +13,7 @@ from gdal2bin_util import *
 #-------------------------------------------------------------------------------
 #
 # find /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013 -name 'LC8226061*tif'
-# find /home/scidb/MODIS -type f -name '*h12v10*'
+# find /home/scidb/MODIS -type f -name '*h12v10*' | grep A2013
 #
 # python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_cloud.tif" 0 0 2 2 10 10 >> res.sdbbin
 # python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif" 0 0 2 2 10 10 >> res.sdbbin
@@ -37,6 +37,7 @@ def main(argv):
     parser.add_argument("coltrans", help = "Translation applied to the column index.")
     parser.add_argument("rowtrans", help = "Translation applied to the row index.")
     parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
+    parser.add_argument("--output", help = "The SciDB format used to export the data. Default = binary", default = 'binary')
     parser.add_argument("--log", help = "Log level. Default = WARNING", default = 'WARNING')
     #Get paramters
     args = parser.parse_args()
@@ -48,6 +49,7 @@ def main(argv):
     coltrans = int(args.coltrans)
     rowtrans = int(args.rowtrans)
     d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
+    output = args.output
     log = args.log
     ####################################################
     # CONFIG
@@ -99,7 +101,9 @@ def main(argv):
     bandtypes = sum(bandtypes, []) if isinstance(bandtypes[0], list) else bandtypes
     # get time_id transformation parameters
     tidparam = gettimeidparameters(filesmd[0]['sname'])
-    # get pixels from each image    
+    #---------------------------------------------------------------------------
+    # get pixels from each image
+    #---------------------------------------------------------------------------
     tid = -1
     for ifiles in imgfiles:
         if d2tid:
@@ -115,16 +119,29 @@ def main(argv):
             for j in range(imgpixs.shape[1]):
                 cid = j + coltrans
                 pixval = imgpixs[i, j]
-                # write the dimensions as binary
-                idxa = array('L',[cid, rid, tid])                               # sdb's array dimensions - L unsigned long
-                idxa.tofile(sys.stdout)
-                # write the data as binary
-                for k in range(len(pixval)):
-                    dt = bandtypes[k]
-                    idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
-                    idxv.tofile(sys.stdout)
+                # write the dimensions
+                if output == "binary":
+                    idxa = array('L',[cid, rid, tid])                               # sdb's array dimensions - L unsigned long
+                    idxa.tofile(sys.stdout)
+                    # write the data
+                    for k in range(len(pixval)):
+                        dt = bandtypes[k]
+                        idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
+                        idxv.tofile(sys.stdout)
+                elif output == "dcsv":
+                    s = "{" + str(cid) + "," + str(rid) + "," + str(tid) + "} "
+                    for k in range(len(pixval)):
+                        s += str(pixval[k][0]) + ','
+                    sys.stdout.write(s[0:-1] + "\n")
+                else:
+                    logging.warning("Unknown SciDB format!")
 
 
+
+# TODO: write dcsv output
+# TODO: Validate the order of the written values
+#       MODIS: OK imgpixs.shape = (3, 3, 12, 1) <col_id, row_id, atts, time_id>
+#       LANDSAT???? landsat files in desktop
 
 if __name__ == "__main__":
    main(sys.argv[1:])
