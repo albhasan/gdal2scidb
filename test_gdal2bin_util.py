@@ -12,9 +12,10 @@ import sys
 import numpy
 import datetime
 import struct
+from array import array
 import logging
 log = 'INFO'
-logging.basicConfig(filename = 'log_gdal2bin_util.log', level = getattr(logging, log.upper(), None), format = '%(asctime)s %(levelname)s: %(message)s')
+logging.basicConfig(filename = 'log_gdal2bin_test.log', level = getattr(logging, log.upper(), None), format = '%(asctime)s %(levelname)s: %(message)s')
 #-------------------------------------
 col = 0
 row = 0
@@ -127,6 +128,53 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(len(imgfiles), 2)
 
 
+
+
+
+
+
+
+
+# find /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013 -name 'LC8226061*tif'
+# find /home/scidb/MODIS -type f -name '*h12v10*' | grep A2013
+#
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_cloud.tif" 0 0 2 2 10 10 >> res.sdbbin
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif" 0 0 2 2 10 10 >> res.sdbbin
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/MODIS/2012/MOD13Q1.A2012049.h12v10.005.2012067111445.hdf /home/scidb/MODIS/2012/MOD13Q1.A2012257.h12v10.005.2012275105908.hdf" 0 0 3 3 10 10 >> res.sdbbin
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band7.tif" 0 0 3 3 10 10 >> res.sdbbin
+# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif"  7500 7320 3 3 10 10 >> res.sdbbin
+#
+# python gdal2bin_chunk.py --d2tid "false" "/home/alber/Desktop/MOD13Q1.A2010081.h12v10.005.2010101105440.hdf"  4799 4799 3 3 0 0 >> res.sdbbin
+#
+# python gdal2bin_chunk.py  --d2tid 'False' --output 'binary' --log DEBUG "/tmp/MOD13Q1.A2013081.h12v10.005.2013098040626.hdf /tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf" 0 0 3 3 0 0 >res.bin 
+#
+
+
+
+
+# R
+# library(raster)
+# #
+# as.array(raster('/tmp/LC82260612013133LGN01_sr_band1.tif'))[2001:2003, 2001:2003, 1]
+# as.array(raster('/tmp/LC82260612013133LGN01_sr_band2.tif'))[2001:2003, 2001:2003, 1]
+# as.array(raster('/tmp/LC82260612013133LGN01_sr_band3.tif'))[2001:2003, 2001:2003, 1]
+# #
+# as.array(raster('/tmp/LC82260612013149LGN00_sr_band1.tif'))[2001:2003, 2001:2003, 1]
+# as.array(raster('/tmp/LC82260612013149LGN00_sr_band2.tif'))[2001:2003, 2001:2003, 1]
+# as.array(raster('/tmp/LC82260612013149LGN00_sr_band3.tif'))[2001:2003, 2001:2003, 1]
+
+
+
+# python gdal2bin_chunk.py  --d2tid 'False' --output 'dcsv' --log DEBUG "/tmp/LC82260612013133LGN01_cfmask_conf.tif /tmp/LC82260612013133LGN01_cfmask.tif /tmp/LC82260612013133LGN01_sr_band1.tif /tmp/LC82260612013133LGN01_sr_band2.tif /tmp/LC82260612013133LGN01_sr_band3.tif /tmp/LC82260612013133LGN01_sr_band4.tif /tmp/LC82260612013133LGN01_sr_band5.tif /tmp/LC82260612013133LGN01_sr_band6.tif /tmp/LC82260612013133LGN01_sr_band7.tif /tmp/LC82260612013133LGN01_sr_cloud.tif /tmp/LC82260612013149LGN00_cfmask_conf.tif /tmp/LC82260612013149LGN00_cfmask.tif /tmp/LC82260612013149LGN00_sr_band1.tif /tmp/LC82260612013149LGN00_sr_band2.tif /tmp/LC82260612013149LGN00_sr_band3.tif /tmp/LC82260612013149LGN00_sr_band4.tif /tmp/LC82260612013149LGN00_sr_band5.tif /tmp/LC82260612013149LGN00_sr_band6.tif /tmp/LC82260612013149LGN00_sr_band7.tif /tmp/LC82260612013149LGN00_sr_cloud.tif" 1886 1556 3 3 0 0 > res.bin 
+
+
+
+
+
+
+# python gdal2bin_chunk.py  --d2tid 'False' --output 'dcsv' --log DEBUG "/tmp/LC82260612013133LGN01_sr_band1.tif /tmp/LC82260612013133LGN01_sr_band2.tif /tmp/LC82260612013133LGN01_sr_band3.tif /tmp/LC82260612013149LGN00_sr_band1.tif /tmp/LC82260612013149LGN00_sr_band2.tif /tmp/LC82260612013149LGN00_sr_band3.tif" 2000 2000 3 3 0 0 > res.bin 
+
+# python gdal2bin_chunk.py  --d2tid 'False' --output 'dcsv' --log DEBUG "/tmp/MOD13Q1.A2013081.h12v10.005.2013098040626.hdf /tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf" 0 0 3 3 0 0 > res.bin 
 
 
 
