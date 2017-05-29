@@ -473,7 +473,7 @@ def getPixels(filepath, x, y, xchunk, ychunk, dimpos):
         ext = os.path.splitext(filename)[1][1:]
         ds = gdal.Open(filepath, GA_ReadOnly)
         pixlist = []
-        if(ext == 'hdf'):                                                       
+        if(ext == 'hdf'):
             for sdsname in ds.GetSubDatasets():
                 sds = gdal.Open(sdsname[0])
                 for bandid in range(1, sds.RasterCount + 1):
