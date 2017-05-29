@@ -11,18 +11,6 @@ from gdal2bin_util import *
 # sdb2bin(files, chunk, chunkTranslation)
 #
 #-------------------------------------------------------------------------------
-#
-# find /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013 -name 'LC8226061*tif'
-# find /home/scidb/MODIS -type f -name '*h12v10*' | grep A2013
-#
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_cloud.tif" 0 0 2 2 10 10 >> res.sdbbin
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif" 0 0 2 2 10 10 >> res.sdbbin
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/MODIS/2012/MOD13Q1.A2012049.h12v10.005.2012067111445.hdf /home/scidb/MODIS/2012/MOD13Q1.A2012257.h12v10.005.2012275105908.hdf" 0 0 3 3 10 10 >> res.sdbbin
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band7.tif" 0 0 3 3 10 10 >> res.sdbbin
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif"  7500 7320 3 3 10 10 >> res.sdbbin
-#
-# python gdal2bin_chunk.py --d2tid "false" "/home/alber/Desktop/MOD13Q1.A2010081.h12v10.005.2010101105440.hdf"  4799 4799 3 3 0 0 >> res.sdbbin
-#
 # Ubuntu uses an old version of numpy
 # sudo easy_install --upgrade numpy
 # sudo easy_install --upgrade scipy
@@ -106,6 +94,7 @@ def main(argv):
     #---------------------------------------------------------------------------
     tid = -1
     for ifiles in imgfiles:
+        print(ifiles)
         if d2tid:
             tid = ymd2tid(int(ifiles[0][-8:]), int(tidparam['origin']), int(tidparam['period']), tidparam['yearly'])
         else:
@@ -131,17 +120,16 @@ def main(argv):
                 elif output == "dcsv":
                     s = "{" + str(cid) + "," + str(rid) + "," + str(tid) + "} "
                     for k in range(len(pixval)):
-                        s += str(pixval[k][0]) + ','
+                        s += str(pixval[k]) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 else:
                     logging.warning("Unknown SciDB format!")
 
 
 
-# TODO: write dcsv output
-# TODO: Validate the order of the written values
-#       MODIS: OK imgpixs.shape = (3, 3, 12, 1) <col_id, row_id, atts, time_id>
-#       LANDSAT???? landsat files in desktop
+# TODO: Landsat & output = 'dcsv' produces a wrong dcsv notation
+# TODO: Run load test to SciDB. Check binary interpretation of the output file
+
 
 if __name__ == "__main__":
    main(sys.argv[1:])
