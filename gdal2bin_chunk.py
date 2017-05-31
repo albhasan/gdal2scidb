@@ -94,7 +94,6 @@ def main(argv):
     #---------------------------------------------------------------------------
     tid = -1
     for ifiles in imgfiles:
-        print(ifiles)
         if d2tid:
             tid = ymd2tid(int(ifiles[0][-8:]), int(tidparam['origin']), int(tidparam['period']), tidparam['yearly'])
         else:
