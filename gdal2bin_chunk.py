@@ -14,6 +14,8 @@ from gdal2bin_util import *
 # Ubuntu uses an old version of numpy
 # sudo easy_install --upgrade numpy
 # sudo easy_install --upgrade scipy
+#-------------------------------------------------------------------------------
+# python gdal2bin_chunk.py --output dcsv /home/alber/Documents/tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf 0 0 3 3 10 10 
 ################################################################################
 def main(argv):
     parser = argparse.ArgumentParser(description = "Export GDAL images to the stdout using SciDB's binary format.")
@@ -25,9 +27,9 @@ def main(argv):
     parser.add_argument("coltrans", help = "Translation applied to the column index.")
     parser.add_argument("rowtrans", help = "Translation applied to the row index.")
     parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
-    parser.add_argument("--output", help = "The SciDB format used to export the data. Default = binary", default = 'binary')
+    parser.add_argument("--output", help = "The SciDB format used to export the data [binary, dcsv]. Default = binary", default = 'binary')
     parser.add_argument("--log", help = "Log level. Default = WARNING", default = 'WARNING')
-    #Get paramters
+    # Get parameters
     args = parser.parse_args()
     inputFiles = args.inputFiles
     col = int(args.col)
@@ -119,15 +121,14 @@ def main(argv):
                 elif output == "dcsv":
                     s = "{" + str(cid) + "," + str(rid) + "," + str(tid) + "} "
                     for k in range(len(pixval)):
-                        s += str(pixval[k]) + ','
+                        s += str(pixval[k][0]) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 else:
                     logging.warning("Unknown SciDB format!")
 
 
 
-# TODO: Landsat & output = 'dcsv' produces a wrong dcsv notation
-# TODO: Run load test to SciDB. Check binary interpretation of the output file
+# TODO: Run load test to SciDB. Check binary interpretation of the output file - WAIT UNTIL NEW MODIS UPLOAD
 
 
 if __name__ == "__main__":
