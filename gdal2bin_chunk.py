@@ -27,6 +27,7 @@ def main(argv):
     parser.add_argument("coltrans", help = "Translation applied to the column index.")
     parser.add_argument("rowtrans", help = "Translation applied to the row index.")
     parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
+    parser.add_argument("--tile2id", help = "Include the image's tile (e.g path & row) as pixel identifiers. Default = True", default = 'True')
     parser.add_argument("--output", help = "The SciDB format used to export the data [binary, dcsv]. Default = binary", default = 'binary')
     parser.add_argument("--log", help = "Log level. Default = WARNING", default = 'WARNING')
     # Get parameters
@@ -39,6 +40,7 @@ def main(argv):
     coltrans = int(args.coltrans)
     rowtrans = int(args.rowtrans)
     d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
+    t2id = args.tile2id in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     output = args.output
     log = args.log
     ####################################################
@@ -64,6 +66,7 @@ def main(argv):
     # get files' metadata
     imgseries = set()                                                           # set of series of images
     filesmd = list()                                                            # list of metadata derived from file names
+    fmd = ""
     for key,value in files.items():
         fmd = getFileNameMetadata(value)
         filesmd.append(fmd)
@@ -72,6 +75,9 @@ def main(argv):
     if len(imgseries) != 1:
         logging.error("Invalid number of time series of images: " + imgseries)
         sys.exit(0)
+    # NOTE: assume all the images belong to the same path & row or TILE!!!!
+    ipath = fmd['path']
+    irow = fmd['row']
     # build list of images and filepaths
     imgfiles = imgseries2imgfp(filesmd)                                         # List [img, [filepaths]]
     # validation
@@ -112,6 +118,8 @@ def main(argv):
                 # write the dimensions
                 if output == "binary":
                     idxa = array('L',[cid, rid, tid])                               # sdb's array dimensions - L unsigned long
+                    if t2id:
+                        idxa = array('L',[ipath, irow, cid, rid, tid])
                     idxa.tofile(sys.stdout)
                     # write the data
                     for k in range(len(pixval)):
@@ -120,16 +128,16 @@ def main(argv):
                         idxv.tofile(sys.stdout)
                 elif output == "dcsv":
                     s = "{" + str(cid) + "," + str(rid) + "," + str(tid) + "} "
+                    if t2id:
+                        s = "{" + str(ipath) + "," + str(irow) + "," + str(cid) + "," + str(rid) + "," + str(tid) + "} "
                     for k in range(len(pixval)):
                         s += str(pixval[k][0]) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 else:
-                    logging.warning("Unknown SciDB format!")
+                    logging.error("Unknown SciDB format: " + output)
+                    sys.exit(0)
 
-
-
-# TODO: Run load test to SciDB. Check binary interpretation of the output file - WAIT UNTIL NEW MODIS UPLOAD
-
+# TODO: Run load test to SciDB. Check binary interpretation of the output file
 
 if __name__ == "__main__":
    main(sys.argv[1:])
