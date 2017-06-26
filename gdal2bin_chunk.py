@@ -15,7 +15,8 @@ from gdal2bin_util import *
 # sudo easy_install --upgrade numpy
 # sudo easy_install --upgrade scipy
 #-------------------------------------------------------------------------------
-# python gdal2bin_chunk.py --output dcsv /home/alber/Documents/tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf 0 0 3 3 10 10 
+# Use:
+# python gdal2bin_chunk.py --output dcsv --tile2id true /home/alber/Documents/tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf 0 0 3 3 10 10
 ################################################################################
 def main(argv):
     parser = argparse.ArgumentParser(description = "Export GDAL images to the stdout using SciDB's binary format.")
