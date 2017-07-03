@@ -16,17 +16,17 @@ from gdal2bin_util import *
 # sudo easy_install --upgrade scipy
 #-------------------------------------------------------------------------------
 # Use:
-# python gdal2bin_chunk.py --output dcsv --tile2id true /home/alber/Documents/tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf 0 0 3 3 10 10
+# python gdal2bin_chunk.py --output dcsv --tile2id true 0 0 3 3 10 10 /home/alber/Documents/tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf 
 ################################################################################
 def main(argv):
     parser = argparse.ArgumentParser(description = "Export GDAL images to the stdout using SciDB's binary format.")
-    parser.add_argument("inputFiles", help = "List of images separated by spaces.")
     parser.add_argument("col", help = "Number of the column from where to start getting data.")
     parser.add_argument("row", help = "Number of the row from where to start getting data.")
     parser.add_argument("colbuf", help = "Number of additional columns to get data from.")
     parser.add_argument("rowbuf", help = "Number of additional rows to get data from.")
     parser.add_argument("coltrans", help = "Translation applied to the column index.")
     parser.add_argument("rowtrans", help = "Translation applied to the row index.")
+    parser.add_argument("inputFiles", help = "List of images separated by spaces.", nargs = "+")
     parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
     parser.add_argument("--tile2id", help = "Include the image's tile (e.g path & row) as pixel identifiers. Default = True", default = 'True')
     parser.add_argument("--output", help = "The SciDB format used to export the data [binary, dcsv]. Default = binary", default = 'binary')
@@ -139,6 +139,7 @@ def main(argv):
                     sys.exit(0)
 
 # TODO: Run load test to SciDB. Check binary interpretation of the output file
+
 
 if __name__ == "__main__":
    main(sys.argv[1:])
