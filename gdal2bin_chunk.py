@@ -63,7 +63,7 @@ def main(argv):
     # [1] file  == [n] bands
     ####################################################
     # sort files by image-path/row-band
-    files = sortFiles(inputFiles.split())
+    files = sortFiles(inputFiles)
     # get files' metadata
     imgseries = set()                                                           # set of series of images
     filesmd = list()                                                            # list of metadata derived from file names
