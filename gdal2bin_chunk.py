@@ -74,7 +74,7 @@ def main(argv):
         imgseries.add(fmd['satellite'] + fmd['sensor']+ fmd['path'] + fmd['row'])
     # validation
     if len(imgseries) != 1:
-        logging.error("Invalid number of time series of images: " + imgseries)
+        logging.error("Invalid number of time series of images: " + str(imgseries))
         sys.exit(0)
     # NOTE: assume all the images belong to the same path & row or TILE!!!!
     ipath = fmd['path']
