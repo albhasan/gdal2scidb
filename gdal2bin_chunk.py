@@ -135,7 +135,7 @@ def main(argv):
                         s += str(pixval[k][0]) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 elif output == "csv":
-                    s = str(cid) + "," + str(rid) + "," + str(tid)
+                    s = str(cid) + "," + str(rid) + "," + str(tid) + ","
                     if t2id:
                         s = str(ipath) + "," + str(irow) + s
                     for k in range(len(pixval)):
