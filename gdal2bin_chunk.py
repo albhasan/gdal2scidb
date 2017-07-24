@@ -139,7 +139,7 @@ def main(argv):
                     sys.exit(0)
 
 # TODO: Run load test to SciDB. Check binary interpretation of the output file
-
+# TODO: Write script to split images into chunks and call "this" script
 
 if __name__ == "__main__":
    main(sys.argv[1:])
