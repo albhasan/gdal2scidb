@@ -94,8 +94,8 @@ def main(argv):
     bandtypes = []                                                              # GDAL band types of an image's bands
     for fp in imgfiles[0][1]:
         bandtypes.append(getGdalMetadata(fp)['bandtype'])
-    #
     bandtypes = sum(bandtypes, []) if isinstance(bandtypes[0], list) else bandtypes
+    logging.info("Bandtypes: " + str(bandtype))
     # get time_id transformation parameters
     tidparam = gettimeidparameters(filesmd[0]['sname'])
     #---------------------------------------------------------------------------
@@ -118,7 +118,7 @@ def main(argv):
                 pixval = imgpixs[i, j]
                 # write the dimensions
                 if output == "binary":
-                    idxa = array('L',[cid, rid, tid])                               # sdb's array dimensions - L unsigned long
+                    idxa = array('L',[cid, rid, tid])                           # sdb's array dimensions - L unsigned long
                     if t2id:
                         idxa = array('L',[ipath, irow, cid, rid, tid])
                     idxa.tofile(sys.stdout)
@@ -145,7 +145,6 @@ def main(argv):
                     logging.error("Unknown SciDB format: " + output)
                     sys.exit(0)
 
-# TODO: Run load test to SciDB. Check binary interpretation of the output file
 # TODO: Write script to split images into chunks and call "this" script
 
 if __name__ == "__main__":
