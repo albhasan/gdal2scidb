@@ -404,7 +404,7 @@ def ymd2tid(ymd, origin, period, yearly):
     # [MOD13Q1, 20000101, 16, True]
     # [LD5Original-DigitalNumber, 19840411, 16, False]
     # [LD8Original-DigitalNumber, 20130418, 16, False]
-    res = -1
+    res = 0
     dy = 0
     # cast YYYYDDMMs to dates
     ymdy,ymdm,ymdd = ymd2ymd(ymd)
