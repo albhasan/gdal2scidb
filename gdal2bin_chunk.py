@@ -76,6 +76,7 @@ def main(argv):
     if len(imgseries) != 1:
         logging.error("Invalid number of time series of images: " + str(imgseries))
         sys.exit(0)
+    imgtype = imgseries.pop()
     # NOTE: assume all the images belong to the same path & row or TILE!!!!
     ipath = fmd['path']
     irow = fmd['row']
@@ -132,7 +133,10 @@ def main(argv):
                     if t2id:
                         s = str(ipath) + "," + str(irow) + "," + s
                     for k in range(len(pixval)):
-                        s += str(pixval[k][0]) + ','
+                        if(imgtype[0:3] == "MOD"):
+                            s += str(pixval[k][0]) + ','
+                        elif(imgtype[0:3] == "Lan"):
+                            s += str(pixval[k]) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 else:
                     logging.error("Unknown SciDB format: " + output)
