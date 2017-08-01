@@ -95,7 +95,7 @@ def main(argv):
     for fp in imgfiles[0][1]:
         bandtypes.append(getGdalMetadata(fp)['bandtype'])
     bandtypes = sum(bandtypes, []) if isinstance(bandtypes[0], list) else bandtypes
-    logging.info("Bandtypes: " + str(bandtype))
+    logging.info("Bandtypes: " + str(bandtypes))
     # get time_id transformation parameters
     tidparam = gettimeidparameters(filesmd[0]['sname'])
     #---------------------------------------------------------------------------
@@ -132,14 +132,14 @@ def main(argv):
                     if t2id:
                         s = "{" + str(ipath) + "," + str(irow) + "," + str(cid) + "," + str(rid) + "," + str(tid) + "} "
                     for k in range(len(pixval)):
-                        s += str(pixval[k][0]) + ','
+                        s += str(pixval[k]) + ','                               # NOTE: XXX s += str(pixval[k][0]) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 elif output == "csv":
                     s = str(cid) + "," + str(rid) + "," + str(tid) + ","
                     if t2id:
                         s = str(ipath) + "," + str(irow) + "," + s
                     for k in range(len(pixval)):
-                        s += str(pixval[k][0]) + ','
+                        s += str(pixval[k]) + ','                               # NOTE: XXX s += str(pixval[k][0]) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 else:
                     logging.error("Unknown SciDB format: " + output)
