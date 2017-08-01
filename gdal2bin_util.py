@@ -81,7 +81,7 @@ def mapGdal2python(gdalType):
     # 'd'           double          float               8        
     try:
         res = {
-            'GDT_Byte':     'f',
+            'GDT_Byte':     'B',
             'GDT_Int16':    'h', 
             'GDT_UInt16':   'H', 
             'GDT_Int32':    'i', 
