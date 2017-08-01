@@ -29,7 +29,7 @@ def main(argv):
     parser.add_argument("inputFiles", help = "List of images separated by spaces.", nargs = "+")
     parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
     parser.add_argument("--tile2id", help = "Include the image's tile (e.g path & row) as pixel identifiers. Default = True", default = 'True')
-    parser.add_argument("--output", help = "The SciDB format used to export the data [binary, dcsv]. Default = binary", default = 'binary')
+    parser.add_argument("--output", help = "The SciDB format used to export the data [binary, csv]. Default = binary", default = 'binary')
     parser.add_argument("--log", help = "Log level. Default = WARNING", default = 'WARNING')
     # Get parameters
     args = parser.parse_args()
@@ -127,13 +127,6 @@ def main(argv):
                         dt = bandtypes[k]
                         idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
                         idxv.tofile(sys.stdout)
-                elif output == "dcsv":
-                    s = "{" + str(cid) + "," + str(rid) + "," + str(tid) + "} "
-                    if t2id:
-                        s = "{" + str(ipath) + "," + str(irow) + "," + str(cid) + "," + str(rid) + "," + str(tid) + "} "
-                    for k in range(len(pixval)):
-                        s += str(pixval[k][0]) + ','
-                    sys.stdout.write(s[0:-1] + "\n")
                 elif output == "csv":
                     s = str(cid) + "," + str(rid) + "," + str(tid) + ","
                     if t2id:
