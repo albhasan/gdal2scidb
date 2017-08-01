@@ -26,34 +26,21 @@ rowtrans = 48000
 d2tid = False
 #-------------------------------------
 
-
-
-
 logging.info("test_gdal2bin_util")
-
 
 class TestStringMethods(unittest.TestCase):
 
     def test_upper(self):
-
         inputFiles = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260672013181LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260612013181LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260622013181LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260612013181LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260672013181LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260622013181LGN00_sr_band6.tif /this/must/fail/LC82260672013213ALA00_cfmask.tif /home/scidb/MODIS/2005/MOD13Q1.A2005353.h11v07.005.2008091034316.hdf /home/scidb/MODIS/2005/MOD13Q1.A2003353.h10v11.005.2008041120050.hdf /home/scidb/MODIS/2005/MOD13Q1.A2015353.h10v11.005.2016007192946.hdf"
-        #inputFiles = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-11/LC82260682013101LGN01_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-04-27/LC82260682013117LGN01_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-13/LC82260682013133LGN01_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260682013149LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_cloud.tif"
-        #inputFiles = "/home/scidb/MODIS/2010/MOD13Q1.A2010337.h12v10.005.2010355190043.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010177.h12v10.005.2010196020624.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010113.h12v10.005.2010133072929.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010225.h12v10.005.2010252053925.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010209.h12v10.005.2010239173903.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010161.h12v10.005.2010178143649.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010257.h12v10.005.2010282030406.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010241.h12v10.005.2010259062743.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010033.h12v10.005.2010050162915.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010305.h12v10.005.2010322173628.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010193.h12v10.005.2010212005018.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010145.h12v10.005.2010165175205.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010321.h12v10.005.2010339042846.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010129.h12v10.005.2010146170112.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010353.h12v10.005.2011006185024.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010273.h12v10.005.2010291065852.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010017.h12v10.005.2010036003008.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010097.h12v10.005.2010114150000.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010065.h12v10.005.2010084080913.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010289.h12v10.005.2010309022036.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010049.h12v10.005.2010067021119.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010001.h12v10.005.2010027070105.hdf /home/scidb/MODIS/2010/MOD13Q1.A2010081.h12v10.005.2010101105440.hdf"
-        #
-        #inputFiles = '/media/alber/fd2f2147-f07d-4a8a-9e17-715140f0e470/academicData/inpe/phdCienciaSistemaTerrestre/projects/proyectoDonato/data/MOD11A1.A2015127.h13v11.005.2015128103250.hdf'
+
         inputFiles = '/home/alber/Desktop/MOD13Q1.A2010081.h12v10.005.2010101105440.hdf'
-        #
-        #inputFiles = '/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_cloud.tif'
-        #inputFiles = '/home/scidb/MODIS/2010/MOD13Q1.A2010081.h12v10.005.2010101105440.hdf'
-        
+
         col = 0
         row = 0
         colbuf = 75
         rowbuf = 75
         coltrans = 48000
         rowtrans = 48000
-
-
 
         self.assertEqual(date2ydoy(datetime.date(2007, 12, 31)), 2007365)
         self.assertEqual(date2ydoy(datetime.date(2007, 1, 1)), 2007001)
@@ -131,55 +118,14 @@ class TestStringMethods(unittest.TestCase):
 
 
 
-
-
-
-
-# find /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013 -name 'LC8226061*tif'
-# find /home/scidb/MODIS -type f -name '*h12v10*' | grep A2013
-#
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-14/LC82260682013165LGN00_sr_cloud.tif" 0 0 2 2 10 10 >> res.sdbbin
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif" 0 0 2 2 10 10 >> res.sdbbin
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/MODIS/2012/MOD13Q1.A2012049.h12v10.005.2012067111445.hdf /home/scidb/MODIS/2012/MOD13Q1.A2012257.h12v10.005.2012275105908.hdf" 0 0 3 3 10 10 >> res.sdbbin
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band7.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_cfmask_conf.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band6.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band5.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-08-17/LC82260612013229LGN00_sr_band7.tif" 0 0 3 3 10 10 >> res.sdbbin
-# python gdal2bin_chunk.py --d2tid "false" "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif"  7500 7320 3 3 10 10 >> res.sdbbin
-#
-# python gdal2bin_chunk.py --d2tid "false" "/home/alber/Desktop/MOD13Q1.A2010081.h12v10.005.2010101105440.hdf"  4799 4799 3 3 0 0 >> res.sdbbin
-#
-# python gdal2bin_chunk.py  --d2tid 'False' --output 'binary' --log DEBUG "/tmp/MOD13Q1.A2013081.h12v10.005.2013098040626.hdf /tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf" 0 0 3 3 0 0 >res.bin 
-#
-
-
-
-
-# R
-# library(raster)
-# #
-# as.array(raster('/tmp/LC82260612013133LGN01_sr_band1.tif'))[2001:2003, 2001:2003, 1]
-# as.array(raster('/tmp/LC82260612013133LGN01_sr_band2.tif'))[2001:2003, 2001:2003, 1]
-# as.array(raster('/tmp/LC82260612013133LGN01_sr_band3.tif'))[2001:2003, 2001:2003, 1]
-# #
-# as.array(raster('/tmp/LC82260612013149LGN00_sr_band1.tif'))[2001:2003, 2001:2003, 1]
-# as.array(raster('/tmp/LC82260612013149LGN00_sr_band2.tif'))[2001:2003, 2001:2003, 1]
-# as.array(raster('/tmp/LC82260612013149LGN00_sr_band3.tif'))[2001:2003, 2001:2003, 1]
-
-
-
-# python gdal2bin_chunk.py  --d2tid 'False' --output 'dcsv' --log DEBUG "/tmp/LC82260612013133LGN01_cfmask_conf.tif /tmp/LC82260612013133LGN01_cfmask.tif /tmp/LC82260612013133LGN01_sr_band1.tif /tmp/LC82260612013133LGN01_sr_band2.tif /tmp/LC82260612013133LGN01_sr_band3.tif /tmp/LC82260612013133LGN01_sr_band4.tif /tmp/LC82260612013133LGN01_sr_band5.tif /tmp/LC82260612013133LGN01_sr_band6.tif /tmp/LC82260612013133LGN01_sr_band7.tif /tmp/LC82260612013133LGN01_sr_cloud.tif /tmp/LC82260612013149LGN00_cfmask_conf.tif /tmp/LC82260612013149LGN00_cfmask.tif /tmp/LC82260612013149LGN00_sr_band1.tif /tmp/LC82260612013149LGN00_sr_band2.tif /tmp/LC82260612013149LGN00_sr_band3.tif /tmp/LC82260612013149LGN00_sr_band4.tif /tmp/LC82260612013149LGN00_sr_band5.tif /tmp/LC82260612013149LGN00_sr_band6.tif /tmp/LC82260612013149LGN00_sr_band7.tif /tmp/LC82260612013149LGN00_sr_cloud.tif" 1886 1556 3 3 0 0 > res.bin 
+    filepath = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2013/2013-04-27/LC08_L1GT_226064_20130427_20170505_01_T2_sr_aerosol.tif"
+    getFileNameMetadata(filepath)
 
 
 
 
 
-
-# python gdal2bin_chunk.py  --d2tid 'False' --output 'dcsv' --log DEBUG "/tmp/LC82260612013133LGN01_sr_band1.tif /tmp/LC82260612013133LGN01_sr_band2.tif /tmp/LC82260612013133LGN01_sr_band3.tif /tmp/LC82260612013149LGN00_sr_band1.tif /tmp/LC82260612013149LGN00_sr_band2.tif /tmp/LC82260612013149LGN00_sr_band3.tif" 2000 2000 3 3 0 0 > res.bin 
-
-# python gdal2bin_chunk.py  --d2tid 'False' --output 'dcsv' --log DEBUG "/tmp/MOD13Q1.A2013081.h12v10.005.2013098040626.hdf /tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf" 0 0 3 3 0 0 > res.bin 
-
-
-
-
-        self.assertEqual('foo'.upper(), 'FOO')
+        
 if __name__ == '__main__':
 	unittest.main()
 
