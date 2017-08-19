@@ -397,7 +397,7 @@ def ymd2ymd(ymd):
 # @param origin An int YYYYMMDD. The day when the time_id == 0
 # @param period An int. The number of days between observations
 # @param yearly A boolean. Do the dates yearly match January the 1st?
-# @return       An integer. The time_id matching ymd or -1 is ymd doesn't match
+# @return       An integer. The time_id matching ymd or 0 is ymd doesn't match
 def ymd2tid(ymd, origin, period, yearly):
     # image, origin, period, yearly
     # [MOD09Q1, 20000101, 8, True]
