@@ -6,20 +6,19 @@ from array import array
 from gdal2bin_util import *
 
 ################################################################################
-# MAIN
-#
-# sdb2bin(files, chunk, chunkTranslation)
-#
-#-------------------------------------------------------------------------------
+# NOTES:
 # Ubuntu uses an old version of numpy
 # sudo easy_install --upgrade numpy
 # sudo easy_install --upgrade scipy
 #-------------------------------------------------------------------------------
+# TODO: Test
+#-------------------------------------------------------------------------------
 # Use:
-# python gdal2bin_chunk.py --output dcsv --tile2id true 0 0 3 3 10 10 /home/alber/Documents/tmp/MOD13Q1.A2013209.h12v10.005.2013226054045.hdf 
+# see test.sh
 ################################################################################
+
 def main(argv):
-    parser = argparse.ArgumentParser(description = "Export GDAL images to the stdout using SciDB's binary format.")
+    parser = argparse.ArgumentParser(description = "Export GDAL images' segments to the stdout using SciDB's binary format.")
     parser.add_argument("col", help = "Number of the column from where to start getting data.")
     parser.add_argument("row", help = "Number of the row from where to start getting data.")
     parser.add_argument("colbuf", help = "Number of additional columns to get data from.")
@@ -28,6 +27,7 @@ def main(argv):
     parser.add_argument("rowtrans", help = "Translation applied to the row index.")
     parser.add_argument("inputFiles", help = "List of images separated by spaces.", nargs = "+")
     parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
+    parser.add_argument("--d2att", help = "Add the image date as an attribute (last). Default = True", default = 'False')
     parser.add_argument("--tile2id", help = "Include the image's tile (e.g path & row) as pixel identifiers. Default = True", default = 'True')
     parser.add_argument("--output", help = "The SciDB format used to export the data [binary, csv]. Default = binary", default = 'binary')
     parser.add_argument("--log", help = "Log level. Default = WARNING", default = 'WARNING')
@@ -41,13 +41,14 @@ def main(argv):
     coltrans = int(args.coltrans)
     rowtrans = int(args.rowtrans)
     d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
+    d2att = args.d2att in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     t2id = args.tile2id in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     output = args.output
     log = args.log
     ####################################################
     # CONFIG
     ####################################################
-    gdal.UseExceptions()                                                        # use GDAL's error messages #gdal.DontUseExceptions()
+    gdal.UseExceptions()
     # log
     numeric_loglevel = getattr(logging, log.upper(), None)
     if not isinstance(numeric_loglevel, int):
@@ -128,6 +129,9 @@ def main(argv):
                         dt = bandtypes[k]
                         idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
                         idxv.tofile(sys.stdout)
+                    if d2att:
+                        idxd = array('L',[fmd['acquisition']])                  # image date - L unsigned long
+                        idxd.tofile(sys.stdout)
                 elif output == "csv":
                     s = str(cid) + "," + str(rid) + "," + str(tid) + ","
                     if t2id:
@@ -137,12 +141,13 @@ def main(argv):
                             s += str(pixval[k][0]) + ','
                         elif(imgtype[0:3] == "Lan"):
                             s += str(pixval[k]) + ','
+                    if d2att:
+                        s += str(fmd['acquisition']) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 else:
                     logging.error("Unknown SciDB format: " + output)
                     sys.exit(0)
 
-# TODO: Write script to split images into chunks and call "this" script
 
 if __name__ == "__main__":
    main(sys.argv[1:])

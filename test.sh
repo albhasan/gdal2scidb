@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "################################################################################"
-echo "GDAL2SCIDB: LOAD DATA USING CSV"
+echo "GDAL2SCIDB: LOAD DATA USING CSV AND BINARY"
 echo "################################################################################"
 
 echo "--------------------------------------------------------------------------------"
@@ -24,8 +24,6 @@ iquery -naq "load(testG2B, '/tmp/gdal2scidb_data', -2, 'CSV')"
 
 echo "Showing array's contents..."
 iquery -aq "scan(testG2B)"
-
-
 
 echo "--------------------------------------------------------------------------------"
 echo "Load data using CSV data exported from MODIS (include images's path and row)"
@@ -139,4 +137,4 @@ iquery -aq "scan(testG2B)"
 
 
 # TODO: Test --d2tid True
-
+exit 0
