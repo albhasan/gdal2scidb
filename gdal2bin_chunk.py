@@ -27,7 +27,7 @@ def main(argv):
     parser.add_argument("rowtrans", help = "Translation applied to the row index.")
     parser.add_argument("inputFiles", help = "List of images separated by spaces.", nargs = "+")
     parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
-    parser.add_argument("--d2att", help = "Add the image date as an attribute (last). Default = True", default = 'False')
+    parser.add_argument("--d2att", help = "Add the image date as an int32 yyyymmdd attribute (last attribute). Default = False", default = 'False')
     parser.add_argument("--tile2id", help = "Include the image's tile (e.g path & row) as pixel identifiers. Default = True", default = 'True')
     parser.add_argument("--output", help = "The SciDB format used to export the data [binary, csv]. Default = binary", default = 'binary')
     parser.add_argument("--log", help = "Log level. Default = WARNING", default = 'WARNING')
@@ -130,7 +130,7 @@ def main(argv):
                         idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
                         idxv.tofile(sys.stdout)
                     if d2att:
-                        idxd = array('L',[fmd['acquisition']])                  # image date - L unsigned long
+                        idxd = array('I',[fmd['acquisition']])                  # image date - I unsigned int (int32)
                         idxd.tofile(sys.stdout)
                 elif output == "csv":
                     s = str(cid) + "," + str(rid) + "," + str(tid) + ","
