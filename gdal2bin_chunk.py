@@ -109,6 +109,8 @@ def main(argv):
             tid = ymd2tid(int(ifiles[0][-8:]), int(tidparam['origin']), int(tidparam['period']), tidparam['yearly'])
         else:
             tid = tid + 1
+        if d2att:
+            d2att = getFileNameMetadata(ifiles[1])['acquisition']
         imgpixs = getPixelImages(ifiles[1], col, row, colbuf, rowbuf, -1)       # pixels of the bands of an image. A numpy.ndarray object
         if len(imgpixs.shape) < 3:                                              # not enough pixels left to be read
             logging.warn("Insufficient pixels to read")
@@ -130,7 +132,7 @@ def main(argv):
                         idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
                         idxv.tofile(sys.stdout)
                     if d2att:
-                        idxd = array('I',[fmd['acquisition']])                  # image date - I unsigned int (int32)
+                        idxd = array('I',[d2att])                  # image date - I unsigned int (int32)
                         idxd.tofile(sys.stdout)
                 elif output == "csv":
                     s = str(cid) + "," + str(rid) + "," + str(tid) + ","
@@ -142,7 +144,7 @@ def main(argv):
                         elif(imgtype[0:3] == "Lan"):
                             s += str(pixval[k]) + ','
                     if d2att:
-                        s += str(fmd['acquisition']) + ','
+                        s += str(d2att) + ','
                     sys.stdout.write(s[0:-1] + "\n")
                 else:
                     logging.error("Unknown SciDB format: " + output)
