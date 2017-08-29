@@ -110,7 +110,7 @@ def main(argv):
         else:
             tid = tid + 1
         if d2att:
-            d2att = getFileNameMetadata(ifiles[1])['acquisition']
+            d2att = getFileNameMetadata(ifiles[1][0])['acquisition']
         imgpixs = getPixelImages(ifiles[1], col, row, colbuf, rowbuf, -1)       # pixels of the bands of an image. A numpy.ndarray object
         if len(imgpixs.shape) < 3:                                              # not enough pixels left to be read
             logging.warn("Insufficient pixels to read")
