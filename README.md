@@ -27,7 +27,7 @@ Python scripts for exporting a raster (supported by GDAL) to SciDB binary format
 <h3>Definitions:</h3>
 <ul>
 <li>An <b>image</b> is made of one or more <b>bands</b> of the same path/row and date.</li>
-<li>An <b>image series<b> is made of one or more <b>images<b> of the same satellite, sensor, path and row but different acquisition time.</li>
+<li>An <b>image series</b> is made of one or more <b>images<b> of the same satellite, sensor, path and row but different acquisition time.</li>
 <li>A <b>band</b> is contained in one file <b>file</b></li>
 <li>A <b>file</b> contains one or more <b>bands</b></li>
 <li>A <b>chunk</b> is a contiguos segment of one <b>image series</b>. That is, a chunk is made of pixels on the same positions but different time.</li>
