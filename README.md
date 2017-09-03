@@ -61,19 +61,20 @@ The <b>image series</b> LANDSAT are retrieved using this bash command <code>find
 <h3>Cases:</h3>
 
 <h3>Export a single chunk to CSV from the image series MODIS:</h3>
-<code>echo "Cleaning..."</code><br>
-<code>rm /tmp/gdal2scidb_data 2> /dev/null</code><br>
-<code>iquery -aq "remove(testG2B)" 2> /dev/null</code><br>
-<code>iquery -aq "remove(shadowArray)" 2> /dev/null</code><br>
-<code>echo "Exporting images' pixels..."</code><br>
-<code>python /home/scidb/ghProjects/gdal2scidb/gdal2bin_chunk.py --log info --output csv --tile2id false 0 0 3 3 10 10 $(find /home/scidb/MODIS -type f | grep "MOD13Q1\.A[0-9]\{7\}\.h09v08\.005\.[0-9]\{13\}\.hdf$" | head -n 3) > /tmp/gdal2scidb_data</code><br>
-<code>echo "Creating an array..."</code><br>
-<code>iquery -aq "CREATE ARRAY testG2B <col_id:int64, row_id:int64, time_id:int64,ndvi:int16, evi:int16, quality:uint16, red:int16,nir:int16, blue:int16,mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int16> [i=0:*]"</code><br>
-<code>echo "Loading data..."</code><br>
-<code>iquery -naq "load(testG2B, '/tmp/gdal2scidb_data', -2, 'CSV')"</code><br>
-<code>echo "Showing array's contents..."</code><br>
-<code>iquery -aq "scan(testG2B)"</code><br>
-
+<ul>
+<li><code>echo "Cleaning..."</code></li>
+<li><code>rm /tmp/gdal2scidb_data 2> /dev/null</code></li>
+<li><code>iquery -aq "remove(testG2B)" 2> /dev/null</code></li>
+<li><code>iquery -aq "remove(shadowArray)" 2> /dev/null</code></li>
+<li><code>echo "Exporting images' pixels..."</code></li>
+<li><code>python /home/scidb/ghProjects/gdal2scidb/gdal2bin_chunk.py --log info --output csv --tile2id false 0 0 3 3 10 10 $(find /home/scidb/MODIS -type f | grep "MOD13Q1\.A[0-9]\{7\}\.h09v08\.005\.[0-9]\{13\}\.hdf$" | head -n 3) > /tmp/gdal2scidb_data</code></li>
+<li><code>echo "Creating an array..."</code></li>
+<li><code>iquery -aq "CREATE ARRAY testG2B <col_id:int64, row_id:int64, time_id:int64,ndvi:int16, evi:int16, quality:uint16, red:int16,nir:int16, blue:int16,mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int16> [i=0:*]"</code></li>
+<li><code>echo "Loading data..."</code></li>
+<li><code>iquery -naq "load(testG2B, '/tmp/gdal2scidb_data', -2, 'CSV')"</code></li>
+<li><code>echo "Showing array's contents..."</code></li>
+<li><code>iquery -aq "scan(testG2B)"</code></li>
+</ul>
 
 <ol>
 <li>TODO</li>
