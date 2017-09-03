@@ -28,14 +28,19 @@ Python scripts for exporting a raster (supported by GDAL) to SciDB binary format
 <ul>
 <li>An <b>image</b> is made of one or more <b>bands</b> of the same path/row and date.</li>
 <li>An <b>image series</b> is made of one or more <b>images</b> of the same satellite, sensor, path and row but different acquisition time.</li>
-<li>A <b>band</b> is contained in one file <b>file</b></li>
+<li>A <b>band</b> is contained in one <b>file</b></li>
 <li>A <b>file</b> contains one or more <b>bands</b></li>
 <li>A <b>chunk</b> is a contiguos segment of one <b>image series</b>. That is, a chunk is made of pixels on the same positions but different time.</li>
 </ul>
 
 
-<h3>Image series MODIS:</h3>
-The <b>image series</b> MODIS are retrieved using this bash command <code>find /home/scidb/MODIS -type f | grep "MOD13Q1\.A[0-9]\{7\}\.h09v08\.005\.[0-9]\{13\}\.hdf$" | head -n 3</code>. It is composed of the following files:
+<h3>Sample image series MODIS:</h3>
+The <b>image series</b> MODIS are retrieved using this bash command: 
+
+<code>find /home/scidb/MODIS -type f | grep "MOD13Q1\.A[0-9]\{7\}\.h09v08\.005\.[0-9]\{13\}\.hdf$" | head -n 3</code>
+
+This command retrives just three files. To retrieve the whole image series, remove the last part, starting at the pipe <code>|</code>. This sample is composed of the following files:
+
 <ul>
 <li><code>/home/scidb/MODIS/2006/MOD13Q1.A2006001.h09v08.005.2008063192116.hdf</code></li>
 <li><code>/home/scidb/MODIS/2006/MOD13Q1.A2006177.h09v08.005.2008131182157.hdf</code></li>
@@ -55,21 +60,19 @@ The <b>image series</b> LANDSAT are retrieved using this bash command <code>find
 
 <h3>Cases:</h3>
 
-<h3>Export a single chunk to CSV:</h3>
-<code>
-echo "Cleaning..."
-rm /tmp/gdal2scidb_data 2> /dev/null
-iquery -aq "remove(testG2B)" 2> /dev/null
-iquery -aq "remove(shadowArray)" 2> /dev/null
-echo "Exporting images' pixels..."
-python /home/scidb/ghProjects/gdal2scidb/gdal2bin_chunk.py --log info --output csv --tile2id false 0 0 3 3 10 10 $(find /home/scidb/MODIS -type f | grep "MOD13Q1\.A[0-9]\{7\}\.h09v08\.005\.[0-9]\{13\}\.hdf$" | head -n 3) > /tmp/gdal2scidb_data
-echo "Creating an array..."
-iquery -aq "CREATE ARRAY testG2B <col_id:int64, row_id:int64, time_id:int64,ndvi:int16, evi:int16, quality:uint16, red:int16,nir:int16, blue:int16,mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int16> [i=0:*]"
-echo "Loading data..."
-iquery -naq "load(testG2B, '/tmp/gdal2scidb_data', -2, 'CSV')"
-echo "Showing array's contents..."
-iquery -aq "scan(testG2B)"
-</code>
+<h3>Export a single chunk to CSV from the image series MODIS:</h3>
+<code>echo "Cleaning..."</code>
+<code>rm /tmp/gdal2scidb_data 2> /dev/null</code>
+<code>iquery -aq "remove(testG2B)" 2> /dev/null</code>
+<code>iquery -aq "remove(shadowArray)" 2> /dev/null</code>
+<code>echo "Exporting images' pixels..."</code>
+<code>python /home/scidb/ghProjects/gdal2scidb/gdal2bin_chunk.py --log info --output csv --tile2id false 0 0 3 3 10 10 $(find /home/scidb/MODIS -type f | grep "MOD13Q1\.A[0-9]\{7\}\.h09v08\.005\.[0-9]\{13\}\.hdf$" | head -n 3) > /tmp/gdal2scidb_data</code>
+<code>echo "Creating an array..."</code>
+<code>iquery -aq "CREATE ARRAY testG2B <col_id:int64, row_id:int64, time_id:int64,ndvi:int16, evi:int16, quality:uint16, red:int16,nir:int16, blue:int16,mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int16> [i=0:*]"</code>
+<code>echo "Loading data..."</code>
+<code>iquery -naq "load(testG2B, '/tmp/gdal2scidb_data', -2, 'CSV')"</code>
+<code>echo "Showing array's contents..."</code>
+<code>iquery -aq "scan(testG2B)"</code>
 
 
 <ol>
