@@ -19,18 +19,18 @@ from gdal2bin_util import *
 
 def main(argv):
     parser = argparse.ArgumentParser(description = "Export GDAL images' segments to the stdout using SciDB's binary format.")
-    parser.add_argument("col", help = "Number of the column from where to start getting data.")
-    parser.add_argument("row", help = "Number of the row from where to start getting data.")
-    parser.add_argument("colbuf", help = "Number of additional columns to get data from.")
-    parser.add_argument("rowbuf", help = "Number of additional rows to get data from.")
-    parser.add_argument("coltrans", help = "Translation applied to the column index.")
-    parser.add_argument("rowtrans", help = "Translation applied to the row index.")
-    parser.add_argument("inputFiles", help = "List of images separated by spaces.", nargs = "+")
-    parser.add_argument("--d2tid", help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
-    parser.add_argument("--d2att", help = "Add the image date as an int32 yyyymmdd attribute (last attribute). Default = False", default = 'False')
-    parser.add_argument("--tile2id", help = "Include the image's tile (e.g path & row) as pixel identifiers. Default = True", default = 'True')
-    parser.add_argument("--output", help = "The SciDB format used to export the data [binary, csv]. Default = binary", default = 'binary')
-    parser.add_argument("--log", help = "Log level. Default = WARNING", default = 'WARNING')
+    parser.add_argument("col",          help = "Number of the column from where to start getting data.")
+    parser.add_argument("row",          help = "Number of the row from where to start getting data.")
+    parser.add_argument("colbuf",       help = "Number of additional columns to get data from.")
+    parser.add_argument("rowbuf",       help = "Number of additional rows to get data from.")
+    parser.add_argument("coltrans",     help = "Translation applied to the column index.")
+    parser.add_argument("rowtrans",     help = "Translation applied to the row index.")
+    parser.add_argument("inputFiles",   help = "List of images separated by spaces.", nargs = "+")
+    parser.add_argument("--d2tid",      help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
+    parser.add_argument("--d2att",      help = "Add the image date as an int32 yyyymmdd attribute (last attribute). Default = False", default = 'False')
+    parser.add_argument("--tile2id",    help = "Include the image's tile (e.g path & row) as pixel identifiers. Default = True", default = 'True')
+    parser.add_argument("--output",     help = "The SciDB format used to export the data [binary, csv]. Default = binary", default = 'binary')
+    parser.add_argument("--log",        help = "Log level. Default = WARNING", default = 'WARNING')
     # Get parameters
     args = parser.parse_args()
     inputFiles = args.inputFiles
@@ -112,13 +112,13 @@ def main(argv):
         if d2att:
             d2att = getFileNameMetadata(ifiles[1][0])['acquisition']
         imgpixs = getPixelImages(ifiles[1], col, row, colbuf, rowbuf, -1)       # pixels of the bands of an image. A numpy.ndarray object
-        if len(imgpixs.shape) < 3:                                              # not enough pixels left to be read
+        if len(imgpixs.shape) < 3:
             logging.warn("Insufficient pixels to read")
             continue
         for i in range(imgpixs.shape[0]):
-            rid = i + rowtrans
+            rid = i + + row + rowtrans
             for j in range(imgpixs.shape[1]):
-                cid = j + coltrans
+                cid = j + col + coltrans
                 pixval = imgpixs[i, j]
                 # write the dimensions
                 if output == "binary":
