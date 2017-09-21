@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "################################################################################"
-echo "GDAL2SCIDB: LOAD DATA USING CSV AND BINARY"
+echo "GDAL2SCIDB EXAMPLE: Export data into CSV and binary and load then load it"
 #-------------------------------------------------------------------------------
 # TODO: Test --d2tid True But for this the images must be regularly spaced in time
 echo "################################################################################"

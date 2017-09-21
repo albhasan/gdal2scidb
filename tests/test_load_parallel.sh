@@ -1,5 +1,5 @@
 echo "--------------------------------------------------------------------------------"
-echo "Exporting an image series into chunks..."
+echo "GDAL2SCIDB EXAMPLE: Export data into chunks and then load it to SciDB ..."
 echo "--------------------------------------------------------------------------------"
 
 
@@ -71,4 +71,4 @@ iquery -aq "CREATE ARRAY MOD13Q1 <ndvi:int16, evi:int16, quality:uint16, red:int
 ./load_parallel.sh $(find /home/scidb/tmp/ -type f | sort | head -n 35)
 iquery -aq "op_count(MOD13Q1)"
 
-
+exit 0

@@ -3,8 +3,8 @@
 # SCIDB LOADER HELPER
 #-------------------------------------------------------------------------------
 # NOTE:
-# - Do not use pipes because not all partitions support them
-# - All instances' folders are accessible from the coordinator instance
+# - Do not use pipes because not all partition formats support them
+# - All instances' folders must be accessible from the coordinator instance
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Parameters
