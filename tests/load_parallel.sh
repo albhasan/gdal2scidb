@@ -5,6 +5,7 @@
 # NOTE:
 # - Do not use pipes because not all partition formats support them
 # - All instances' folders must be accessible from the coordinator instance
+# - MOD13Q1 schema <ndvi:int16, evi:int16, quality:uint16, red:int16, nir:int16, blue:int16, mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int8> [col_id=0:172799:0:40; row_id=0:86399:0:40; time_id=0:511:0:512]
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Parameters
@@ -15,10 +16,10 @@
 # ...
 # $35    path to SciDB binary file
 ################################################################################
-# number of SciDB instances in the while cluster
-SDB_INSTANCES=35
 # number of SciDB instances in each machine
 SDB_INSTANCES_MACHINE=7
+# number of SciDB instances in the whole cluster
+SDB_INSTANCES=35
 # Path containing the SciDB instance folders (e.g. 0, 1, 2, 3, 4)
 SDB_INSTANCES_PATH=/home/scidb/instances
 SDB_1D_SCHEMA="<col_id:int64, row_id:int64, time_id:int64, ndvi:int16, evi:int16, quality:uint16, red:int16, nir:int16, blue:int16, mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int8> [i=0:*]"
