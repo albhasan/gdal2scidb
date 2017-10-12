@@ -2,13 +2,14 @@
 ################################################################################
 # SCIDB LOADER HELPER
 #-------------------------------------------------------------------------------
+# Load in parallel a SDB_INSTANCES number of SciDB binary files
+#-------------------------------------------------------------------------------
 # NOTE:
 # - Do not use pipes because not all partition formats support them
 # - All instances' folders must be accessible from the coordinator instance
 # - MOD13Q1 schema <ndvi:int16, evi:int16, quality:uint16, red:int16, nir:int16, blue:int16, mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int8> [col_id=0:172799:0:40; row_id=0:86399:0:40; time_id=0:511:0:512]
 #-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-# Parameters
+# PARAMETERS
 # $1    path to SciDB binary file
 # $2    path to SciDB binary file
 # ...
