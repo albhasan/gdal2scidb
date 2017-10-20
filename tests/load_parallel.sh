@@ -38,7 +38,7 @@ if [ "$#" -eq $SDB_INSTANCES ]; then
     echo "Loading files using all SciDB instances..."
     #-------------------------------------------------------------------------------
     echo "Copying files..."
-    # TODO: Use parallel for cpying the sdb binaries to the instances
+    # TODO: Use parallel for copying the sdb binaries to the instances
     count=0
     for f in "$@"; do
         min=$(( $count % $SDB_INSTANCES_MACHINE ))
