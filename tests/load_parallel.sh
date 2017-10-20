@@ -42,11 +42,11 @@ if [ "$#" -eq $SDB_INSTANCES ]; then
     for f in "$@"; do
         min=$(( $count % $SDB_INSTANCES_MACHINE ))
         mip=`echo $(( $count / $SDB_INSTANCES_MACHINE )) | cut -f1 -d "."`
-        cp "$f" $SDB_INSTANCES_PATH/$mip/$min/p &
-        # the last one does NOT run in the background
-        if [ $count -eq $SDB_INSTANCES ]; then
-            cp "$f" $SDB_INSTANCES_PATH/$mip/$min/p
-        fi
+        cp "$f" $SDB_INSTANCES_PATH/$mip/$min/p # &
+        ## the last one does NOT run in the background
+        #if [ $count -eq $SDB_INSTANCES ]; then
+        #    cp "$f" $SDB_INSTANCES_PATH/$mip/$min/p
+        #fi
         count=`expr $count + 1`
     done
     echo "Running SciDB query..."
