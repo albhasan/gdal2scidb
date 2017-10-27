@@ -32,9 +32,15 @@ TID1=$4
 TID2=$5
 
 
+
+if (($(iquery -aq "list('arrays')" | grep -w $ARRAY | wc -l) == 0 )); then
+    echo "ERROR: Array $ARRAY not found"
+    exit 1
+fi
+
+
 # get the list of time_id from the query
 TID=$(iquery -aq "between($ARRAY,$CID,$RID,$TID1,$CID,$RID,$TID2)" | awk -F } '{if (NR!=1) { print $1 }}' | awk -F , '{ print $3 }')
-
 
 
 # create a list of numbers
