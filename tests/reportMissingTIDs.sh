@@ -6,6 +6,10 @@
 # ./reportMissingTIDs.sh MOD13Q1 52800 48000 0 400
 ################################################################################
 
+
+command -v iquery >/dev/null 2>&1 || { echo >&2 "ERROR: iquery is not installed!"; exit 1; }
+
+
 if (( $# != 5 )); then
     echo "ERROR:Illegal number of parameters"
     echo ""
