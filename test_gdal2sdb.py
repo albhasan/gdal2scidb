@@ -33,6 +33,8 @@ class TestClasses(unittest.TestCase):
         self.assertEqual(imgf.nrow, 7791)
         self.assertEqual(imgf.bandtype, ['Int16'])
         self.assertEqual(imgf.geotransform, (706785.0, 30.0, 0.0, -843885.0, 0.0, -30.0))
+        
+        # TODO: add test for older landsat images
 
         imgf = ImageFile("/home/scidb/MODIS/2010/MOD13Q1.A2010241.h11v10.006.2015210102523.hdf")
         self.assertEqual(imgf.filepath, '/home/scidb/MODIS/2010/MOD13Q1.A2010241.h11v10.006.2015210102523.hdf')
