@@ -13,6 +13,7 @@ class ImageSeries:
         if len(self.filepaths) > 0:
             imgf = ImageFile(filepaths[0])
             self.id = imgf.satellite + imgf.sensor + imgf.path + imgf.row
+        #TODO: here I go - Build Images out of the given paths!!!!!!!!!!!!!!!!!!!!!!!!!!
     def __repr__(self):
         st = "ImageSeries: " + self.id + "\n"
         for key,value in self.filepaths.items():
@@ -58,11 +59,10 @@ class ImageFileCol:
         return self.it.next()
     def getImages(self):
         uimgset = set()  # unique images
-        imglist = []     # list of image objects
+        imglist = []     # list of Image objects
         for imgf in self.col:
             imgid = Image([imgf.filepath]).id
             uimgset.add(imgid)
-            #print(imgf.filepath)
         for uid in uimgset:
             flist = []
             for imgf in self.col:
@@ -74,10 +74,20 @@ class ImageFileCol:
     def getImageSeries(self):
         imgs = self.getImages()
         uimgsset = set()  # unique image series
-        for img in imgs:
-            print(img.id)
-            ImageSeries()
-            #TODO: here I go! return a image series!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+        imgslist = []     # list of ImageSeries objects
+        for imgf in self.col:
+            imgsid = ImageSeries([imgf.filepath]).id
+            uimgsset.add(imgsid) 
+        for uid in uimgsset:
+            flist = []
+            for img in imgs:
+                imgsid = ImageSeries(img.filepaths.values()).id
+                print(imgsid)
+                if uid == imgsid:
+                    flist = flist + img.filepaths.values()
+            print(flist)
+            imgslist.append(ImageSeries(flist))
+        return imgslist
 
 class ImageFile:
     """A representation of a file. A file have at least one band"""
