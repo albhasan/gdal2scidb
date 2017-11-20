@@ -27,7 +27,7 @@ SDB_1D_SCHEMA="<col_id:int64, row_id:int64, time_id:int64, ndvi:int16, evi:int16
 SDB_FORMAT="'(int64,int64,int64,int16,int16,uint16,int16,int16,int16,int16,int16,int16,int16,int16,int8)'"
 SDB_3D_ARRAY=MOD13Q1
 #-------------------------------------------------------------------------------
-echo "Validating..."
+# echo "Validating..."
 #-------------------------------------------------------------------------------
 if [ "$#" -lt 1 ] || [ "$#" -gt $SDB_INSTANCES ]; then
     echo "ERROR: You must provide between 1 and $SDB_INSTANCES binary files"
@@ -35,9 +35,9 @@ if [ "$#" -lt 1 ] || [ "$#" -gt $SDB_INSTANCES ]; then
 fi
 if [ "$#" -eq $SDB_INSTANCES ]; then
     #-------------------------------------------------------------------------------
-    echo "Loading files using all SciDB instances..."
+    # echo "Loading files using all SciDB instances..."
     #-------------------------------------------------------------------------------
-    echo "Copying files..."
+    # echo "Copying files..."
     # TODO: Use parallel for copying the sdb binaries to the instances
     count=0
     for f in "$@"; do
@@ -46,10 +46,10 @@ if [ "$#" -eq $SDB_INSTANCES ]; then
         cp "$f" $SDB_INSTANCES_PATH/$mip/$min/p # &
         count=`expr $count + 1`
     done
-    echo "Running SciDB query..."
+    # echo "Running SciDB query..."
     # MAX_ERRORS: A 35-instance SciDB loading 40x40 chunks is loading 36K time series in each query. MAX_ERRORS = 1000 is a ~3% rate of error
     iquery -naq "insert(redimension(input($SDB_1D_SCHEMA, 'p', -1, $SDB_FORMAT, 1000, shadowArray), $SDB_3D_ARRAY), $SDB_3D_ARRAY)"
-    echo "Deleting files..."
+    # echo "Deleting files..."
     countdel=0
     for f in "$@"; do
         min=$(( $countdel % $SDB_INSTANCES_MACHINE ))
@@ -59,15 +59,15 @@ if [ "$#" -eq $SDB_INSTANCES ]; then
     done
 else
     #-------------------------------------------------------------------------------
-    echo "Loading files using one SciDB instance..."
+    # echo "Loading files using one SciDB instance..."
     #-------------------------------------------------------------------------------
     for f in "$@"; do
-        echo "Copying file..."
+        # echo "Copying file..."
         cp "$f" $SDB_INSTANCES_PATH/0/0/p
-        echo "Running SciDB query..."
+        # echo "Running SciDB query..."
         # MAX_ERRORS: A single-instance SciDB loading a 40x40 chunk is loading 1.6K time series in each query. MAX_ERRORS = 50 is a ~3% rate of error
         iquery -naq "insert(redimension(input($SDB_1D_SCHEMA, '"$SDB_INSTANCES_PATH/0/0/p"', -2, $SDB_FORMAT, 50, shadowArray), $SDB_3D_ARRAY), $SDB_3D_ARRAY)"
-        echo "Deleting file..."
+        # echo "Deleting file..."
         rm $SDB_INSTANCES_PATH/0/0/p
     done
 fi
