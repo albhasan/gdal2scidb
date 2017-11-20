@@ -64,7 +64,7 @@ def main(argv):
     # [1] file  == [n] bands
     ####################################################
     # sort files by image-path/row-band
-    files = sortFiles(inputFiles)
+    files = sortFiles(inputFiles) # sortFiles(inputFiles.split())
     # get files' metadata
     imgseries = set()                                                           # set of series of images
     filesmd = list()                                                            # list of metadata derived from file names
@@ -104,7 +104,7 @@ def main(argv):
     # get pixels from each image
     #---------------------------------------------------------------------------
     tid = -1
-    for ifiles in imgfiles:
+    for ifiles in imgfiles: # ifiles is made of 2 elements the image type (e.g. 'Landsat8OLI/TIRS Combined22606420140617') and the array of path to files
         if d2tid:
             tid = ymd2tid(int(ifiles[0][-8:]), int(tidparam['origin']), int(tidparam['period']), tidparam['yearly'])
         else:
