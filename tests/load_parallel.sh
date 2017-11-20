@@ -48,7 +48,7 @@ if [ "$#" -eq $SDB_INSTANCES ]; then
     done
     # echo "Running SciDB query..."
     # MAX_ERRORS: A 35-instance SciDB loading 40x40 chunks is loading 36K time series in each query. MAX_ERRORS = 1000 is a ~3% rate of error
-    iquery -naq "insert(redimension(input($SDB_1D_SCHEMA, 'p', -1, $SDB_FORMAT, 1000, shadowArray), $SDB_3D_ARRAY), $SDB_3D_ARRAY)"
+    iquery -naq "insert(redimension(input($SDB_1D_SCHEMA, 'p', -1, $SDB_FORMAT, 1000, shadowArray), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
     # echo "Deleting files..."
     countdel=0
     for f in "$@"; do
@@ -66,7 +66,7 @@ else
         cp "$f" $SDB_INSTANCES_PATH/0/0/p
         # echo "Running SciDB query..."
         # MAX_ERRORS: A single-instance SciDB loading a 40x40 chunk is loading 1.6K time series in each query. MAX_ERRORS = 50 is a ~3% rate of error
-        iquery -naq "insert(redimension(input($SDB_1D_SCHEMA, '"$SDB_INSTANCES_PATH/0/0/p"', -2, $SDB_FORMAT, 50, shadowArray), $SDB_3D_ARRAY), $SDB_3D_ARRAY)"
+        iquery -naq "insert(redimension(input($SDB_1D_SCHEMA, '"$SDB_INSTANCES_PATH/0/0/p"', -2, $SDB_FORMAT, 50, shadowArray), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
         # echo "Deleting file..."
         rm $SDB_INSTANCES_PATH/0/0/p
     done
