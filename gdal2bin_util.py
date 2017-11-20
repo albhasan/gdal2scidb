@@ -432,10 +432,10 @@ def getGdalMetadata(filepath):
         ext = os.path.splitext(filename)[1][1:]
         dataset = gdal.Open(filepath, GA_ReadOnly)                              # open dataset
         driver = dataset.GetDriver().LongName
-        ncol = dataset.RasterXSize
-        nrow = dataset.RasterYSize
         geotransform = dataset.GetGeoTransform()
         bandtype = []
+        ncol = -1
+        nrow = -1
         if(ext == 'hdf'):                                                       # modis
             for sdsname in dataset.GetSubDatasets():
                 sds = gdal.Open(sdsname[0])
@@ -443,6 +443,8 @@ def getGdalMetadata(filepath):
                     band = sds.GetRasterBand(bandid)
                     bandtype.append(gdal.GetDataTypeName(band.DataType))
         else:                                                                   # landsat?
+            ncol = dataset.RasterXSize     # TODO: ncol & nrow are wrongly reported for HDFs
+            nrow = dataset.RasterYSize
             for bandid in range(1, dataset.RasterCount + 1):
                 band = dataset.GetRasterBand(bandid)
                 bandtype.append(gdal.GetDataTypeName(band.DataType))
