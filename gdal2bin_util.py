@@ -5,6 +5,8 @@ import sys
 import numpy
 import datetime
 # import struct
+from warnings import warn
+
 try:
     from osgeo import gdal # ogr, osr
     from gdalconst import *
@@ -240,6 +242,8 @@ def getFileNameMetadata(filepath):
         facqdate    = ydoy2ymd(int(filename[9:16]))
         fprodate    = ydoy2ymd(int(filename[28:35]))
         fcolnum     = filename[24:27]
+    else:
+        warn("Unrecognized filename: " + filename)
     return({
     'filepath':     filepath, 
     'image':        fsatellite + fsensor + fpath + frow + str(facqdate), 
