@@ -124,22 +124,25 @@ class ImageFileCol_testCase(unittest.TestCase):
 
 
 
-class ImageTestCase(unittest.TestCase):
+class Image_TestCase(unittest.TestCase):
     def setUp(self):
         inputFiles1 = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sensor_azimuth_band4.tif"
         self.iLandsat1 = Image(inputFiles1.split(" "))
     def tearDown(self):
         self.iLandsat1 = None
     def test_creation_landsat(self):
-        self.assertEqual(self.iLandsat1.id, "Landsat8OLI/TIRS Combined22606420150111")
+        self.assertEqual(self.iLandsat1.id, "Landsat8_OLI/TIRS Combined_226_064_20150111")
 
 
 
-class ImageColTestCase(unittest.TestCase):
+class ImageCol_TestCase(unittest.TestCase):
+    #TODO: 
+    # - is iterator ordered?
     def setUp(self):
+        inputFiles2 = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sensor_azimuth_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-11-11/LC08_L1TP_226064_20151111_20170402_01_T2_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-11-11/LC08_L1TP_226064_20151111_20170402_01_T2_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-11-11/LC08_L1TP_226064_20151111_20170402_01_T2_sensor_azimuth_band4.tif"
         inputFiles3 = "/home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140330_20170424_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140314_20170425_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140415_20170423_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20150112_20170415_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20160131_20170330_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20160319_20170328_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20131224_20170427_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20150301_20170412_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20130412_20170505_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20150418_20170409_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140210_20170425_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20150128_20170413_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20130514_20170504_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140226_20170425_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140125_20170426_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20160216_20170329_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20151230_20170331_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20141211_20170416_01_T2_B1.TIF"
-        filepaths = inputFiles3.split(" ")
-        self.imgcol = ImageCol(filepaths)
+        self.imgcol2 = ImageCol(inputFiles2.split(" "))
+        self.imgcol3 = ImageCol(inputFiles3.split(" "))
     def tearDown(self):
         self.imgser = None
     def iterate(self):
@@ -152,8 +155,14 @@ class ImageColTestCase(unittest.TestCase):
         for imgf in self.imgcol:
             count = count + 1
         self.assertEqual(count, 4)
-        #TODO: is iterator ordered?
-
+    def getImages():
+        imgList2 = self.imgcol2.getImages()
+        imgList3 = self.imgcol3.getImages()
+        self.assertEqual(imgList2, 3)
+        self.assertEqual(imgList2, 3)
+    def getImageSeries():
+        imgser = imgcol2.getImagesSeries()
+        print(imgser)
 
 
 #class ImageSeriesTestCase(unittest.TestCase):

@@ -29,7 +29,7 @@ class ImageFile:
         self.nrow        = -1
         self.bandtype    = []
         self.geotransform = ""
-        self.id = self.satellite + self.sensor + self.path + self.row + str(self.acquisition)
+        self.id = self.satellite + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
     def __repr__(self):
         return "ImageFile: " + self.filepath
     def getMetadata(self):
@@ -86,15 +86,15 @@ class Image:
                 self.path = imgf.path
                 self.row = imgf.row
                 self.acquisition =imgf.acquisition
-                self.id = self.satellite + self.sensor + self.path + self.row + str(self.acquisition)
+                self.id = self.satellite + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
                 imgfIds.add(self.id)
             assert len(imgfIds) == 1, "Image: The given ImageFiles do not belong to one Image"
             self.col = imgfc
             self.filepaths = imgfc.filepaths
     def __repr__(self):
         st = "Image: " + self.id + "\n"
-        for key,value in self.filepaths.items():
-            st = st + os.path.basename(str(value)) + "\n"
+        for fp in self.filepaths:
+            st = st + os.path.basename(fp) + "\n"
         return st
 
 
@@ -104,14 +104,7 @@ class ImageCol:
     def __init__(self, filepaths):
         assert type(filepaths) is list, "ImageCol: filepaths is not a list: %r" % filepaths
         self.col = []
-        col = []
-        for fp in filepaths:
-            assert type(fp) is str, "ImageCol: filepath is not a str: %r" % fp
-            col.append(ImageFile(fp))
-        col = sorted(col, key=lambda imageFile: imageFile.id)
-        self.filepaths = []
-        for imgf in col:
-            self.filepaths = self.filepaths + [imgf.filepath]
+        self.filepaths = ImageFileCol(filepaths).filepaths
         self._getImages()
         self.it = iter(self.col)
     def __repr__(self):
@@ -128,6 +121,7 @@ class ImageCol:
             self.it = iter(self.col)
             raise StopIteration        
     def _getImages(self):
+        """Build a python list of Image objects"""
         uimgset = set()  # unique images
         imgfc = ImageFileCol(self.filepaths)
         for imgf in imgfc:
@@ -139,19 +133,20 @@ class ImageCol:
                 imgid = Image([imgf.filepath]).id
                 if uid == imgid:
                     flist.append(imgf.filepath)
-            self.col.append(Image(flist))
+            self.col = self.col + [Image(flist)]
     def getImagesSeries(self):
+        """Return a python list of ImageSeries objects"""
         uimgsSet = set()    # unique image series
         imgslist = []       # list of ImageSeries
         for img in self.col:
-            imgserId = img.satellite + img.sensor + img.path + img.row
-            uimgsset.add(imgserId) 
+            imgserId = ImageSeries(img.filepaths).id
+            uimgsSet.add(imgserId) 
         for uid in uimgsSet:
             flist = []
             for img in self.col:
-                imgsid = ImageSeries(img.filepaths.values()).id
+                imgsid = ImageSeries(img.filepaths).id
                 if uid == imgsid:
-                    flist = flist + img.filepaths.values()
+                    flist = flist + img.filepaths
             imgslist.append(ImageSeries(flist))
         return imgslist
 
@@ -161,32 +156,23 @@ class ImageSeries:
     """A set of images of the same satellite, sensor, path and row but different acquisition time. For creation, use ImageFileCol.getImageSeries"""
     def __init__(self, filepaths):
         #TODO: 
-        # - validate all the images belong to the same image series  - raise NameError('Given images belong to many ImageSeries')
-        assert type(filepaths) is list, "filepath is not a list: %r" % filepaths
+        # - are images time-ordered?????
+        assert type(filepaths) is list, "ImageSeries: filepath is not a list: %r" % filepaths
         self.id = ''
-        self.filepaths = sortFiles(filepaths)
+        self.col = ImageCol(filepaths)
+        self.filepaths = self.col.filepaths
         if len(self.filepaths) > 0:
-            imgfc = ImageFileCol(self.filepaths.values())
             imgsId = set()
-            for imgf in imgfc:
-                imgsId.add(imgf.id)
-                
-                
-                
-            assert len(imgfc.getImageSeries()) == 1, "The given Images do not belong to one ImageSeries"
-            imgf = ImageFile(self.filepaths.values()[0])
-            self.id = imgf.satellite + imgf.sensor + imgf.path + imgf.row
+            for img in self.col.col:
+                self.id = img.satellite + "_" + img.sensor + "_" + img.path + "_" + img.row
+                imgsId.add(self.id)
+            assert len(imgsId) == 1, "ImageSeries: The given Images do not belong to one ImageSeries"
     def __repr__(self):
         st = "ImageSeries: " + self.id + "\n"
-        for img in self.imgs:
+        for img in self.col.col:
             st = st + img.id + "\n"
         return st
-    def _countImageSeries(self):
-        for img in self.imgs:
-            imgsid = ImageSeries(img.filepaths.values()).id
 
-            if uid == imgsid:
-                flist = flist + img.filepaths.values()
 
 
 
