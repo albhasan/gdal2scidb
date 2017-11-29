@@ -66,7 +66,7 @@ def mapGdal2python(gdalType):
     #GDT_CInt16     Complex Int16
     #GDT_CInt32     Complex Int32
     #GDT_CFloat32   Complex Float32
-    #GDT_CFloat64   Complex Float64         
+    #GDT_CFloat64   Complex Float64
     #
     # Type code     C Type          Python Type         Minimum size in bytes
     # 'c'           char            character           1
@@ -80,18 +80,18 @@ def mapGdal2python(gdalType):
     # 'l'           signed long     int                 4
     # 'L'           unsigned long   long                4
     # 'f'           float           float               4
-    # 'd'           double          float               8        
+    # 'd'           double          float               8
     try:
         res = {
             'GDT_Byte':     'B',
-            'GDT_Int16':    'h', 
-            'GDT_UInt16':   'H', 
-            'GDT_Int32':    'i', 
-            'GDT_UInt32':   'I', 
+            'GDT_Int16':    'h',
+            'GDT_UInt16':   'H',
+            'GDT_Int32':    'i',
+            'GDT_UInt32':   'I',
             'GDT_Float32':  'f',
             'GDT_Float64':  'd',
-            'GDT_CInt16':   'h', 
-            'GDT_CInt32':   'i', 
+            'GDT_CInt16':   'h',
+            'GDT_CInt32':   'i',
             'GDT_CFloat32': 'f',
             'GDT_CFloat64': 'd'
         }[gdalType]
@@ -108,17 +108,17 @@ def mapGdal2python(gdalType):
 def mapGdaldatatype2(gdalType):
     try:
         res = {
-            'GDT_Unknown':      0, 
-            'GDT_Byte':         1, 
-            'GDT_UInt16':       2, 
+            'GDT_Unknown':      0,
+            'GDT_Byte':         1,
+            'GDT_UInt16':       2,
             'GDT_Int16':        3,
-            'GDT_UInt32':       4, 
-            'GDT_Int32':        5, 
-            'GDT_Float32':      6, 
+            'GDT_UInt32':       4,
+            'GDT_Int32':        5,
+            'GDT_Float32':      6,
             'GDT_Float64':      7,
-            'GDT_CInt16':       8, 
-            'GDT_CInt32':       9, 
-            'GDT_CFloat32':     10, 
+            'GDT_CInt16':       8,
+            'GDT_CInt32':       9,
+            'GDT_CFloat32':     10,
             'GDT_CFloat64':     11,
             'GDT_TypeCount':    12
         }[gdalType]
@@ -176,9 +176,9 @@ def n2pos(n, dims):
 # @return           A dict
 def getFileNameMetadata(filepath):
     filename = os.path.basename(filepath)
-    sensorLandsat = {'C':'OLI/TIRS Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
+    sensorLandsat = {'C':'OLI/TIRS-Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
     satelliteLandsat = {'4':'Landsat4','5':'Landsat5','7':'Landsat7', '8':'Landsat8'}
-    processingLevelLandsat = {'L1TP':'Precision and Terrain Correction', 'L1GT':'Systematic Terrain Correction', 'L1GS':'Systematic Correction'}
+    processingLevelLandsat = {'L1TP':'Precision-and-Terrain-Correction', 'L1GT':'Systematic-Terrain-Correction', 'L1GS':'Systematic-Correction'}
     collectionCategoryLandsat = {'RT':'Real Time', 'T1':'Tier 1', 'T2':'Tier 2'}
     sensorModis = {'MOD':'Terra', 'MYD':'Aqua'}
     #
@@ -222,7 +222,7 @@ def getFileNameMetadata(filepath):
         ftype       = "Landsat_tiered"
         fsensor     = sensorLandsat[filename[1]]
         fsatellite  = satelliteLandsat[str(int(filename[2:4]))]
-        fproclev    = processingLevelLandsat[filename[5:9]]                                                
+        fproclev    = processingLevelLandsat[filename[5:9]]
         fpath       = filename[10:13]
         frow        = filename[13:16]
         facqdate    = int(filename[17:25])
@@ -245,21 +245,21 @@ def getFileNameMetadata(filepath):
     else:
         warn("Unrecognized filename: " + filename)
     return({
-    'filepath':     filepath, 
-    'image':        fsatellite + fsensor + fpath + frow + str(facqdate), 
-    'type':         ftype, 
-    'sensor':       fsensor, 
-    'satellite':    fsatellite, 
-    'level':        fproclev, 
-    'path':         fpath, 
-    'row':          frow, 
-    'acquisition':  facqdate, 
-    'processing':   fprodate, 
-    'collection':   fcolnum, 
-    'category':     fcolcat, 
-    'stationId':    fstationId, 
-    'archive':      farchive, 
-    'band':         fband, 
+    'filepath':     filepath,
+    'image':        fsatellite + fsensor + fpath + frow + str(facqdate),
+    'type':         ftype,
+    'sensor':       fsensor,
+    'satellite':    fsatellite,
+    'level':        fproclev,
+    'path':         fpath,
+    'row':          frow,
+    'acquisition':  facqdate,
+    'processing':   fprodate,
+    'collection':   fcolnum,
+    'category':     fcolcat,
+    'stationId':    fstationId,
+    'archive':      farchive,
+    'band':         fband,
     'product':      fprod,
     'sname':        sname
     })
@@ -292,7 +292,7 @@ def processLBand(band):
 # Sort images by satellite, path, row and date
 #
 # @param filepaths  A list. The paths to the files
-# @ return          An OrderedDict image-band and filepaths 
+# @ return          An OrderedDict image-band and filepaths
 def sortFiles(filepaths):
     imgfiles = {}
     for filepath in filepaths:
@@ -359,7 +359,7 @@ def tid2ymd(tid, origin, period, yearly):
     if yearly:
         ppy = 1 + 365/period                                                    # periods per year
         ny = tid / ppy                                                          # number of years
-        ntids = tid % ppy 
+        ntids = tid % ppy
     d = datetime.datetime(ory + ny, orm, or_d) + datetime.timedelta(days = ntids * period)
     return(d.year * 10000 + d.month * 100 + d.day)
 
@@ -452,8 +452,8 @@ def getGdalMetadata(filepath):
             for bandid in range(1, dataset.RasterCount + 1):
                 band = dataset.GetRasterBand(bandid)
                 bandtype.append(gdal.GetDataTypeName(band.DataType))
-        res = {'file':filepath, 'driver':driver, 'ncol':ncol, 'nrow':nrow, 'bandtype':bandtype, 'geotransform':geotransform}        
-    except IOError: 
+        res = {'file':filepath, 'driver':driver, 'ncol':ncol, 'nrow':nrow, 'bandtype':bandtype, 'geotransform':geotransform}
+    except IOError:
         raise IOError("Cannot open:" + filepath)
     except:
         raise RuntimeError("Could not get image metadata from: " + filepath)
@@ -549,5 +549,3 @@ def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos):
     except:
         raise
     return(res)
-
-

@@ -29,7 +29,7 @@ class ImageFile:
         self.nrow        = -1
         self.bandtype    = []
         self.geotransform = ""
-        self.id = self.satellite + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
+        self.id = self.satellite + "_" + self.level + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
     def __repr__(self):
         return "ImageFile: " + self.filepath
     def getMetadata(self):
@@ -82,13 +82,15 @@ class Image:
             imgfIds = set()
             for imgf in imgfc:
                 self.satellite = imgf.satellite
+                self.level = imgf.level
                 self.sensor = imgf.sensor
                 self.path = imgf.path
                 self.row = imgf.row
                 self.acquisition =imgf.acquisition
-                self.id = self.satellite + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
+                self.id = self.satellite + "_" + self.level + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
                 imgfIds.add(self.id)
-            assert len(imgfIds) == 1, "Image: The given ImageFiles do not belong to one Image"
+            if len(imgfIds) > 1:
+                raise ValueError("Image: The given ImageFiles do not belong to one Image")
             self.col = imgfc
             self.filepaths = imgfc.filepaths
     def __repr__(self):
@@ -119,7 +121,7 @@ class ImageCol:
             return self.it.next()
         except StopIteration:
             self.it = iter(self.col)
-            raise StopIteration        
+            raise StopIteration
     def _getImages(self):
         """Build a python list of Image objects"""
         uimgset = set()  # unique images
@@ -140,7 +142,7 @@ class ImageCol:
         imgslist = []       # list of ImageSeries
         for img in self.col:
             imgserId = ImageSeries(img.filepaths).id
-            uimgsSet.add(imgserId) 
+            uimgsSet.add(imgserId)
         for uid in uimgsSet:
             flist = []
             for img in self.col:
@@ -155,7 +157,7 @@ class ImageCol:
 class ImageSeries:
     """A set of images of the same satellite, sensor, path and row but different acquisition time. For creation, use ImageFileCol.getImageSeries"""
     def __init__(self, filepaths):
-        #TODO: 
+        #TODO:
         # - are images time-ordered?????
         assert type(filepaths) is list, "ImageSeries: filepath is not a list: %r" % filepaths
         self.id = ''
@@ -164,7 +166,7 @@ class ImageSeries:
         if len(self.filepaths) > 0:
             imgsId = set()
             for img in self.col.col:
-                self.id = img.satellite + "_" + img.sensor + "_" + img.path + "_" + img.row
+                self.id = img.satellite + "_" + img.level + "_" + img.sensor + "_" + img.path + "_" + img.row
                 imgsId.add(self.id)
             assert len(imgsId) == 1, "ImageSeries: The given Images do not belong to one ImageSeries"
     def __repr__(self):
@@ -180,7 +182,3 @@ class ImageSeries:
 #    """A set of pixels (observations) of the same variable"""
 #    def __init__(self, filepath):
 #        self.imagefile = ""
-
-
-
-
