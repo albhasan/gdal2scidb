@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #test_gdal2sdb.py
 
 import unittest
@@ -19,6 +20,7 @@ class gdal2sdb_testCase(unittest.TestCase):
 
 
 class ImageFile_testCase(gdal2sdb_testCase):
+    """ Test ImageFile objects """
     def test_creation_landsat(self):
         imgf = ImageFile("/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-07-06/LC08_L1TP_226066_20150706_20170407_01_T1_sr_band3.tif")
         self.assertEqual(imgf.filepath, '/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-07-06/LC08_L1TP_226066_20150706_20170407_01_T1_sr_band3.tif')
@@ -46,6 +48,7 @@ class ImageFile_testCase(gdal2sdb_testCase):
         #self.assertEqual(imgf.bandtype, ['Int16'])
         #self.assertEqual(imgf.geotransform, (706785.0, 30.0, 0.0, -843885.0, 0.0, -30.0))
     def test_creation_landsatOld(self):
+        """ Test the creation of objects of the pre-tier landsat images """
         imgf = ImageFile("/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif")
         self.assertEqual(imgf.filepath, '/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif')
         self.assertEqual(imgf.image, 'Landsat8OLI/TIRS-Combined22606120130529')
@@ -65,6 +68,7 @@ class ImageFile_testCase(gdal2sdb_testCase):
         self.assertEqual(imgf.product, 'sr')
         self.assertEqual(imgf.sname, 'LC08')
     def test_creation_modis(self):
+        """ Test the creation of MODIS objects """
         imgf = ImageFile("/home/scidb/MODIS/2010/MOD13Q1.A2010241.h11v10.006.2015210102523.hdf")
         self.assertEqual(imgf.filepath, '/home/scidb/MODIS/2010/MOD13Q1.A2010241.h11v10.006.2015210102523.hdf')
         self.assertEqual(imgf.image, 'MOD13Q1111020100829')
@@ -94,58 +98,44 @@ class ImageFile_testCase(gdal2sdb_testCase):
 
 
 class ImageFileCol_testCase(gdal2sdb_testCase):
+    """ Test ImageFileCol objects  """
     def test_iterate(self):
+        """ Is iterator re-setting? """
         filepaths = self.inputFiles1.split(" ")
         ifc = ImageFileCol(filepaths)
         count = 0
         for imgf in ifc:
             count = count + 1
         self.assertEqual(count, len(filepaths))
-        # is iterator re-setting?
         count = 0
         count = 0
         for imgf in ifc:
             count = count + 1
         self.assertEqual(count, len(filepaths))
     def test_iterate_order(self):
+        """ Are the ImageFileCol objects iterated in order?  """
         filepathsList = [self.inputFiles1.split(" "), self.inputFiles2.split(" "), self.inputFiles3.split(" ")]
         for filepaths in filepathsList:
             ifc = ImageFileCol(filepaths)
             first = True
             last_id          = ''
-            last_satellite   = ''
-            last_sensor      = ''
-            last_path        = 0
-            last_row         = 0
-            last_acquisition = 0
             for imgf in ifc:
                 if first:
                     last_id = imgf.id
-                    last_satellite = imgf.satellite
-                    last_sensor = imgf.sensor
-                    last_path = imgf.path
-                    last_row = imgf.row
-                    last_acquisition = imgf.acquisition
                     first = False
                 else:
-                    print(imgf.id + " >= \n" + last_id + "\n---")
                     self.assertTrue(imgf.id >= last_id)
-                    self.assertTrue(imgf.satellite >= last_satellite)
-                    self.assertTrue(imgf.sensor >= last_sensor)
-                    self.assertTrue(imgf.path >= last_path)
-                    self.assertTrue(imgf.row >= last_row)
-                    self.assertTrue(imgf.acquisition >= last_acquisition)
                     last_id = imgf.id
-                    last_satellite = imgf.satellite
-                    last_sensor = imgf.sensor
-                    last_path = imgf.path
-                    last_row = imgf.row
-                    last_acquisition = imgf.acquisition
 
 
 
 class Image_TestCase(gdal2sdb_testCase):
+    """ Test Image objects  """
+    #TODO:
+    # - what is the ID of images???? Should "Systematic-Terrain-Correction_OLI" be included?
+    # - create tests for MODIS and old landsat
     def test_creation_landsat(self):
+        """ Test object creation """
         img = Image(self.inputFiles1.split(" "))
         self.assertEqual(img.id, "Landsat8_Systematic-Terrain-Correction_OLI/TIRS-Combined_226_064_20150111")
         self.assertRaises(ValueError, Image, self.inputFiles2.split(" "))
@@ -154,18 +144,20 @@ class Image_TestCase(gdal2sdb_testCase):
 
 
 class ImageCol_TestCase(gdal2sdb_testCase):
+    """ Test ImageCol objects  """
     def test_iterate(self):
+        """ is the iterator re-setting? """
         imgcol = ImageCol(self.inputFiles1.split(" "))
         count = 0
         for img in imgcol:
             count = count + 1
         self.assertEqual(count, 1)
-        # is iterator re-setting?
         count = 0
         for imgf in imgcol:
             count = count + 1
         self.assertEqual(count, 1)
     def test_iterate_order(self):
+        """ Is iterator ordered? """
         #filepathsList = [self.inputFiles1.split(" "), self.inputFiles2.split(" "), self.inputFiles3.split(" ")]
         filepathsList = [self.inputFiles3.split(" ")]
         filepathsList = [self.inputFiles2.split(" ")]
@@ -181,25 +173,10 @@ class ImageCol_TestCase(gdal2sdb_testCase):
             for img in ic:
                 if first:
                     last_id          = img.id
-                    last_satellite   = img.satellite
-                    last_sensor      = img.sensor
-                    last_path        = img.path
-                    last_row         = img.row
-                    last_acquisition = img.acquisition
                     first = False
                 else:
                     self.assertTrue(img.id          >= last_id)
-                    self.assertTrue(img.satellite   >= last_satellite)
-                    self.assertTrue(img.sensor      >= last_sensor)
-                    self.assertTrue(img.path        >= last_path)
-                    self.assertTrue(img.row         >= last_row)
-                    self.assertTrue(img.acquisition >= last_acquisition)
                     last_id          = img.id
-                    last_satellite   = img.satellite
-                    last_sensor      = img.sensor
-                    last_path        = img.path
-                    last_row         = img.row
-                    last_acquisition = img.acquisition
 #    def getImages():
 #        imgList2 = self.imgcol2.getImages()
 #        imgList3 = self.imgcol3.getImages()
