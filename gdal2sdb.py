@@ -32,6 +32,10 @@ class ImageFile:
         self.id = self.satellite + "_" + self.level + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
     def __repr__(self):
         return "ImageFile: " + self.filepath
+    def __lt__(self, other):
+        if type(self) != type(other):
+            raise ValueError("ImageFile: The given objects are not instances of the same class")
+        return self.id < other.id
     def getMetadata(self):
         gmd = getGdalMetadata(self.filepath)
         self.driver = gmd['driver']
@@ -46,14 +50,14 @@ class ImageFileCol:
     """A sorted collection of ImageFile"""
     def __init__(self, filepaths):
         assert type(filepaths) is list, "ImageFileCol: filepaths is not a list: %r" % filepaths
-        col = []
+        self.col = []
         for fp in filepaths:
             assert type(fp) is str, "ImageFileCol: filepath is not a str: %r" % fp
-            col.append(ImageFile(fp))
-        self.col = sorted(col, key=lambda imageFile: imageFile.id)
+            self.col.append(ImageFile(fp))
+        self.col.sort()
         self.filepaths = []
         for imgf in self.col:
-            self.filepaths = self.filepaths + [imgf.filepath]
+            self.filepaths.append(imgf.filepath)
         self.it = iter(self.col)
     def __repr__(self):
         st = "ImageFileCol: \n"
@@ -98,6 +102,10 @@ class Image:
         for fp in self.filepaths:
             st = st + os.path.basename(fp) + "\n"
         return st
+    def __lt__(self, other):
+        if type(self) != type(other):
+            raise ValueError("Image: The given objects are not instances of the same class")
+        return self.id < other.id
 
 
 
@@ -136,6 +144,7 @@ class ImageCol:
                 if uid == imgid:
                     flist.append(imgf.filepath)
             self.col = self.col + [Image(flist)]
+        self.col.sort()
     def getImagesSeries(self):
         """Return a python list of ImageSeries objects"""
         uimgsSet = set()    # unique image series
@@ -157,8 +166,6 @@ class ImageCol:
 class ImageSeries:
     """A set of images of the same satellite, sensor, path and row but different acquisition time. For creation, use ImageFileCol.getImageSeries"""
     def __init__(self, filepaths):
-        #TODO:
-        # - are images time-ordered?????
         assert type(filepaths) is list, "ImageSeries: filepath is not a list: %r" % filepaths
         self.id = ''
         self.col = ImageCol(filepaths)
