@@ -3,7 +3,13 @@ import argparse
 import logging
 import numpy
 from array import array
-from gdal2bin_util import *
+from gdal2sdb import *
+
+
+
+
+
+
 
 ################################################################################
 # NOTES:
@@ -63,10 +69,56 @@ def main(argv):
     # [1] band  == [1]file
     # [1] file  == [n] bands
     ####################################################
-    # sort files by image-path/row-band
-    imgfcol = ImageFileCol(inputFiles)
-    
+    # sort files into list of image series
+    ifcol = ImageFileCol(inputFiles)
+    iserlist = ifcol.getImagesSeries()
+    if len(iserlist) > 1:
+        raise ValueError("The given files belong to more than one ImageSeries")
+    # get pixels from each image
+    tid = -1
+    for img in iserlist[0]:
+        if d2tid:
+            tid = img.tid
+        else:
+            tid = tid + 1
+        if d2att:
+            d2att = img.acquisition
+        imgpixs = img.getpixels(col, row, colbuf, rowbuf, -1)                   # pixels of the bands of an image. A numpy.ndarray object
+        
+        #TODO: this works, but it is better to move code to classes
+        
+        
+        
+        if len(imgpixs.shape) < 3:
+            logging.warn("Insufficient pixels to read")
+            continue
+        for i in range(imgpixs.shape[0]):
+            rid = i + row + rowtrans
+            for j in range(imgpixs.shape[1]):
+                cid = j + col + coltrans
+                pixval = imgpixs[i, j]
+                # write the dimensions
+                if output == "binary":
+                    idxa = array('L',[cid, rid, tid])                           # sdb's array dimensions - L unsigned long
+                    if t2id:
+                        idxa = array('L',[ipath, irow, cid, rid, tid])
+                    idxa.tofile(sys.stdout)
+                    # write the data
+                    for k in range(len(pixval)):
+                        dt = bandtypes[k]
+                        idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
+                        idxv.tofile(sys.stdout)
+                    if d2att:
+                        idxd = array('I',[d2att])                  # image date - I unsigned int (int32)
+                        idxd.tofile(sys.stdout)
+
+
+
 
 if __name__ == "__main__":
    main(sys.argv[1:])
+
+
+
+
 

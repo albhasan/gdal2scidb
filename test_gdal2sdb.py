@@ -132,7 +132,7 @@ class ImageFileCol_testCase(gdal2sdb_testCase):
 class Image_TestCase(gdal2sdb_testCase):
     """ Test Image objects  """
     #TODO:
-    # - what is the ID of images???? Should "Systematic-Terrain-Correction_OLI" be included?
+    # - what is the ID of images???? Should "Systematic-Terrain-Correction_OLI" be included? Sorting is done using the ID
     # - create tests for MODIS and old landsat
     def test_creation_landsat(self):
         """ Test object creation """
@@ -153,23 +153,16 @@ class ImageCol_TestCase(gdal2sdb_testCase):
             count = count + 1
         self.assertEqual(count, 1)
         count = 0
-        for imgf in imgcol:
+        for img in imgcol:
             count = count + 1
         self.assertEqual(count, 1)
     def test_iterate_order(self):
         """ Is iterator ordered? """
-        #filepathsList = [self.inputFiles1.split(" "), self.inputFiles2.split(" "), self.inputFiles3.split(" ")]
-        filepathsList = [self.inputFiles3.split(" ")]
-        filepathsList = [self.inputFiles2.split(" ")]
+        filepathsList = [self.inputFiles1.split(" "), self.inputFiles2.split(" "), self.inputFiles3.split(" ")]
         for filepaths in filepathsList:
             ic = ImageCol(filepaths)
             first = True
             last_id   = ''
-            last_satellite   = ''
-            last_sensor      = ''
-            last_path        = 0
-            last_row         = 0
-            last_acquisition = 0
             for img in ic:
                 if first:
                     last_id          = img.id
@@ -177,18 +170,35 @@ class ImageCol_TestCase(gdal2sdb_testCase):
                 else:
                     self.assertTrue(img.id          >= last_id)
                     last_id          = img.id
-#    def getImages():
-#        imgList2 = self.imgcol2.getImages()
-#        imgList3 = self.imgcol3.getImages()
-#        self.assertEqual(imgList2, 3)
-#        self.assertEqual(imgList2, 3)
-#    def getImageSeries():
-#        imgser2 = imgcol2.getImagesSeries()
-#        self.assertEqual(len(imgser2), 1)
-#        imgser3 = imgcol3.getImagesSeries()
-#        self.assertEqual(len(imgser3), 1)
 
 
+
+class ImageSeries_TestCase(gdal2sdb_testCase):
+    """ Test ImageSeries objects  """
+    def test_iterate(self):
+        """ is the iterator re-setting? """
+        imgser = ImageSeries(self.inputFiles3.split(" "))
+        count1 = 0
+        for img in imgser:
+            count1 = count1 + 1
+        count2 = 0
+        for img in imgser:
+            count2 = count2 + 1
+        self.assertEqual(count1, count2)
+    def test_iterate_order(self):
+        """ Is iterator ordered? """
+        filepathsList = [self.inputFiles3.split(" ")]
+        for filepaths in filepathsList:
+            iser = ImageSeries(filepaths)
+            first = True
+            last_id   = ''
+            for img in iser:
+                if first:
+                    last_id          = img.id
+                    first = False
+                else:
+                    self.assertTrue(img.id          >= last_id)
+                    last_id          = img.id
 
 
 

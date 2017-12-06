@@ -2,6 +2,14 @@ from gdal2bin_util import *
 
 
 
+#TODO:
+# - Image: get pixels
+# - import code from getPixelImages
+# - import code from getFileNameMetadata
+# - import code from ymd2tid
+
+
+
 class ImageFile:
     """A representation of a file. A file have at least one band"""
     def __init__(self, filepath):
@@ -107,7 +115,33 @@ class Image:
         if type(self) != type(other):
             raise ValueError("Image: The given objects are not instances of the same class")
         return self.id < other.id
-
+    def tid(self):
+        """ Compute the time_id of the image """
+        origin = 0
+        period = 0
+        yearly = False
+        if self.sname == 'MOD09Q1':
+            origin = 20000101
+            period = 8
+            yearly = True
+        elif self.sname == 'MOD13Q1':
+            origin = 20000101
+            period = 16
+            yearly = True
+        elif self.sname == 'LD5Original-DigitalNumber':
+            origin = 19840411
+            period = 16
+            yearly = False
+        elif self.sname == 'LD8Original-DigitalNumber':
+            origin = 20130418
+            period = 16
+            yearly = False
+        else:
+            raise ValueError("Image: Unknown image name")
+        return(ymd2tid(self.acquisition, origin, period, yearly))
+    def getpixels(self, x, y, xchunk, ychunk, dimpos):
+        """ Get the pixels """
+        return(getPixelImages(self.filepaths, x, y, xchunk, ychunk, dimpos))
 
 
 class ImageCol:
@@ -177,16 +211,31 @@ class ImageSeries:
                 self.id = img.satellite + "_" + img.level + "_" + img.sensor + "_" + img.path + "_" + img.row
                 imgsId.add(self.id)
             assert len(imgsId) == 1, "ImageSeries: The given Images do not belong to one ImageSeries"
+        self.it = iter(self.col)
     def __repr__(self):
         st = "ImageSeries: " + self.id + "\n"
         for img in self.col.col:
             st = st + img.id + "\n"
         return st
-
-
+    def __iter__(self):
+        return self
+    def next(self):
+        try:
+            return self.it.next()
+        except StopIteration:
+            self.it = iter(self.col)
+            raise StopIteration
 
 
 #class ImageBand:
 #    """A set of pixels (observations) of the same variable"""
 #    def __init__(self, filepath):
-#        self.imagefile = ""
+#        imgf = ImageFile(filepath)
+#        if imgf.type == "Modis":
+#            # 1 file * bands
+#        elif imgf.type[0:7] == "Landsat":
+#            # 1 file 1 band
+#        self.filepath = ""
+#        self.id = ""
+
+

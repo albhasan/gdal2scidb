@@ -79,4 +79,5 @@ The `test.sh` bash script:
 ### TODO:
 - These scripts build a chunk at a time. This is inefficient. Re-write 
 - Test sentinel images
-
+- Clean and re-order scripts
+- Review the ordering parameters
