@@ -37,6 +37,7 @@ class ImageFile:
             raise ValueError("ImageFile: The given objects are not instances of the same class")
         return self.id < other.id
     def getMetadata(self):
+        """Get metadata from GDAL"""
         gmd = getGdalMetadata(self.filepath)
         self.driver = gmd['driver']
         self.ncol = gmd['ncol']
