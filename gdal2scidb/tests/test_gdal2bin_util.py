@@ -6,29 +6,6 @@ import datetime
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import gdal2bin_util
 #-------------------------------------
-# test
-import collections
-import os
-import re
-import sys
-import numpy
-import datetime
-import struct
-from array import array
-import logging
-log = 'INFO'
-logging.basicConfig(filename = 'log_gdal2bin_test.log', level = getattr(logging, log.upper(), None), format = '%(asctime)s %(levelname)s: %(message)s')
-#-------------------------------------
-col = 0
-row = 0
-colbuf = 75
-rowbuf = 75
-coltrans = 48000
-rowtrans = 48000
-d2tid = False
-#-------------------------------------
-
-logging.info("test_gdal2bin_util")
 
 class TestStringMethods(unittest.TestCase):
 
