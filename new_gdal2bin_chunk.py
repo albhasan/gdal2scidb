@@ -104,9 +104,9 @@ def main(argv):
                     if t2id:
                         s = str(ipath) + "," + str(irow) + "," + s
                     for k in range(len(pixval)):
-                        if(imgtype[0:3] == "MOD"):
+                        if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
                             s += str(pixval[k][0]) + ','
-                        elif(imgtype[0:3] == "Lan"):
+                        elif(img.sname[0:2] == "LC"):
                             s += str(pixval[k]) + ','
                     if d2att:
                         s += str(d2att) + ','
