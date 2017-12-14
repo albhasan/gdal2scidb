@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 #test_gdal2sdb.py
-
-import unittest
+import os
 import sys
+import unittest
 import datetime
-from gdal2sdb import *
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import gdal2sdb
+
+
 
 
 # TODO:
