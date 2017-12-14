@@ -4,7 +4,7 @@ import sys
 import unittest
 import datetime
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import gdal2bin_util
+import g2butil
 #-------------------------------------
 
 class TestStringMethods(unittest.TestCase):
@@ -21,11 +21,11 @@ class TestStringMethods(unittest.TestCase):
         coltrans = 48000
         rowtrans = 48000
 
-        self.assertEqual(date2ydoy(datetime.date(2007, 12, 31)), 2007365)
-        self.assertEqual(date2ydoy(datetime.date(2007, 1, 1)), 2007001)
-        self.assertEqual(date2ydoy(datetime.date(2000, 12, 31)), 2000366)
-        self.assertEqual(date2ydoy(datetime.date(2000, 2, 29)), 2000060)
-        self.assertEqual(date2ydoy(datetime.date(2001, 3, 1)), 2001060)
+        self.assertEqual(g2butil.date2ydoy(datetime.date(2007, 12, 31)), 2007365)
+        self.assertEqual(g2butil.date2ydoy(datetime.date(2007, 1, 1)), 2007001)
+        self.assertEqual(g2butil.date2ydoy(datetime.date(2000, 12, 31)), 2000366)
+        self.assertEqual(g2butil.date2ydoy(datetime.date(2000, 2, 29)), 2000060)
+        self.assertEqual(g2butil.date2ydoy(datetime.date(2001, 3, 1)), 2001060)
 
         self.assertEqual(ydoy2ymd(2007365), 20071231)
         self.assertEqual(ydoy2ymd(2007001), 20070101)
