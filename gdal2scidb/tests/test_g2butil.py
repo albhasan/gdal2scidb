@@ -1,16 +1,11 @@
-#
+#!/usr/bin/env python
+#test_g2butil.py
 import os
 import sys
 import unittest
 import datetime
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import g2butil
-
-################################################################################
-# TODO:
-# - rename test class
-# - are there missing tests?
-################################################################################
 
 class g2butil_testCase(unittest.TestCase):
     def test_upper(self):

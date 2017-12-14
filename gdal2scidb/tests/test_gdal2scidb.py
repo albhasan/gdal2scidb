@@ -7,13 +7,6 @@ import datetime
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import gdal2scidb
 
-
-
-
-# TODO:
-# -
-
-
 class gdal2sdb_testCase(unittest.TestCase):
     def setUp(self):
         self.inputFiles1 = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sensor_azimuth_band4.tif"
@@ -134,9 +127,6 @@ class ImageFileCol_testCase(gdal2sdb_testCase):
 
 class Image_TestCase(gdal2sdb_testCase):
     """ Test Image objects  """
-    #TODO:
-    # - what is the ID of images???? Should "Systematic-Terrain-Correction_OLI" be included? Sorting is done using the ID
-    # - create tests for MODIS and old landsat
     def test_creation_landsat(self):
         """ Test object creation """
         img = Image(self.inputFiles1.split(" "))

@@ -1,0 +1,14 @@
+TODO:
+
+test_g2butil.py:
+- rename class
+- split test into functions
+- are there missing tests?
+
+
+gdal2scidb.py
+- what is the ID of images???? Should "Systematic-Terrain-Correction_OLI" be included? Sorting is done using the ID
+
+
+test_gdal2scidb.py
+- create tests for MODIS and old landsat
