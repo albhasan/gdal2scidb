@@ -6,7 +6,6 @@ import re
 import sys
 import numpy
 import datetime
-# import struct
 from warnings import warn
 
 try:
