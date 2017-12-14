@@ -69,10 +69,10 @@ class ImageFileCol:
             self.filepaths.append(imgf.filepath)
         self.it = iter(self.col)
     def __repr__(self):
-        st = "ImageFileCol: \n"
+        st = ["ImageFileCol:"]
         for imgf in self.col:
-            st = st + os.path.basename(imgf.filepath) + "\n"
-        return st
+            st = st + [os.path.basename(imgf.filepath)]
+        return '\n'.join(st)
     def __iter__(self):
         return self
     def next(self):
@@ -108,10 +108,10 @@ class Image:
             self.col = imgfc
             self.filepaths = imgfc.filepaths
     def __repr__(self):
-        st = "Image: " + self.id + "\n"
+        st = ["Image: " + self.id]
         for fp in self.filepaths:
-            st = st + os.path.basename(fp) + "\n"
-        return st
+            st = st + [os.path.basename(fp)]
+        return '\n'.join(st)
     def __lt__(self, other):
         if type(self) != type(other):
             raise ValueError("Image: The given objects are not instances of the same class")
@@ -166,10 +166,10 @@ class ImageCol:
         self._getImages()
         self.it = iter(self.col)
     def __repr__(self):
-        st = "ImageCol: \n"
+        st = ["ImageCol:"]
         for img in self.col:
-            st = st + img.id + "\n"
-        return st
+            st = st + [img.id]
+        return '\n'.join(st)
     def __iter__(self):
         return self
     def next(self):
@@ -226,10 +226,10 @@ class ImageSeries:
             assert len(imgsId) == 1, "ImageSeries: The given Images do not belong to one ImageSeries"
         self.it = iter(self.col)
     def __repr__(self):
-        st = "ImageSeries: " + self.id + "\n"
+        st = ["ImageSeries: " + self.id]
         for img in self.col.col:
-            st = st + img.id + "\n"
-        return st
+            st = st + [img.id]
+        return '\n'.join(st)
     def __iter__(self):
         return self
     def next(self):
