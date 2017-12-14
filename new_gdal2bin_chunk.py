@@ -4,13 +4,6 @@ import logging
 import numpy
 from array import array
 from gdal2sdb import *
-
-
-
-
-
-
-
 ################################################################################
 # NOTES:
 # Ubuntu uses an old version of numpy
@@ -84,11 +77,6 @@ def main(argv):
         if d2att:
             d2att = img.acquisition
         imgpixs = img.getpixels(col, row, colbuf, rowbuf, -1)                   # pixels of the bands of an image. A numpy.ndarray object
-        
-        #TODO: this works, but it is better to move code to classes
-        
-        
-        
         if len(imgpixs.shape) < 3:
             logging.warn("Insufficient pixels to read")
             continue
@@ -111,14 +99,24 @@ def main(argv):
                     if d2att:
                         idxd = array('I',[d2att])                  # image date - I unsigned int (int32)
                         idxd.tofile(sys.stdout)
-
+                elif output == "csv":
+                    s = str(cid) + "," + str(rid) + "," + str(tid) + ","
+                    if t2id:
+                        s = str(ipath) + "," + str(irow) + "," + s
+                    for k in range(len(pixval)):
+                        if(imgtype[0:3] == "MOD"):
+                            s += str(pixval[k][0]) + ','
+                        elif(imgtype[0:3] == "Lan"):
+                            s += str(pixval[k]) + ','
+                    if d2att:
+                        s += str(d2att) + ','
+                    sys.stdout.write(s[0:-1] + "\n")
+                else:
+                    logging.error("Unknown SciDB format: " + output)
+                    sys.exit(0)
 
 
 
 if __name__ == "__main__":
    main(sys.argv[1:])
-
-
-
-
 
