@@ -116,6 +116,18 @@ class Image:
         if type(self) != type(other):
             raise ValueError("Image: The given objects are not instances of the same class")
         return self.id < other.id
+    def getMetadata(self):
+        self.bandtype = []
+        for imgf in self.col:
+            imgf.getMetadata()
+            self.driver = imgf.driver
+            self.ncol = imgf.ncol
+            self.nrow = imgf.nrow
+            self.bandtypes = self.bandtype + imgf.bandtype
+            self.geotransform = imgf.geotransform
+
+
+
     def tid(self):
         """ Compute the time_id of the image """
         origin = 0
@@ -228,15 +240,16 @@ class ImageSeries:
             raise StopIteration
 
 
+
 #class ImageBand:
 #    """A set of pixels (observations) of the same variable"""
-#    def __init__(self, filepath):
-#        imgf = ImageFile(filepath)
-#        if imgf.type == "Modis":
-#            # 1 file * bands
-#        elif imgf.type[0:7] == "Landsat":
-#            # 1 file 1 band
-#        self.filepath = ""
-#        self.id = ""
-
-
+#    def __init__(self, image, driver, ncol, nrow, bandtype, geotransform):
+#        self.image = image
+#        self.driver = driver
+#        self.ncol = ncol
+#        self.nrow = nrow
+#        self.bandtype = bandtype
+#        self.geotransform = geotransform
+#    def __repr__(self):
+#        st = "ImageBand:" + "\n  Image: " + self.image.id + "\n  Driver: " + self.driver + "\n  N Col: " + self.ncol + "\n  N Row: " + self.nrow + "\n  Band type: " + self.bandtype
+  

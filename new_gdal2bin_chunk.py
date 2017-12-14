@@ -70,6 +70,7 @@ def main(argv):
     # get pixels from each image
     tid = -1
     for img in iserlist[0]:
+        img.getMetadata()
         if d2tid:
             tid = img.tid()
         else:
@@ -93,7 +94,7 @@ def main(argv):
                     idxa.tofile(sys.stdout)
                     # write the data
                     for k in range(len(pixval)):
-                        dt = bandtypes[k]
+                        dt = img.bandtypes[k]
                         idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
                         idxv.tofile(sys.stdout)
                     if d2att:
