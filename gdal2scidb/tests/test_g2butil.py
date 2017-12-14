@@ -5,21 +5,16 @@ import unittest
 import datetime
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import g2butil
-#-------------------------------------
 
-class TestStringMethods(unittest.TestCase):
+################################################################################
+# TODO:
+# - rename test class
+# - are there missing tests?
+################################################################################
 
+class g2butil_testCase(unittest.TestCase):
     def test_upper(self):
-        inputFiles = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260672013181LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260612013181LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260622013181LGN00_sr_cloud.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260612013181LGN00_cfmask.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260672013181LGN00_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260622013181LGN00_sr_band6.tif /this/must/fail/LC82260672013213ALA00_cfmask.tif /home/scidb/MODIS/2005/MOD13Q1.A2005353.h11v07.005.2008091034316.hdf /home/scidb/MODIS/2005/MOD13Q1.A2003353.h10v11.005.2008041120050.hdf /home/scidb/MODIS/2005/MOD13Q1.A2015353.h10v11.005.2016007192946.hdf"
-
         inputFiles = '/home/alber/Desktop/MOD13Q1.A2010081.h12v10.005.2010101105440.hdf'
-
-        col = 0
-        row = 0
-        colbuf = 75
-        rowbuf = 75
-        coltrans = 48000
-        rowtrans = 48000
 
         self.assertEqual(g2butil.date2ydoy(datetime.date(2007, 12, 31)), 2007365)
         self.assertEqual(g2butil.date2ydoy(datetime.date(2007, 1, 1)), 2007001)
@@ -38,8 +33,6 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(g2butil.ymd2ydoy(20001231), 2000366)
         self.assertEqual(g2butil.ymd2ydoy(20000229), 2000060)
         self.assertEqual(g2butil.ymd2ydoy(20010301), 2001060)
-
-
 
         self.assertEqual(g2butil.ymd2tid(20000101, 20000101, 8, True), 0)
         self.assertEqual(g2butil.ymd2tid(20000109, 20000101, 8, True), 1)
@@ -61,7 +54,6 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(g2butil.ymd2tid(20011219, 20000101, 16, True), 45)
         self.assertEqual(g2butil.ymd2tid(20020101, 20000101, 16, True), 46)
 
-
         # tid2ymd and ymd2tid are complementary
         ori = 20000101
         per = 16
@@ -71,7 +63,6 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(g2butil.tid2ymd(g2butil.ymd2tid(20010101, ori, per, y), ori, per, y), 20010101)
         self.assertEqual(g2butil.tid2ymd(g2butil.ymd2tid(20011219, ori, per, y), ori, per, y), 20011219)
         self.assertEqual(g2butil.tid2ymd(g2butil.ymd2tid(20020101, ori, per, y), ori, per, y), 20020101)
-
 
         inputFiles = '/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260672013181LGN00_cfmask.tif'
         imgseriesmd = []
