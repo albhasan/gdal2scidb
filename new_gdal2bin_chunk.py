@@ -71,7 +71,7 @@ def main(argv):
     tid = -1
     for img in iserlist[0]:
         if d2tid:
-            tid = img.tid
+            tid = img.tid()
         else:
             tid = tid + 1
         if d2att:
@@ -88,7 +88,7 @@ def main(argv):
                 # write the dimensions
                 if output == "binary":
                     idxa = array('L',[cid, rid, tid])                           # sdb's array dimensions - L unsigned long
-                    if t2id:
+                    if tile2id:
                         idxa = array('L',[ipath, irow, cid, rid, tid])
                     idxa.tofile(sys.stdout)
                     # write the data
@@ -101,7 +101,7 @@ def main(argv):
                         idxd.tofile(sys.stdout)
                 elif output == "csv":
                     s = str(cid) + "," + str(rid) + "," + str(tid) + ","
-                    if t2id:
+                    if tile2id:
                         s = str(ipath) + "," + str(irow) + "," + s
                     for k in range(len(pixval)):
                         if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
