@@ -99,7 +99,8 @@ class Image:
                 self.sensor = imgf.sensor
                 self.path = imgf.path
                 self.row = imgf.row
-                self.acquisition =imgf.acquisition
+                self.acquisition = imgf.acquisition
+                self.sname = imgf.sname
                 self.id = self.satellite + "_" + self.level + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
                 imgfIds.add(self.id)
             if len(imgfIds) > 1:
