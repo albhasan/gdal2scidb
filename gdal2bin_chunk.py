@@ -3,8 +3,7 @@ import argparse
 import logging
 import numpy
 from array import array
-from gdal2bin_util import *
-
+from gdal2sdb import *
 ################################################################################
 # NOTES:
 # Ubuntu uses an old version of numpy
@@ -42,7 +41,7 @@ def main(argv):
     rowtrans = int(args.rowtrans)
     d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     d2att = args.d2att in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
-    t2id = args.tile2id in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
+    tile2id = args.tile2id in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     output = args.output
     log = args.log
     ####################################################
@@ -63,72 +62,39 @@ def main(argv):
     # [1] band  == [1]file
     # [1] file  == [n] bands
     ####################################################
-    # sort files by image-path/row-band
-    files = sortFiles(inputFiles) # sortFiles(inputFiles.split())
-    # get files' metadata
-    imgseries = set()                                                           # set of series of images
-    filesmd = list()                                                            # list of metadata derived from file names
-    fmd = ""
-    for key,value in files.items():
-        fmd = getFileNameMetadata(value)
-        filesmd.append(fmd)
-        imgseries.add(fmd['satellite'] + fmd['sensor']+ fmd['path'] + fmd['row'])
-    # validation
-    if len(imgseries) != 1:
-        logging.error("Invalid number of time series of images: " + str(imgseries))
-        sys.exit(0)
-    imgtype = imgseries.pop()
-    # NOTE: assume all the images belong to the same path & row or TILE!!!!
-    ipath = fmd['path']
-    irow = fmd['row']
-    # build list of images and filepaths
-    imgfiles = imgseries2imgfp(filesmd)                                         # List [img, [filepaths]]
-    # validation
-    if len(imgfiles) == 0:
-        logging.error("No images found")
-        sys.exit(0)
-    nimg = len(imgfiles[0][1])
-    for i in range(1, len(imgfiles)):
-        if nimg != len(imgfiles[i][1]):
-            logging.error("Inconsistent number of files in images: " + imgfiles[i][0])
-            sys.exit(0)
-    # get band's datatypes from of a single image
-    bandtypes = []                                                              # GDAL band types of an image's bands
-    for fp in imgfiles[0][1]:
-        bandtypes.append(getGdalMetadata(fp)['bandtype'])
-    bandtypes = sum(bandtypes, []) if isinstance(bandtypes[0], list) else bandtypes
-    logging.info("Bandtypes: " + str(bandtypes))
-    # get time_id transformation parameters
-    tidparam = gettimeidparameters(filesmd[0]['sname'])
-    #---------------------------------------------------------------------------
+    # sort files into list of image series
+    icol = ImageCol(inputFiles)
+    iserlist = icol.getImagesSeries()
+    if len(iserlist) > 1:
+        raise ValueError("The given files belong to more than one ImageSeries")
     # get pixels from each image
-    #---------------------------------------------------------------------------
     tid = -1
-    for ifiles in imgfiles: # ifiles is made of 2 elements the image type (e.g. 'Landsat8OLI/TIRS Combined22606420140617') and the array of path to files
+    for img in iserlist[0]:
+        img.getMetadata()
         if d2tid:
-            tid = ymd2tid(int(ifiles[0][-8:]), int(tidparam['origin']), int(tidparam['period']), tidparam['yearly'])
+            tid = img.tid()
         else:
             tid = tid + 1
         if d2att:
-            d2att = getFileNameMetadata(ifiles[1][0])['acquisition']
-        imgpixs = getPixelImages(ifiles[1], col, row, colbuf, rowbuf, -1)       # pixels of the bands of an image. A numpy.ndarray object
+            d2att = img.acquisition
+        imgpixs = img.getpixels(col, row, colbuf, rowbuf, -1)                   # pixels of the bands of an image. A numpy.ndarray object
         if len(imgpixs.shape) < 3:
             logging.warn("Insufficient pixels to read")
             continue
         for i in range(imgpixs.shape[0]):
-            rid = i + + row + rowtrans
+            rid = i + row + rowtrans
             for j in range(imgpixs.shape[1]):
                 cid = j + col + coltrans
                 pixval = imgpixs[i, j]
                 # write the dimensions
                 if output == "binary":
                     idxa = array('L',[cid, rid, tid])                           # sdb's array dimensions - L unsigned long
-                    if t2id:
+                    if tile2id:
                         idxa = array('L',[ipath, irow, cid, rid, tid])
                     idxa.tofile(sys.stdout)
                     # write the data
                     for k in range(len(pixval)):
-                        dt = bandtypes[k]
+                        dt = img.bandtypes[k]
                         idxv = array(mapGdal2python('GDT_' + dt), [pixval[k]])
                         idxv.tofile(sys.stdout)
                     if d2att:
@@ -136,12 +102,12 @@ def main(argv):
                         idxd.tofile(sys.stdout)
                 elif output == "csv":
                     s = str(cid) + "," + str(rid) + "," + str(tid) + ","
-                    if t2id:
+                    if tile2id:
                         s = str(ipath) + "," + str(irow) + "," + s
                     for k in range(len(pixval)):
-                        if(imgtype[0:3] == "MOD"):
+                        if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
                             s += str(pixval[k][0]) + ','
-                        elif(imgtype[0:3] == "Lan"):
+                        elif(img.sname[0:2] == "LC"):
                             s += str(pixval[k]) + ','
                     if d2att:
                         s += str(d2att) + ','
@@ -149,6 +115,7 @@ def main(argv):
                 else:
                     logging.error("Unknown SciDB format: " + output)
                     sys.exit(0)
+
 
 
 if __name__ == "__main__":
