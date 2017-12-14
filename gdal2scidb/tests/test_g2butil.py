@@ -76,7 +76,7 @@ class TestStringMethods(unittest.TestCase):
         inputFiles = '/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-06-30/LC82260672013181LGN00_cfmask.tif'
         imgseriesmd = []
         for f in inputFiles.split():
-            imgseriesmd.append(getFileNameMetadata(f))
+            imgseriesmd.append(g2butil.getFileNameMetadata(f))
         self.assertEqual(len(imgseriesmd), 1)
 
 
