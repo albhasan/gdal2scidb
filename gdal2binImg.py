@@ -62,13 +62,24 @@ def main(argv):
     iserlist = icol.getImagesSeries()
     if len(iserlist) > 1:
         raise ValueError("The given files belong to more than one ImageSeries")
+    #---------------------------------------------------------------------------
+    for img in iserlist[0]:
+        #img.getMetadata()
+        if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
+            # open the HDF once and write the chunks
+            try:
+                raster = img.filepaths[0]
+                ds = gdal.Open(raster)
+                band = ds.GetRasterBand(idband)
+                array = band.ReadAsArray(x, y, xchunk, ychunk)
+            except:
+                raise RuntimeError("Could not get the pixels of a band")
+            finally:
+                band = None
+                ds = None
 
-    # if MODIS -> open the HDF once and write the chunks
-    # if LANDSAT -> open X images, read, merge, write
-
-
-
-
+        elif(img.sname[0:2] == "LC"):
+            # open X images, read, merge, write
 
 
 
