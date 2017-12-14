@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #gdal2scidb.py
-from gdal2bin_util
+import g2butil as g2b
 
 
 
@@ -16,7 +16,7 @@ class ImageFile:
     """A representation of a file. A file have at least one band"""
     def __init__(self, filepath):
         assert type(filepath) is str, "ImageFile: filepath is not a string: %r" % filepath
-        md = getFileNameMetadata(filepath)
+        md = g2b.getFileNameMetadata(filepath)
         self.filepath    = md['filepath']
         self.image       = md['image']
         self.type        = md['type']
@@ -48,7 +48,7 @@ class ImageFile:
         return self.id < other.id
     def getMetadata(self):
         """Get metadata from GDAL"""
-        gmd = getGdalMetadata(self.filepath)
+        gmd = g2b.getGdalMetadata(self.filepath)
         self.driver = gmd['driver']
         self.ncol = gmd['ncol']
         self.nrow = gmd['nrow']
@@ -156,7 +156,7 @@ class Image:
         return(ymd2tid(self.acquisition, origin, period, yearly))
     def getpixels(self, x, y, xchunk, ychunk, dimpos):
         """ Get the pixels """
-        return(getPixelImages(self.filepaths, x, y, xchunk, ychunk, dimpos))
+        return(g2b.getPixelImages(self.filepaths, x, y, xchunk, ychunk, dimpos))
 
 
 class ImageCol:
