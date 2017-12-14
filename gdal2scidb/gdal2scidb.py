@@ -71,7 +71,7 @@ class ImageFileCol:
     def __repr__(self):
         st = ["ImageFileCol:"]
         for imgf in self.col:
-            st = st + [os.path.basename(imgf.filepath)]
+            st.append(os.path.basename(imgf.filepath))
         return '\n'.join(st)
     def __iter__(self):
         return self
@@ -110,7 +110,7 @@ class Image:
     def __repr__(self):
         st = ["Image: " + self.id]
         for fp in self.filepaths:
-            st = st + [os.path.basename(fp)]
+            st.append(os.path.basename(fp))
         return '\n'.join(st)
     def __lt__(self, other):
         if type(self) != type(other):
@@ -168,7 +168,7 @@ class ImageCol:
     def __repr__(self):
         st = ["ImageCol:"]
         for img in self.col:
-            st = st + [img.id]
+            st.append(img.id)
         return '\n'.join(st)
     def __iter__(self):
         return self
@@ -228,7 +228,7 @@ class ImageSeries:
     def __repr__(self):
         st = ["ImageSeries: " + self.id]
         for img in self.col.col:
-            st = st + [img.id]
+            st.append(img.id)
         return '\n'.join(st)
     def __iter__(self):
         return self
