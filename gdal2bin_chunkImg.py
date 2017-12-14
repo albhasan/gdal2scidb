@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#gdal2bin_chunkImg.py
 import sys
 import argparse
 import logging

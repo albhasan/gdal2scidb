@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#gdal2scidb.py
 from gdal2bin_util import *
 
 

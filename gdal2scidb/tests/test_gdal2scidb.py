@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#test_gdal2sdb.py
+#test_gdal2scidb.py
 import os
 import sys
 import unittest

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#g2butil.py
 import collections
 import os
 import re
