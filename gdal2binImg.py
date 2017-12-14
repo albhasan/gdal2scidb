@@ -24,6 +24,8 @@ def main(argv):
     parser = argparse.ArgumentParser(description = "Export GDAL images to chunked files using SciDB's binary format.")    
     parser.add_argument("coltrans",     help = "Translation applied to the column index.")
     parser.add_argument("rowtrans",     help = "Translation applied to the row index.")
+    parser.add_argument("xsize",     help = "Chunk size in the x direction.")
+    parser.add_argument("ysize",     help = "Chunk size in the y direction.")
     parser.add_argument("inputFiles",   help = "List of images separated by spaces.", nargs = "+")
     parser.add_argument("--d2tid",      help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
     parser.add_argument("--d2att",      help = "Add the image date as an int32 yyyymmdd attribute (last attribute). Default = False", default = 'False')
@@ -35,6 +37,8 @@ def main(argv):
     inputFiles = args.inputFiles
     coltrans = int(args.coltrans)
     rowtrans = int(args.rowtrans)
+    xsize = int(args.xsize)
+    ysize = int(args.ysize)
     d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     d2att = args.d2att in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     tile2id = args.tile2id in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
