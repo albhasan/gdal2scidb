@@ -131,8 +131,8 @@ class Image_TestCase(gdal2sdb_testCase):
         """ Test object creation """
         img = g2s.Image(self.inputFiles1.split(" "))
         self.assertEqual(img.id, "Landsat8_Systematic-Terrain-Correction_OLI/TIRS-Combined_226_064_20150111")
-        self.assertRaises(ValueError, Image, self.inputFiles2.split(" "))
-        self.assertRaises(ValueError, Image, self.inputFiles3.split(" "))
+        self.assertRaises(ValueError, g2s.Image, self.inputFiles2.split(" "))
+        self.assertRaises(ValueError, g2s.Image, self.inputFiles3.split(" "))
 
 
 
