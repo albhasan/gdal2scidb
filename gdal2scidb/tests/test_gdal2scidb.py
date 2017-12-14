@@ -5,7 +5,7 @@ import sys
 import unittest
 import datetime
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import gdal2scidb
+import gdal2scidb as g2s
 
 class gdal2sdb_testCase(unittest.TestCase):
     def setUp(self):
@@ -18,7 +18,7 @@ class gdal2sdb_testCase(unittest.TestCase):
 class ImageFile_testCase(gdal2sdb_testCase):
     """ Test ImageFile objects """
     def test_creation_landsat(self):
-        imgf = ImageFile("/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-07-06/LC08_L1TP_226066_20150706_20170407_01_T1_sr_band3.tif")
+        imgf = g2s.ImageFile("/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-07-06/LC08_L1TP_226066_20150706_20170407_01_T1_sr_band3.tif")
         self.assertEqual(imgf.filepath, '/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-07-06/LC08_L1TP_226066_20150706_20170407_01_T1_sr_band3.tif')
         self.assertEqual(imgf.image, 'Landsat8OLI/TIRS-Combined22606620150706')
         self.assertEqual(imgf.type, 'Landsat_tiered')
@@ -45,7 +45,7 @@ class ImageFile_testCase(gdal2sdb_testCase):
         #self.assertEqual(imgf.geotransform, (706785.0, 30.0, 0.0, -843885.0, 0.0, -30.0))
     def test_creation_landsatOld(self):
         """ Test the creation of objects of the pre-tier landsat images """
-        imgf = ImageFile("/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif")
+        imgf = g2s.ImageFile("/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif")
         self.assertEqual(imgf.filepath, '/home/scidb/LANDSAT/landsat8Original/SurfaceReflectance/2013/2013-05-29/LC82260612013149LGN00_sr_band2.tif')
         self.assertEqual(imgf.image, 'Landsat8OLI/TIRS-Combined22606120130529')
         self.assertEqual(imgf.type, 'Landsat_untiered')
@@ -65,7 +65,7 @@ class ImageFile_testCase(gdal2sdb_testCase):
         self.assertEqual(imgf.sname, 'LC08')
     def test_creation_modis(self):
         """ Test the creation of MODIS objects """
-        imgf = ImageFile("/home/scidb/MODIS/2010/MOD13Q1.A2010241.h11v10.006.2015210102523.hdf")
+        imgf = g2s.ImageFile("/home/scidb/MODIS/2010/MOD13Q1.A2010241.h11v10.006.2015210102523.hdf")
         self.assertEqual(imgf.filepath, '/home/scidb/MODIS/2010/MOD13Q1.A2010241.h11v10.006.2015210102523.hdf')
         self.assertEqual(imgf.image, 'MOD13Q1111020100829')
         self.assertEqual(imgf.type, 'Modis')
@@ -98,7 +98,7 @@ class ImageFileCol_testCase(gdal2sdb_testCase):
     def test_iterate(self):
         """ Is iterator re-setting? """
         filepaths = self.inputFiles1.split(" ")
-        ifc = ImageFileCol(filepaths)
+        ifc = g2s.ImageFileCol(filepaths)
         count = 0
         for imgf in ifc:
             count = count + 1
@@ -112,7 +112,7 @@ class ImageFileCol_testCase(gdal2sdb_testCase):
         """ Are the ImageFileCol objects iterated in order?  """
         filepathsList = [self.inputFiles1.split(" "), self.inputFiles2.split(" "), self.inputFiles3.split(" ")]
         for filepaths in filepathsList:
-            ifc = ImageFileCol(filepaths)
+            ifc = g2s.ImageFileCol(filepaths)
             first = True
             last_id          = ''
             for imgf in ifc:
@@ -129,7 +129,7 @@ class Image_TestCase(gdal2sdb_testCase):
     """ Test Image objects  """
     def test_creation_landsat(self):
         """ Test object creation """
-        img = Image(self.inputFiles1.split(" "))
+        img = g2s.Image(self.inputFiles1.split(" "))
         self.assertEqual(img.id, "Landsat8_Systematic-Terrain-Correction_OLI/TIRS-Combined_226_064_20150111")
         self.assertRaises(ValueError, Image, self.inputFiles2.split(" "))
         self.assertRaises(ValueError, Image, self.inputFiles3.split(" "))
@@ -140,7 +140,7 @@ class ImageCol_TestCase(gdal2sdb_testCase):
     """ Test ImageCol objects  """
     def test_iterate(self):
         """ is the iterator re-setting? """
-        imgcol = ImageCol(self.inputFiles1.split(" "))
+        imgcol = g2s.ImageCol(self.inputFiles1.split(" "))
         count = 0
         for img in imgcol:
             count = count + 1
@@ -153,7 +153,7 @@ class ImageCol_TestCase(gdal2sdb_testCase):
         """ Is iterator ordered? """
         filepathsList = [self.inputFiles1.split(" "), self.inputFiles2.split(" "), self.inputFiles3.split(" ")]
         for filepaths in filepathsList:
-            ic = ImageCol(filepaths)
+            ic = g2s.ImageCol(filepaths)
             first = True
             last_id   = ''
             for img in ic:
@@ -170,7 +170,7 @@ class ImageSeries_TestCase(gdal2sdb_testCase):
     """ Test ImageSeries objects  """
     def test_iterate(self):
         """ is the iterator re-setting? """
-        imgser = ImageSeries(self.inputFiles3.split(" "))
+        imgser = g2s.ImageSeries(self.inputFiles3.split(" "))
         count1 = 0
         for img in imgser:
             count1 = count1 + 1
@@ -182,7 +182,7 @@ class ImageSeries_TestCase(gdal2sdb_testCase):
         """ Is iterator ordered? """
         filepathsList = [self.inputFiles3.split(" ")]
         for filepaths in filepathsList:
-            iser = ImageSeries(filepaths)
+            iser = g2s.ImageSeries(filepaths)
             first = True
             last_id   = ''
             for img in iser:
