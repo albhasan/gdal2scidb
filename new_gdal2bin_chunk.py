@@ -63,8 +63,8 @@ def main(argv):
     # [1] file  == [n] bands
     ####################################################
     # sort files into list of image series
-    ifcol = ImageFileCol(inputFiles)
-    iserlist = ifcol.getImagesSeries()
+    icol = ImageCol(inputFiles)
+    iserlist = icol.getImagesSeries()
     if len(iserlist) > 1:
         raise ValueError("The given files belong to more than one ImageSeries")
     # get pixels from each image
