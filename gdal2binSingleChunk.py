@@ -5,7 +5,6 @@ import argparse
 import logging
 import numpy
 from array import array
-from gdal2sdb import *
 ################################################################################
 # NOTES:
 # Ubuntu uses an old version of numpy
@@ -49,7 +48,6 @@ def main(argv):
     ####################################################
     # CONFIG
     ####################################################
-    gdal.UseExceptions()
     # log
     numeric_loglevel = getattr(logging, log.upper(), None)
     if not isinstance(numeric_loglevel, int):
