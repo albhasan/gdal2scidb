@@ -53,7 +53,7 @@ def main(argv):
     if not isinstance(numeric_loglevel, int):
         raise ValueError('Invalid log level: %s' % log)
     logging.basicConfig(filename = 'gdal2binSingleChunk.log', level = numeric_loglevel, format = '%(asctime)s %(levelname)s: %(message)s')
-    logging.info("gdal2bin_chunk: " + str(args))
+    logging.info("gdal2binSingleChunk: " + str(args))
     ####################################################
     # SCRIPT
     #---------------------------------------------------
