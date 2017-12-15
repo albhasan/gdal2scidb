@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #gdal2scidb.py
+import os
 import g2butil as g2b
 
 
