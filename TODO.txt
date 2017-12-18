@@ -19,7 +19,7 @@ test_gdal2scidb.py
 
 
 
-these do not find test to run:
+these do not find tests to run:
 - python -m doctest -v gdal2bin_chunk.py
 - python -m doctest -v gdal2bin_chunkImg.py
 - python -m doctest -v ./gdal2scidb/g2butil.py

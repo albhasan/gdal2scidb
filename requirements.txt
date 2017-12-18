@@ -1,2 +1,4 @@
 GDAL
 unittest
+bitstruct
+
