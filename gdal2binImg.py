@@ -86,7 +86,7 @@ def main(argv):
             try:
                 #--------------
                 from osgeo import gdal # ogr, osr
-                from gdalconst import *
+                #from gdalconst import *
                 import numpy as np
                 import bitstruct as bs
                 gdal.UseExceptions()
@@ -94,9 +94,9 @@ def main(argv):
                 gimg = gdal.Open(img.filepaths[0])
                 barr = [] # list of opened subdatasets (bands)
                 bpixarr = [] # list of subdatasets' pixels
-                btype = ['int64', 'int64', 'int64'] # list of band data types initialized with three int64 for the dimensions
                 #nda2ba = {'int8': 's1',  'uint8': 'u1', 'int16': 's2', 'uint16': 'u2', 'int32': 's3', 'uint32': 'u3', 'int64': 's4', 'uint64': 'u4'}
                 nda2ba = {'int8': 's4',  'uint8': 's4', 'int16': 's4', 'uint16': 's4', 'int32': 's4', 'uint32': 's4', 'int64': 's4', 'uint64': 's4'} # map ndarray types to bstruct
+                btype = ['int64', 'int64', 'int64'] # Band data types initialized with 3 dimensions
                 time_id = img.tid()
                 for subds in gimg.GetSubDatasets():
                     band = gdal.Open(subds[0])
@@ -105,13 +105,13 @@ def main(argv):
                     bpixarr.append(bpix)
                     btype.append(bpix.dtype.name)
                 #
-                assert len(btype) == len(barr)
+                assert (len(btype) - 3) == len(barr) # 3 dim
                 bspacker = bs.compile("<" + "".join([nda2ba[n] if n in nda2ba else n for n in btype])) # Scidb binary is little endian
                 # chunk the image
                 for xc in range(xsize, band.RasterXSize, xsize):
                     for yc in range(ysize, band.RasterYSize, ysize):
-                        col_id = (np.repeat(range(0, xsize), ysize)) + rowtrans
-                        row_id = (range(0, ysize) * xsize) + coltrans
+                        col_id = (np.repeat(range(0, xsize), ysize)) + coltrans
+                        row_id = np.array((range(0, ysize) * xsize)) + rowtrans
                         attdat = [] # list of flat bands' pixels of a chunk
                         for bpix in bpixarr:
                             chunkarr = bpix[(xc - xsize):xsize, (yc - ysize):ysize]
