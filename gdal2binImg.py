@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 #gdal2bin_chunkImg.py
-    import os
-    import sys
-    import argparse
-    import logging
-    import inspect
-    #from array import array
+import os
+import sys
+import argparse
+import logging
+import inspect
+#from array import array
 
-    # import module from subfolder "gdal2scidb"
-    cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0], "gdal2scidb")))
-    if cmd_subfolder not in sys.path:
-        sys.path.insert(0, cmd_subfolder)
+# import module from subfolder "gdal2scidb"
+cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0], "gdal2scidb")))
+if cmd_subfolder not in sys.path:
+    sys.path.insert(0, cmd_subfolder)
 
-    import gdal2scidb as g2b
+import gdal2scidb as g2b
 
 ################################################################################
 # NOTES:
