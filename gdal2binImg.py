@@ -83,12 +83,15 @@ def main(argv):
         logging.error("The given files belong to more than one ImageSeries: " + str(inputFiles))
         raise ValueError("The given files belong to more than one ImageSeries")
     #---------------------------------------------------------------------------
+    # Write all the chunks of an image at once. Then add 
+    tid = -1
     for img in iserlist[0]:
-        #img.getMetadata()
         logging.debug("Processing image:" + img.id)
         if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
-            # open the HDF once and write the chunks
             try:
+                tid = tid + 1
+                if d2tid:
+                    tid = img.tid()
                 #--------------
                 from osgeo import gdal
                 import numpy as np
@@ -97,7 +100,6 @@ def main(argv):
                 gimg = gdal.Open(img.filepaths[0])
                 barr = [] # list of opened subdatasets (bands)
                 bpixarr = [] # list of subdatasets' pixels
-                t = img.tid()
                 for subds in gimg.GetSubDatasets():
                     logging.debug("Processing subdataset:" + str(subds))
                     band = gdal.Open(subds[0])
@@ -112,17 +114,21 @@ def main(argv):
                 for xc in range(xfrom, xto, xsize):
                     for yc in range(yfrom, yto, ysize):
                         logging.debug("Processing chunk: "+  str(xc) + " " + str(yc))
-                        col_id = np.array((range(xc, xc + xsize) * ysize), dtype=np.int64) + coltrans
-                        row_id = (np.repeat(range(yc, yc + ysize), xsize).astype(np.int64)) + rowtrans
-                        time_id = np.repeat(t, len(col_id)).astype(np.int64)
+                        col_id = np.array((range(xc, min(xc + xsize, xto)) * min(ysize, yto - yc)), dtype=np.int64) + coltrans
+                        row_id = (np.repeat(range(yc, min(yc + ysize, yto)), min(xsize, xto - xc)).astype(np.int64)) + rowtrans
+                        time_id = np.repeat(tid, len(col_id)).astype(np.int64)
+                        assert len(col_id) == len(row_id)
                         attdat = [] # list of flat bands' pixels of a chunk
                         for bpix in bpixarr:
                             chunkarr = bpix[xc:(xc + xsize), yc:(yc + ysize)]
-                            attdat.append(chunkarr.flatten())
+                            chunkarrflat = chunkarr.flatten() 
+                            assert len(col_id) == len(chunkarrflat)
+                            attdat.append(chunkarrflat)
+                        #
                         logging.debug("Stacking the bands' chunk into one np array")
                         pixflat = np.vstack([col_id, row_id, time_id, attdat]).T
                         fname = "/home/scidb/alber/test_" + str(xc - xsize) + "_" + str(yc - ysize) + ".sdbbin"
-                        fsdbbin = open(fname, 'w')
+                        fsdbbin = open(fname, 'a')
                         pixflat.tofile(fsdbbin)
                         fsdbbin.close() 
                 #--------------
