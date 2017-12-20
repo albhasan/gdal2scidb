@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 #gdal2bin_chunkImg.py
-import os
-import sys
-import argparse
-import logging
-import inspect
-#from array import array
+    import os
+    import sys
+    import argparse
+    import logging
+    import inspect
+    #from array import array
 
-# import module from subfolder "gdal2scidb"
-cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0], "gdal2scidb")))
-if cmd_subfolder not in sys.path:
-    sys.path.insert(0, cmd_subfolder)
+    # import module from subfolder "gdal2scidb"
+    cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0], "gdal2scidb")))
+    if cmd_subfolder not in sys.path:
+        sys.path.insert(0, cmd_subfolder)
 
-import gdal2scidb as g2b
+    import gdal2scidb as g2b
 
 ################################################################################
 # NOTES:
@@ -105,17 +105,19 @@ def main(argv):
                     barr.append(band)
                     bpixarr.append(bpix.astype(np.int64)) # 
                 # chunk the image
-                #for xc in range(xsize, band.RasterXSize, xsize):
-                for xc in range(xsize, 120, xsize):
-                    #for yc in range(ysize, band.RasterYSize, ysize):
-                    for yc in range(ysize, 120, ysize):
-                        logging.debug("Processing chunk: "+  str(xc) + " " + str(yx))
-                        col_id = (np.repeat(range(0, xsize), ysize).astype(np.int64)) + coltrans
-                        row_id = np.array((range(0, ysize) * xsize), dtype=np.int64) + rowtrans
+                xfrom = 0
+                yfrom = 0
+                xto = band.RasterXSize
+                yto = band.RasterYSize
+                for xc in range(xfrom, xto, xsize):
+                    for yc in range(yfrom, yto, ysize):
+                        logging.debug("Processing chunk: "+  str(xc) + " " + str(yc))
+                        col_id = np.array((range(xc, xc + xsize) * ysize), dtype=np.int64) + coltrans
+                        row_id = (np.repeat(range(yc, yc + ysize), xsize).astype(np.int64)) + rowtrans
                         time_id = np.repeat(t, len(col_id)).astype(np.int64)
                         attdat = [] # list of flat bands' pixels of a chunk
                         for bpix in bpixarr:
-                            chunkarr = bpix[(xc - xsize):xsize, (yc - ysize):ysize]
+                            chunkarr = bpix[xc:(xc + xsize), yc:(yc + ysize)]
                             attdat.append(chunkarr.flatten())
                         logging.debug("Stacking the bands' chunk into one np array")
                         pixflat = np.vstack([col_id, row_id, time_id, attdat]).T
@@ -124,8 +126,8 @@ def main(argv):
                         pixflat.tofile(fsdbbin)
                         fsdbbin.close() 
                 #--------------
-            except:
-                logging.error("Could not get the pixels of a band. Image:" + str(img.filepaths))
+            except Exception as e:
+                logging.exception("message")
                 raise RuntimeError("Could not get the pixels of a band")
             finally:
                 band = None
