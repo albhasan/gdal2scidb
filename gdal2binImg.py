@@ -23,18 +23,18 @@ import gdal2scidb as g2b
 # TODO: 
 #-------------------------------------------------------------------------------
 # Usage:
-# 
+# python gdal2binImg.py 57600 48000 40 40 /home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf
 #-------------------------------------------------------------------------------
-inputFiles = "/home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf".split(" ")
-coltrans = 0
-rowtrans = 0
-xsize = 40
-ysize = 40
-d2tid = True
-d2att = False
-tile2id = False
-output = "csv"
-log = "DEBUG"
+#inputFiles = "/home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf".split(" ")
+#coltrans = 0
+#rowtrans = 0
+#xsize = 40
+#ysize = 40
+#d2tid = True
+#d2att = False
+#tile2id = False
+#output = "csv"
+#log = "DEBUG"
 ################################################################################
 
 def main(argv):
