@@ -23,7 +23,7 @@ import gdal2scidb as g2b
 # TODO: 
 #-------------------------------------------------------------------------------
 # Usage:
-# python gdal2binImg.py --log DEBUG 57600 48000 40 40 /home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf
+# python gdal2binImg.py --log DEBUG 57600 48000 40 40 /home/scidb/alber/test /home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf
 #-------------------------------------------------------------------------------
 #inputFiles = "/home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf".split(" ")
 #coltrans = 0
@@ -33,7 +33,6 @@ import gdal2scidb as g2b
 #d2tid = True
 #d2att = False
 #tile2id = False
-#output = "csv"
 #log = "DEBUG"
 ################################################################################
 
@@ -43,11 +42,11 @@ def main(argv):
     parser.add_argument("rowtrans",     help = "Translation applied to the row index.")
     parser.add_argument("xsize",        help = "Chunk size in the x direction.")
     parser.add_argument("ysize",        help = "Chunk size in the y direction.")
+    parser.add_argument("outputDir",    help = "Output directory.")
     parser.add_argument("inputFiles",   help = "List of images separated by spaces.", nargs = "+")
     parser.add_argument("--d2tid",      help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
-    parser.add_argument("--d2att",      help = "Add the image date as an int32 yyyymmdd attribute (last attribute). Default = False", default = 'False')
-    parser.add_argument("--tile2id",    help = "Include the image's tile (e.g path & row) as pixel identifiers. Default = True", default = 'True')
-    parser.add_argument("--output",     help = "The SciDB format used to export the data [binary, csv]. Default = binary", default = 'binary')
+    parser.add_argument("--d2att",      help = "Add the image date as an int yyyymmdd attribute (last attribute). Default = False", default = 'False')
+    parser.add_argument("--tile2id",    help = "Include the image's tile (e.g path & row) as attribute(first two attributes) . Default = False", default = 'False')
     parser.add_argument("--log",        help = "Log level. Default = WARNING", default = 'WARNING')
     # Get parameters
     args = parser.parse_args()
@@ -56,10 +55,10 @@ def main(argv):
     rowtrans = int(args.rowtrans)
     xsize = int(args.xsize)
     ysize = int(args.ysize)
+    outputDir = int(args.outputDir)
     d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     d2att = args.d2att in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     tile2id = args.tile2id in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
-    output = args.output
     log = args.log
     ####################################################
     # CONFIG
@@ -92,6 +91,8 @@ def main(argv):
                 tid = tid + 1
                 if d2tid:
                     tid = img.tid()
+                if d2att:
+                    imgacq = img.acquisition
                 #--------------
                 from osgeo import gdal
                 import numpy as np
@@ -117,6 +118,13 @@ def main(argv):
                         col_id = np.array((range(xc, min(xc + xsize, xto)) * min(ysize, yto - yc)), dtype=np.int64) + coltrans
                         row_id = (np.repeat(range(yc, min(yc + ysize, yto)), min(xsize, xto - xc)).astype(np.int64)) + rowtrans
                         time_id = np.repeat(tid, len(col_id)).astype(np.int64)
+                        crt_id = []
+                        if tile2id:
+                            crt_id.append(np.repeat(img.path, len(col_id)).astype(np.int64))
+                            crt_id.append(np.repeat(img.row, len(col_id)).astype(np.int64))
+                        crt_id.append(col_id)
+                        crt_id.append(row_id)
+                        crt_id.append(time_id)
                         assert len(col_id) == len(row_id)
                         attdat = [] # list of flat bands' pixels of a chunk
                         for bpix in bpixarr:
@@ -125,9 +133,11 @@ def main(argv):
                             assert len(col_id) == len(chunkarrflat)
                             attdat.append(chunkarrflat)
                         #
+                        if d2att:
+                            attdat.append(np.repeat(imgacq, len(col_id)).astype(np.int64))
                         logging.debug("Stacking the bands' chunk into one np array")
-                        pixflat = np.vstack([col_id, row_id, time_id, attdat]).T
-                        fname = "/home/scidb/alber/test_" + str(xc - xsize) + "_" + str(yc - ysize) + ".sdbbin"
+                        pixflat = np.vstack([crt_id, attdat]).T
+                        fname = os.path.join(outputDir, iserlist[0].id + "_" + str(xc) + "_" + str(yc) + ".sdbbin")
                         fsdbbin = open(fname, 'a')
                         pixflat.tofile(fsdbbin)
                         fsdbbin.close() 
