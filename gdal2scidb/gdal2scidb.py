@@ -128,9 +128,6 @@ class Image:
             self.nrow = imgf.nrow
             self.bandtypes = self.bandtype + imgf.bandtype
             self.geotransform = imgf.geotransform
-
-
-
     def tid(self):
         """ Compute the time_id of the image """
         origin = 0
