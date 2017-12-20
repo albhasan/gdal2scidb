@@ -1,6 +1,9 @@
 TODO:
 
-
+gdal2binImg.py
+- test tile2id
+- test d2tid
+- test d2att
 
 test_g2butil.py:
 - rename class
