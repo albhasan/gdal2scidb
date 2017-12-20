@@ -23,7 +23,7 @@ import gdal2scidb as g2b
 # TODO: 
 #-------------------------------------------------------------------------------
 # Usage:
-# python gdal2binImg.py 57600 48000 40 40 /home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf
+# python gdal2binImg.py --log DEBUG 57600 48000 40 40 /home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf
 #-------------------------------------------------------------------------------
 #inputFiles = "/home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf".split(" ")
 #coltrans = 0
@@ -69,6 +69,7 @@ def main(argv):
     if not isinstance(numeric_loglevel, int):
         raise ValueError('Invalid log level: %s' % log)
     logging.basicConfig(filename = 'gdal2binImg.log', level = numeric_loglevel, format = '%(asctime)s %(levelname)s: %(message)s')
+    logging.info("------------")
     logging.info("gdal2binImg: " + str(args))
     ####################################################
     # SCRIPT
@@ -79,10 +80,12 @@ def main(argv):
     icol = g2b.ImageCol(inputFiles)
     iserlist = icol.getImagesSeries()
     if len(iserlist) > 1:
+        logging.error("The given files belong to more than one ImageSeries: " + str(inputFiles))
         raise ValueError("The given files belong to more than one ImageSeries")
     #---------------------------------------------------------------------------
     for img in iserlist[0]:
         #img.getMetadata()
+        logging.debug("Processing image:" + img.id)
         if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
             # open the HDF once and write the chunks
             try:
@@ -96,15 +99,17 @@ def main(argv):
                 bpixarr = [] # list of subdatasets' pixels
                 t = img.tid()
                 for subds in gimg.GetSubDatasets():
+                    logging.debug("Processing subdataset:" + str(subds))
                     band = gdal.Open(subds[0])
                     bpix = band.ReadAsArray()
                     barr.append(band)
                     bpixarr.append(bpix.astype(np.int64)) # 
                 # chunk the image
                 #for xc in range(xsize, band.RasterXSize, xsize):
-                for xc in range(xsize, 80, xsize):
+                for xc in range(xsize, 120, xsize):
                     #for yc in range(ysize, band.RasterYSize, ysize):
-                    for yc in range(ysize, 80, ysize):
+                    for yc in range(ysize, 120, ysize):
+                        logging.debug("Processing chunk: "+  str(xc) + " " + str(yx))
                         col_id = (np.repeat(range(0, xsize), ysize).astype(np.int64)) + coltrans
                         row_id = np.array((range(0, ysize) * xsize), dtype=np.int64) + rowtrans
                         time_id = np.repeat(t, len(col_id)).astype(np.int64)
@@ -112,7 +117,7 @@ def main(argv):
                         for bpix in bpixarr:
                             chunkarr = bpix[(xc - xsize):xsize, (yc - ysize):ysize]
                             attdat.append(chunkarr.flatten())
-                        # stack the bands into one array
+                        logging.debug("Stacking the bands' chunk into one np array")
                         pixflat = np.vstack([col_id, row_id, time_id, attdat]).T
                         fname = "/home/scidb/alber/test_" + str(xc - xsize) + "_" + str(yc - ysize) + ".sdbbin"
                         fsdbbin = open(fname, 'w')
@@ -120,6 +125,7 @@ def main(argv):
                         fsdbbin.close() 
                 #--------------
             except:
+                logging.error("Could not get the pixels of a band. Image:" + str(img.filepaths))
                 raise RuntimeError("Could not get the pixels of a band")
             finally:
                 band = None
