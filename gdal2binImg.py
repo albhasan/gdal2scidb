@@ -73,6 +73,8 @@ def main(argv):
     ####################################################
     # SCRIPT
     ####################################################
+    if sys.byteorder != 'little':
+        raise ValueError('SciDB requires little endian!')
     # sort files into list of image series
     icol = g2b.ImageCol(inputFiles)
     iserlist = icol.getImagesSeries()
@@ -85,109 +87,48 @@ def main(argv):
             # open the HDF once and write the chunks
             try:
                 #--------------
-                from osgeo import gdal # ogr, osr
-                #from gdalconst import *
+                from osgeo import gdal
                 import numpy as np
-                import bitstruct as bs
                 gdal.UseExceptions()
                 # get all the pixels from all bands
                 gimg = gdal.Open(img.filepaths[0])
                 barr = [] # list of opened subdatasets (bands)
                 bpixarr = [] # list of subdatasets' pixels
-                #nda2ba = {'int8': 's1',  'uint8': 'u1', 'int16': 's2', 'uint16': 'u2', 'int32': 's3', 'uint32': 'u3', 'int64': 's4', 'uint64': 'u4'}
-                nda2ba = {'int8': 's4',  'uint8': 's4', 'int16': 's4', 'uint16': 's4', 'int32': 's4', 'uint32': 's4', 'int64': 's4', 'uint64': 's4'} # map ndarray types to bstruct
-                btype = ['int64', 'int64', 'int64'] # Band data types initialized with 3 dimensions
-                time_id = img.tid()
+                t = img.tid()
                 for subds in gimg.GetSubDatasets():
                     band = gdal.Open(subds[0])
                     bpix = band.ReadAsArray()
                     barr.append(band)
-                    bpixarr.append(bpix)
-                    btype.append(bpix.dtype.name)
-                #
-                assert (len(btype) - 3) == len(barr) # 3 dim
-                bspacker = bs.compile("<" + "".join([nda2ba[n] if n in nda2ba else n for n in btype])) # Scidb binary is little endian
+                    bpixarr.append(bpix.astype(np.int64)) # 
                 # chunk the image
-                for xc in range(xsize, band.RasterXSize, xsize):
-                    for yc in range(ysize, band.RasterYSize, ysize):
-                        col_id = (np.repeat(range(0, xsize), ysize)) + coltrans
-                        row_id = np.array((range(0, ysize) * xsize)) + rowtrans
+                #for xc in range(xsize, band.RasterXSize, xsize):
+                for xc in range(xsize, 80, xsize):
+                    #for yc in range(ysize, band.RasterYSize, ysize):
+                    for yc in range(ysize, 80, ysize):
+                        col_id = (np.repeat(range(0, xsize), ysize).astype(np.int64)) + coltrans
+                        row_id = np.array((range(0, ysize) * xsize), dtype=np.int64) + rowtrans
+                        time_id = np.repeat(t, len(col_id)).astype(np.int64)
                         attdat = [] # list of flat bands' pixels of a chunk
                         for bpix in bpixarr:
                             chunkarr = bpix[(xc - xsize):xsize, (yc - ysize):ysize]
                             attdat.append(chunkarr.flatten())
-                        #
-                        for i in range(0,len(col_id)):
-                            bspacker.pack(col_id[i], row_id[i], time_id)
-                            #TODO:
-                            # - think!!!!!
-
-
-
-
-
-# numpy - https://docs.scipy.org/doc/numpy/reference/arrays.scalars.html#arrays-scalars-built-in
-# byte 	compatible: C char 	'b'
-# short 	compatible: C short 	'h'
-# intc 	compatible: C int 	'i'
-# int_ 	compatible: Python int 	'l'
-# longlong 	compatible: C long long 	'q'
-# intp 	large enough to fit a pointer 	'p'
-# int8 	8 bits 	 
-# int16 	16 bits 	 
-# int32 	32 bits 	 
-# int64 	64 bits 	 
-# ubyte 	compatible: C unsigned char 	'B'
-# ushort 	compatible: C unsigned short 	'H'
-# uintc 	compatible: C unsigned int 	'I'
-# uint 	compatible: Python int 	'L'
-# ulonglong 	compatible: C long long 	'Q'
-# uintp 	large enough to fit a pointer 	'P'
-# uint8 	8 bits 	 
-# uint16 	16 bits 	 
-# uint32 	32 bits 	 
-# uint64 	64 bits
-# half 	  	'e'
-# single 	compatible: C float 	'f'
-# double 	compatible: C double 	 
-# float_ 	compatible: Python float 	'd'
-# longfloat 	compatible: C long float 	'g'
-# float16 	16 bits 	 
-# float32 	32 bits 	 
-# float64 	64 bits 	 
-# float96 	96 bits, platform? 	 
-# float128 	128 bits, platform?
-
-# bitstruct - https://bitstruct.readthedocs.io/en/latest/
-# u – unsigned integer
-# s – signed integer
-# f – floating point number of 16, 32, or 64 bits
-# b – boolean
-# t – text (ascii or utf-8)
-# r – raw, bytes
-# p – padding, ignore
-
-
-
-
-
-
-
-#fname = "/home/scidb/alber/test_" + str(xc - xsize) + "_" + str(yc - ysize) + ".sdbbin"
-#fsdbbin = open(fname, 'w')
-#fsdbbin.close() 
-                            
-#sys.byteorder
-                #stack the bands into one array
+                        # stack the bands into one array
+                        pixflat = np.vstack([col_id, row_id, time_id, attdat]).T
+                        fname = "/home/scidb/alber/test_" + str(xc - xsize) + "_" + str(yc - ysize) + ".sdbbin"
+                        fsdbbin = open(fname, 'w')
+                        pixflat.tofile(fsdbbin)
+                        fsdbbin.close() 
                 #--------------
             except:
                 raise RuntimeError("Could not get the pixels of a band")
             finally:
                 band = None
                 ds = None
-
+                if not fsdbbin.closed:
+                    fsdbbin.close()
         elif(img.sname[0:2] == "LC"):
             # open X images, read, merge, write
+            print("not implemented")
 
 
 
