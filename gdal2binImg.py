@@ -55,7 +55,7 @@ def main(argv):
     rowtrans = int(args.rowtrans)
     xsize = int(args.xsize)
     ysize = int(args.ysize)
-    outputDir = int(args.outputDir)
+    outputDir = args.outputDir
     d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     d2att = args.d2att in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
     tile2id = args.tile2id in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
