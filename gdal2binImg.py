@@ -25,7 +25,7 @@ import gdal2scidb as g2b
 #-------------------------------------------------------------------------------
 # load flat
 # iquery -aq "create array MOD13Q1_flat <col_id:int64, row_id:int64, time_id:int64, ndvi:int64, evi:int64, quality:int64, red:int64, nir:int64, blue:int64, mir:int64, view_zenith:int64, sun_zenith:int64, relative_azimuth:int64, day_of_year:int64, reliability:int64> [i=0:*:0:1000000]"
-# iquery -aq "input(MOD13Q1_flat, '/home/scidb/alber/test/MOD__13Q1_12_10_2680_4520.sdbbin', -2, '(int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64)', 1, shadowArray)"
+# iquery -aq "input(<col_id:int64, row_id:int64, time_id:int64, ndvi:int64, evi:int64, quality:int64, red:int64, nir:int64, blue:int64, mir:int64, view_zenith:int64, sun_zenith:int64, relative_azimuth:int64, day_of_year:int64, reliability:int64> [i=0:*], '/home/scidb/alber/test/MOD__13Q1_12_10_2680_4520.sdbbin', -2, '(int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64)', 10, shadowArray)"
 #
 #
 # iquery -aq "create array MOD13Q1 <ndvi:int16, evi:int16, quality:uint16, red:int16, nir:int16, blue:int16, mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int8> [col_id=0:172799:0:40; row_id=0:86399:0:40; time_id=0:511:0:512]"
@@ -92,6 +92,7 @@ def main(argv):
     #---------------------------------------------------------------------------
     # Write all the chunks of an image at once. Then add 
     tid = -1
+    ofiles = [] # list of resuntilg files
     for img in iserlist[0]:
         logging.debug("Processing image:" + img.id)
         if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
@@ -145,7 +146,8 @@ def main(argv):
                             attdat.append(np.repeat(imgacq, len(col_id)).astype(np.int64))
                         logging.debug("Stacking the bands' chunk into one np array")
                         pixflat = np.vstack([crt_id, attdat]).T
-                        fname = os.path.join(outputDir, iserlist[0].id + "_" + str(xc) + "_" + str(yc) + ".sdbbin")
+                        fname = os.path.join(outputDir, iserlist[0].id + "_" + str(xc) + "_" + str(yc) + ".sdbbin.tmp")
+                        ofiles.append(fname)
                         fsdbbin = open(fname, 'a')
                         pixflat.tofile(fsdbbin)
                         fsdbbin.close() 
@@ -161,6 +163,10 @@ def main(argv):
         elif(img.sname[0:2] == "LC"):
             # open X images, read, merge, write
             print("not implemented")
+    # remove tmp extension from filename
+    for of in ofiles:
+        basefn = os.path.splitext(of)[0]
+        os.rename(thisFile, basefn)
 
 
 
