@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#gdal2bin_chunk.py
+#gdal2binChunk.py
 import sys
 import argparse
 import logging
@@ -52,8 +52,8 @@ def main(argv):
     numeric_loglevel = getattr(logging, log.upper(), None)
     if not isinstance(numeric_loglevel, int):
         raise ValueError('Invalid log level: %s' % log)
-    logging.basicConfig(filename = 'gdal2binSingleChunk.log', level = numeric_loglevel, format = '%(asctime)s %(levelname)s: %(message)s')
-    logging.info("gdal2binSingleChunk: " + str(args))
+    logging.basicConfig(filename = 'gdal2binChunk.py.log', level = numeric_loglevel, format = '%(asctime)s %(levelname)s: %(message)s')
+    logging.info("gdal2binChunk.py: " + str(args))
     ####################################################
     # SCRIPT
     #---------------------------------------------------
