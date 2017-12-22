@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#gdal2bin_chunkImg.py
+#gdal2binImg.py
 import os
 import sys
 import argparse
@@ -21,17 +21,12 @@ import gdal2scidb as g2b
 # sudo easy_install --upgrade scipy
 #-------------------------------------------------------------------------------
 # Usage:
-# python gdal2binImg.py --log DEBUG 57600 48000 40 40 /home/scidb/alber/test /home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf
+# python gdal2binImg.py --log ERROR 57600 48000 40 40 /home/scidb/alber/test /home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf
 #-------------------------------------------------------------------------------
 # load flat
-# iquery -aq "create array MOD13Q1_flat <col_id:int64, row_id:int64, time_id:int64, ndvi:int64, evi:int64, quality:int64, red:int64, nir:int64, blue:int64, mir:int64, view_zenith:int64, sun_zenith:int64, relative_azimuth:int64, day_of_year:int64, reliability:int64> [i=0:*:0:1000000]"
-# iquery -aq "input(<col_id:int64, row_id:int64, time_id:int64, ndvi:int64, evi:int64, quality:int64, red:int64, nir:int64, blue:int64, mir:int64, view_zenith:int64, sun_zenith:int64, relative_azimuth:int64, day_of_year:int64, reliability:int64> [i=0:*], '/home/scidb/alber/test/MOD__13Q1_12_10_2680_4520.sdbbin', -2, '(int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64)', 10, shadowArray)"
-#
-#
-# iquery -aq "create array MOD13Q1 <ndvi:int16, evi:int16, quality:uint16, red:int16, nir:int16, blue:int16, mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int8> [col_id=0:172799:0:40; row_id=0:86399:0:40; time_id=0:511:0:512]"
-# iquery -aq "input()"
-
-
+# iquery -aq "CREATE ARRAY testG2B  <col_id:int64, row_id:int64, time_id:int64, ndvi:int64, evi:int64, quality:int64, red:int64, nir:int64, blue:int64, mir:int64, view_zenith:int64, sun_zenith:int64, relative_azimuth:int64,day_of_year:int64, reliability:int64>[i=0:*]"
+# iquery -naq "load(testG2B, '/home/scidb/alber/test/MOD__13Q1_12_10_960_600.sdbbin', -2, '(int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64)', 0, shadowArray)"
+# iquery -aq "op_count(testG2B)"
 #-------------------------------------------------------------------------------
 #inputFiles = "/home/scidb/MOD13Q1/2010/MOD13Q1.A2010081.h12v10.006.2015206075415.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010289.h12v10.006.2015211225405.hdf /home/scidb/MOD13Q1/2010/MOD13Q1.A2010225.h12v10.006.2015210084208.hdf".split(" ")
 #coltrans = 0
