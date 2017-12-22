@@ -166,7 +166,7 @@ def main(argv):
     # remove tmp extension from filename
     for of in ofiles:
         basefn = os.path.splitext(of)[0]
-        os.rename(thisFile, basefn)
+        os.rename(of, basefn)
 
 
 
