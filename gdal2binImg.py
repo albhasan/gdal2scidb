@@ -92,7 +92,7 @@ def main(argv):
     #---------------------------------------------------------------------------
     # Write all the chunks of an image at once. Then add 
     tid = -1
-    ofiles = [] # list of resuntilg files
+    ofiles = set() # list of resuntilg files
     for img in iserlist[0]:
         logging.debug("Processing image:" + img.id)
         if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
@@ -108,19 +108,20 @@ def main(argv):
                 gdal.UseExceptions()
                 # get all the pixels from all bands
                 gimg = gdal.Open(img.filepaths[0])
-                barr = [] # list of opened subdatasets (bands)
                 bpixarr = [] # list of subdatasets' pixels
+                xfrom = 0
+                yfrom = 0
+                xto = 0
+                yto = 0
                 for subds in gimg.GetSubDatasets():
                     logging.debug("Processing subdataset:" + str(subds))
                     band = gdal.Open(subds[0])
+                    xto = band.RasterXSize
+                    yto = band.RasterYSize
                     bpix = band.ReadAsArray()
-                    barr.append(band)
                     bpixarr.append(bpix.astype(np.int64)) # 
+                    band = None
                 # chunk the image
-                xfrom = 0
-                yfrom = 0
-                xto = band.RasterXSize
-                yto = band.RasterYSize
                 for xc in range(xfrom, xto, xsize):
                     for yc in range(yfrom, yto, ysize):
                         logging.debug("Processing chunk: "+  str(xc) + " " + str(yc))
@@ -147,7 +148,7 @@ def main(argv):
                         logging.debug("Stacking the bands' chunk into one np array")
                         pixflat = np.vstack([crt_id, attdat]).T
                         fname = os.path.join(outputDir, iserlist[0].id + "_" + str(xc) + "_" + str(yc) + ".sdbbin.tmp")
-                        ofiles.append(fname)
+                        ofiles.add(fname)
                         fsdbbin = open(fname, 'a')
                         pixflat.tofile(fsdbbin)
                         fsdbbin.close() 
@@ -156,14 +157,13 @@ def main(argv):
                 logging.exception("message")
                 raise RuntimeError("Could not get the pixels of a band")
             finally:
-                band = None
-                ds = None
+                gimg = None
                 if not fsdbbin.closed:
                     fsdbbin.close()
         elif(img.sname[0:2] == "LC"):
             # open X images, read, merge, write
             print("not implemented")
-    # remove tmp extension from filename
+    logging.debug("Removing tmp extension from filenames")
     for of in ofiles:
         basefn = os.path.splitext(of)[0]
         os.rename(of, basefn)
