@@ -150,7 +150,7 @@ def main(argv):
                 #--------------
             except Exception as e:
                 logging.exception("message")
-                raise RuntimeError("Could not get the pixels of a band")
+                raise RuntimeError("Could not get the pixels out of a band")
             finally:
                 gimg = None
                 if not fsdbbin.closed:
