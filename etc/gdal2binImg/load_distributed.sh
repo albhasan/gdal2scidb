@@ -9,7 +9,7 @@
 ################################################################################
 # build a lists of binary chunk files
 export H=12                                 # MODIS TILE H
-export V=09                                 # MODIS TILE V
+export V=10                                 # MODIS TILE V
 export FIRST=40                             # Maximum number of files to list
 export SDB_INSTANCES=35                     # SciDB instances in the whole cluster
 
