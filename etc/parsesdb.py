@@ -30,8 +30,8 @@ def main(argv):
         print("message")
         raise RuntimeError("Error!")
     finally:
-        if not fsdbbin.closed:
-            fsdbbin.close()
+        if not f.closed:
+            f.close()
 
 if __name__ == "__main__":
    main(sys.argv[1:])
