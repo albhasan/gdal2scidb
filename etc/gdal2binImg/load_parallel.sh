@@ -49,7 +49,7 @@ if [ "$#" -eq $SDB_INSTANCES ]; then
     done
     # echo "Running SciDB query..."
     # MAX_ERRORS: A 35-instance SciDB loading 40x40 chunks is loading 36K time series in each query. MAX_ERRORS = 1000 is a ~3% rate of error
-    iquery -naq "insert(redimension(cast(input($SDBBIN_SCHEMA, 'p', -2, $SDBBIN_FORMAT, 0, shadowArray), $SDB_1D_SCHEMA), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
+    iquery -naq "insert(redimension(cast(input($SDBBIN_SCHEMA, 'p', -1, $SDBBIN_FORMAT, 0, shadowArray), $SDB_1D_SCHEMA), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
     # echo "Deleting files..."
     countdel=0
     for f in "$@"; do
