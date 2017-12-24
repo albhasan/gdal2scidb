@@ -6,7 +6,7 @@
 H=10                                 # MODIS TILE H
 V=08                                 # MODIS TILE V
 CHUNKSIZE=40                         # Chunk's spatial side (in pixels). i.e. 40 means 40x40 pixels
-FIRST=1 # 512                            # Chunk's time side. Limit to this number of images
+FIRST=512                            # Chunk's time side. Limit to this number of images
 IMG_SZ=4800                          # Side of a whole image (in pixels)
 OUT_DIR=/home/scidb/sdb_chunks/mod13q1_h10v08    # Where to store the chunk binaries
 SCRIPT_FOLDER=/home/scidb/ghProjects/gdal2scidb  # Path to script folder
