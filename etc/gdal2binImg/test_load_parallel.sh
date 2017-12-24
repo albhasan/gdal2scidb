@@ -25,6 +25,7 @@ iquery -aq "CREATE ARRAY testG2B  <col_id:int64, row_id:int64, time_id:int64, nd
 iquery -naq "load(testG2B, '/home/scidb/sdb_chunks/MOD__13Q1_12_10_960_600.sdbbin', -2, '(int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64)', 0, shadowArray)"
 iquery -aq "op_count(testG2B)"
 iquery -aq "scan(testG2B)" | head
+iquery -aq "scan(testG2B)" | tail
 echo "--------------------------------------------------------------------------------"
 echo "Loading 1 chunk into a 3D SciDB array..."
 echo "--------------------------------------------------------------------------------"
@@ -46,7 +47,8 @@ iquery -aq "remove(testG2B)" 2> /dev/null
 iquery -aq "remove(MOD13Q1)" 2> /dev/null
 iquery -aq "remove(shadowArray)" 2> /dev/null
 iquery -aq "create array MOD13Q1 <ndvi:int16, evi:int16, quality:uint16, red:int16, nir:int16, blue:int16, mir:int16, view_zenith:int16, sun_zenith:int16, relative_azimuth:int16, day_of_year:int16, reliability:int8> [col_id=0:172799:0:40; row_id=0:86399:0:40; time_id=0:511:0:512]" 2> /dev/null
-./load_parallel.sh $(find $OUT_DIR -type f | sort | head -n 35)
+iquery -aq "op_count(MOD13Q1)"
+./load_parallel.sh $(find $OUT_DIR -type f | grep "MOD__13Q1_"$H"_"$V".*\.sdbbin$" | sort | head -n 35)
 iquery -aq "op_count(MOD13Q1)"
 
 exit 0
