@@ -57,6 +57,7 @@ if [ "$#" -eq $SDB_INSTANCES ]; then
         mip=`echo $(( $countdel / $SDB_INSTANCES_MACHINE )) | cut -f1 -d "."`
         rm $SDB_INSTANCES_PATH/$mip/$min/p
         countdel=`expr $countdel + 1`
+        echo "$f" >> load_parallel.log
     done
 else
     #-------------------------------------------------------------------------------
@@ -70,6 +71,7 @@ else
         iquery -naq "insert(redimension(cast(input($SDBBIN_SCHEMA, '"$SDB_INSTANCES_PATH/0/0/p"', -2, $SDBBIN_FORMAT, 0, shadowArray), $SDB_1D_SCHEMA), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
         # echo "Deleting file..."
         rm $SDB_INSTANCES_PATH/0/0/p
+        echo "$f" >> load_parallel.log
     done
 fi
 
