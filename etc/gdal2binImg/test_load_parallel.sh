@@ -50,5 +50,7 @@ iquery -aq "create array MOD13Q1 <ndvi:int16, evi:int16, quality:uint16, red:int
 iquery -aq "op_count(MOD13Q1)"
 ./load_parallel.sh $(find $OUT_DIR -type f | grep "MOD__13Q1_"$H"_"$V".*\.sdbbin$" | sort | head -n 35)
 iquery -aq "op_count(MOD13Q1)"
+iquery -aq "scan(MOD13Q1)" | head
+iquery -aq "scan(MOD13Q1)" | tail
 
 exit 0
