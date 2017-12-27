@@ -102,12 +102,12 @@ def main(argv):
                 import numpy as np
                 gdal.UseExceptions()
                 # get all the pixels from all bands
-                gimg = gdal.Open(img.filepaths[0])
                 bpixarr = [] # list of subdatasets' pixels
                 xfrom = 0
                 yfrom = 0
                 xto = 0
                 yto = 0
+                gimg = gdal.Open(img.filepaths[0])
                 for subds in gimg.GetSubDatasets():
                     logging.debug("Processing subdataset:" + str(subds))
                     band = gdal.Open(subds[0])
@@ -116,6 +116,7 @@ def main(argv):
                     bpix = band.ReadAsArray()
                     bpixarr.append(bpix.astype(np.int64)) # 
                     band = None
+                gimg = None
                 # chunk the image
                 for xc in range(xfrom, xto, xsize):
                     for yc in range(yfrom, yto, ysize):
@@ -148,6 +149,11 @@ def main(argv):
                         pixflat.tofile(fsdbbin)
                         fsdbbin.close() 
                 #--------------
+            except RuntimeError as e:
+                logging.exception("message")
+                em = str(e)
+                if "not recognized as a supported file format" not in em:
+                    raise RuntimeError("Could not get the pixels out of a band")
             except Exception as e:
                 logging.exception("message")
                 raise RuntimeError("Could not get the pixels out of a band")
