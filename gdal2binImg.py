@@ -159,8 +159,9 @@ def main(argv):
                 raise RuntimeError("Could not get the pixels out of a band")
             finally:
                 gimg = None
-                if not fsdbbin.closed:
-                    fsdbbin.close()
+                if 'fsdbbin' in locals():
+                    if not fsdbbin.closed:
+                        fsdbbin.close()
         elif(img.sname[0:2] == "LC"):
             # open X images, read, merge, write
             print("not implemented")
