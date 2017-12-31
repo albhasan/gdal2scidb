@@ -141,11 +141,11 @@ class Image:
             origin = 20000101
             period = 16
             yearly = True
-        elif self.sname == 'LD5Original-DigitalNumber' or self.sname = "LC05":
+        elif self.sname == 'LD5Original-DigitalNumber' or self.sname == "LC05":
             origin = 19840411
             period = 16
             yearly = False
-        elif self.sname == 'LD8Original-DigitalNumber' or self.sname = "LC08":
+        elif self.sname == 'LD8Original-DigitalNumber' or self.sname == "LC08":
             origin = 20130418
             period = 16
             yearly = False
