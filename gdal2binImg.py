@@ -13,6 +13,7 @@ if cmd_subfolder not in sys.path:
     sys.path.insert(0, cmd_subfolder)
 
 import gdal2scidb as g2b
+import g2bwriter as g2bw
 
 ################################################################################
 # NOTES:
@@ -85,90 +86,10 @@ def main(argv):
         logging.error("The given files belong to more than one ImageSeries: " + str(inputFiles))
         raise ValueError("The given files belong to more than one ImageSeries")
     #---------------------------------------------------------------------------
-    # Write all the chunks of an image at once. Then add 
-    tid = -1
-    ofiles = set() # list of resuntilg files
-    for img in iserlist[0]:
-        logging.debug("Processing image:" + img.id)
-        if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
-            try:
-                tid = tid + 1
-                if d2tid:
-                    tid = img.tid()
-                if d2att:
-                    imgacq = img.acquisition
-                #--------------
-                from osgeo import gdal
-                import numpy as np
-                gdal.UseExceptions()
-                # get all the pixels from all bands
-                bpixarr = [] # list of subdatasets' pixels
-                xfrom = 0
-                yfrom = 0
-                xto = 0
-                yto = 0
-                gimg = gdal.Open(img.filepaths[0])
-                for subds in gimg.GetSubDatasets():
-                    logging.debug("Processing subdataset:" + str(subds))
-                    band = gdal.Open(subds[0])
-                    xto = band.RasterXSize
-                    yto = band.RasterYSize
-                    bpix = band.ReadAsArray()
-                    bpixarr.append(bpix.astype(np.int64)) # 
-                    band = None
-                gimg = None
-                # chunk the image
-                for xc in range(xfrom, xto, xsize):
-                    for yc in range(yfrom, yto, ysize):
-                        logging.debug("Processing chunk: "+  str(xc) + " " + str(yc))
-                        col_id = np.array((range(xc, min(xc + xsize, xto)) * min(ysize, yto - yc)), dtype=np.int64) + coltrans
-                        row_id = (np.repeat(range(yc, min(yc + ysize, yto)), min(xsize, xto - xc)).astype(np.int64)) + rowtrans
-                        time_id = np.repeat(tid, len(col_id)).astype(np.int64)
-                        crt_id = []
-                        if tile2id:
-                            crt_id.append(np.repeat(img.path, len(col_id)).astype(np.int64))
-                            crt_id.append(np.repeat(img.row, len(col_id)).astype(np.int64))
-                        crt_id.append(col_id)
-                        crt_id.append(row_id)
-                        crt_id.append(time_id)
-                        assert len(col_id) == len(row_id)
-                        attdat = [] # list of flat bands' pixels of a chunk
-                        for bpix in bpixarr:
-                            chunkarr = bpix[xc:(xc + xsize), yc:(yc + ysize)]
-                            chunkarrflat = chunkarr.flatten() 
-                            assert len(col_id) == len(chunkarrflat)
-                            attdat.append(chunkarrflat)
-                        #
-                        if d2att:
-                            attdat.append(np.repeat(imgacq, len(col_id)).astype(np.int64))
-                        logging.debug("Stacking the bands' chunk into one np array")
-                        pixflat = np.vstack([crt_id, attdat]).T
-                        fname = os.path.join(outputDir, iserlist[0].id + "_" + str(xc) + "_" + str(yc) + ".sdbbin.tmp")
-                        ofiles.add(fname)
-                        fsdbbin = open(fname, 'a')
-                        pixflat.tofile(fsdbbin)
-                        fsdbbin.close() 
-                #--------------
-            except RuntimeError as e:
-                logging.exception("message")
-                em = str(e)
-                if "not recognized as a supported file format" not in em:
-                    raise RuntimeError("Could not get the pixels out of a band")
-            except Exception as e:
-                logging.exception("message")
-                raise RuntimeError("Could not get the pixels out of a band")
-            finally:
-                gimg = None
-                if 'fsdbbin' in locals():
-                    if not fsdbbin.closed:
-                        fsdbbin.close()
-        elif(img.sname[0:2] == "LC"):
-            # open X images, read, merge, write
-            print("not implemented")
-    logging.debug("Removing tmp extension from filenames")
-    for of in ofiles:
-        basefn = os.path.splitext(of)[0]
-        os.rename(of, basefn)
+    # Write all the chunks of an image at once. Then add
+    logging.info("Calling the writer...")
+    sdbw = g2bw.SdbWriter()
+    sdbw.serialize(iserlist[0], d2tid, d2att, tile2id, xsize, ysize, coltrans, rowtrans, outputDir, logging)
 
 
 
