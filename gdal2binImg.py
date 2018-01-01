@@ -87,7 +87,7 @@ def main(argv):
         raise ValueError("The given files belong to more than one ImageSeries")
     #---------------------------------------------------------------------------
     # Write all the chunks of an image at once. Then add
-    logging.info("Calling the writer...")
+    logging.debug("Calling the writer...")
     sdbw = g2bw.SdbWriter()
     sdbw.serialize(iserlist[0], d2tid, d2att, tile2id, xsize, ysize, coltrans, rowtrans, outputDir, logging)
 
