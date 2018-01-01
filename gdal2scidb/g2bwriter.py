@@ -8,7 +8,7 @@ gdal.UseExceptions()
 
 class SdbWriter:
     """Write images to SciDB's binary"""
-    def __init__(self, anImageSeries):
+    def __init__(self):
         self.data = []
     def __repr__(self):
         return "SdbWriter:\n" + "ImageSeries: " + self.imgser.id
@@ -43,7 +43,7 @@ class SdbWriter:
                     gimg = None
                 elif(img.sname[0:2] == "LC"):
                     for imgf in img.col:
-                        logging.debug("SdbWriter: Processing subdataset: " + imgf.filepath
+                        logging.debug("SdbWriter: Processing subdataset: " + imgf.filepath)
                         band = gdal.Open(imgf.filepath)
                         xto = band.RasterXSize
                         yto = band.RasterYSize
