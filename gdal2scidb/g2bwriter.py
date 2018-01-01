@@ -11,7 +11,7 @@ class SdbWriter:
     def __init__(self):
         self.data = []
     def __repr__(self):
-        return "SdbWriter:\n" + "ImageSeries: " + self.imgser.id
+        return "SdbWriter\n"
     def serialize(self, imgser, d2tid, d2att, tile2id, xsize, ysize, coltrans, rowtrans, outputDir, logging):
         assert isinstance(imgser, g2s.ImageSeries), "SdbWriter: Parameter is not an ImageSeries: %r" % str(imgser)
         tid = -1                # time_id
@@ -89,7 +89,7 @@ class SdbWriter:
                         attdat.append(np.repeat(imgacq, len(col_id)).astype(np.int64))
                     logging.debug("SdbWriter: Stacking the bands' chunk into one np array")
                     pixflat = np.vstack([crt_id, attdat]).T
-                    fname = os.path.join(outputDir, self.imgser.id + "_" + str(xc) + "_" + str(yc) + ".sdbbin.tmp")
+                    fname = os.path.join(outputDir, imgser.id + "_" + str(xc) + "_" + str(yc) + ".sdbbin.tmp")
                     ofiles.add(fname)
                     try: 
                         fsdbbin = open(fname, 'a')
