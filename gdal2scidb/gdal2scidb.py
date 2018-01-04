@@ -213,7 +213,14 @@ class ImageCol:
 
 class ImageSeries:
     """A set of images of the same satellite, sensor, path and row but different acquisition time. For creation, use ImageFileCol.getImageSeries"""
-    def __init__(self, filepaths):
+    def __init__(self, filepaths, ignoreLevel = False):
+        """Create an ImageSeries.
+
+        Keyword arguments:
+        filepaths   -- List of string. Path to files.
+        ignoreLevel -- Include image's level when testing the image series (default False)
+
+        """
         assert type(filepaths) is list, "ImageSeries: filepath is not a list: %r" % filepaths
         self.id = ''
         self.col = ImageCol(filepaths)
@@ -222,6 +229,8 @@ class ImageSeries:
             imgsId = set()
             for img in self.col.col:
                 self.id = img.satellite + "_" + img.level + "_" + img.sensor + "_" + img.path + "_" + img.row
+                if ignoreLevel:
+                    self.id = img.satellite + "_" + img.sensor + "_" + img.path + "_" + img.row
                 imgsId.add(self.id)
             assert len(imgsId) == 1, "ImageSeries: The given Images do not belong to one ImageSeries"
         self.it = iter(self.col)
