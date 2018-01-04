@@ -173,7 +173,8 @@ class ImageSeries_TestCase(gdal2sdb_testCase):
         img_lc8_1 = g2s.Image(['/home/scidb/LANDSAT8/SurfaceReflectanceC1/2015/2015-06-22/LC08_L1TP_224066_20150622_20170407_01_T1_sr_band1.tif'])
         img_lc8_2 = g2s.Image(['/home/scidb/LANDSAT8/SurfaceReflectanceC1/2015/2015-03-16/LC08_L1GT_224066_20150316_20170412_01_T2_sr_band1.tif'])
         infiles = '/home/scidb/LANDSAT8/SurfaceReflectanceC1/2015/2015-06-22/LC08_L1TP_224066_20150622_20170407_01_T1_sr_band1.tif /home/scidb/LANDSAT8/SurfaceReflectanceC1/2015/2015-03-16/LC08_L1GT_224066_20150316_20170412_01_T2_sr_band1.tif'
-        g2s.ImageSeries(infiles.split(" "))
+        self.assertRaises(AssertionError, g2s.ImageSeries, infiles.split(" "))
+        g2s.ImageSeries(infiles.split(" "), True)
     def test_iterate(self):
         """ is the iterator re-setting? """
         imgser = g2s.ImageSeries(self.inputFiles3.split(" "))
