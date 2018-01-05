@@ -37,6 +37,7 @@ import g2bwriter as g2bw
 #d2tid = True
 #d2att = False
 #tile2id = False
+#ignoreLevel = False
 #log = "DEBUG"
 ################################################################################
 
@@ -48,9 +49,12 @@ def main(argv):
     parser.add_argument("ysize",        help = "Chunk size in the y direction.")
     parser.add_argument("outputDir",    help = "Output directory.")
     parser.add_argument("inputFiles",   help = "List of images separated by spaces.", nargs = "+")
+    parser.add_argument("--tile2id",    help = "Include the image's tile (e.g path & row) as attributes (first two attributes) . Default = False", default = 'False')
     parser.add_argument("--d2tid",      help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
     parser.add_argument("--d2att",      help = "Add the image date as an int yyyymmdd attribute (last attribute). Default = False", default = 'False')
-    parser.add_argument("--tile2id",    help = "Include the image's tile (e.g path & row) as attribute(first two attributes) . Default = False", default = 'False')
+    parser.add_argument("--l2att",      help = "Add the image level as attribute. Default = False", default = 'False')
+    parser.add_argument("--c2att",      help = "Add the image category as attribute. Default = False", default = 'False')
+    parser.add_argument("--ignoreLevel",help = "Ignore the image's processing level when building ImageSeries. Default = False", default = 'False')
     parser.add_argument("--log",        help = "Log level. Default = WARNING", default = 'WARNING')
     # Get parameters
     args = parser.parse_args()
@@ -60,9 +64,13 @@ def main(argv):
     xsize = int(args.xsize)
     ysize = int(args.ysize)
     outputDir = args.outputDir
-    d2tid = args.d2tid in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
-    d2att = args.d2att in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
-    tile2id = args.tile2id in ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
+    trueList = ['True', 'true', 'T', 't', 'YES', 'yes', 'Y', 'y']
+    tile2id = args.tile2id in trueList
+    d2tid = args.d2tid in trueList
+    d2att = args.d2att in trueList
+    l2att = args.l2att in trueList
+    c2att = args.c2att in trueList
+    ignoreLevel = args.ignoreLevel in trueList
     log = args.log
     ####################################################
     # CONFIG
@@ -81,15 +89,14 @@ def main(argv):
         raise ValueError('SciDB requires little endian!')
     # sort files into list of image series
     icol = g2b.ImageCol(inputFiles)
-    iserlist = icol.getImagesSeries()
+    iserlist = icol.getImagesSeries(ignoreLevel)
     if len(iserlist) > 1:
         logging.error("The given files belong to more than one ImageSeries: " + str(inputFiles))
         raise ValueError("The given files belong to more than one ImageSeries")
-    #---------------------------------------------------------------------------
-    # Write all the chunks of an image at once. Then add
+    # Write all the chunks of an image at once
     logging.debug("Calling the writer...")
     sdbw = g2bw.SdbWriter()
-    sdbw.serialize(iserlist[0], d2tid, d2att, tile2id, xsize, ysize, coltrans, rowtrans, outputDir, logging)
+    sdbw.serialize(iserlist[0], d2tid, d2att, tile2id, xsize, ysize, coltrans, rowtrans, outputDir, l2att, c2att, logging)
 
 
 

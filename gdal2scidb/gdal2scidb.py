@@ -2,13 +2,20 @@
 #gdal2scidb.py
 import os
 import g2butil as g2bu
+from collections import OrderedDict
 
+
+LANDSAT_COLLECTION_CATEGORY = OrderedDict([('T1','Tier 1'), ('T2','Tier 2'), ('RT','Real Time')])
+LANDSAT_PROCESSING_LEVEL = OrderedDict([('L1TP', 'Precision and Terrain Correction'), ('L1GT', 'Systematic Terrain Correction'), ('L1GS', 'SystematicCorrection')])
+LANDSAT_SATELLITE = {'4':'Landsat4','5':'Landsat5','7':'Landsat7', '8':'Landsat8'}
+LANDSAT_SENSOR = {'C':'OLI/TIRS-Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
+MODIS_SENSOR = {'MOD':'Terra', 'MYD':'Aqua'}
+    
 
 
 #TODO:
 # - Image: get pixels
 # - import code from getPixelImages
-# - import code from getFileNameMetadata
 # - import code from ymd2tid
 
 
@@ -17,8 +24,8 @@ class ImageFile:
     """A representation of a file. A file have at least one band"""
     def __init__(self, filepath):
         assert type(filepath) is str, "ImageFile: filepath is not a string: %r" % filepath
-        md = g2bu.getFileNameMetadata(filepath)
-        self.filepath    = md['filepath']
+        self.filepath    = filepath
+        md = getFileNameMetadata()
         self.image       = md['image']
         self.type        = md['type']
         self.sensor      = md['sensor']
@@ -55,6 +62,90 @@ class ImageFile:
         self.nrow = gmd['nrow']
         self.bandtype = gmd['bandtype']
         self.geotransform = gmd['geotransform']
+    def getFileNameMetadata(self):
+        """Return a dict made of metadata from a file's name using."""
+        filename = os.path.basename(self.filepath)
+        ftype = 'Unknown'
+        fsensor = ''
+        fsatellite = ''
+        fpath = ''
+        frow = ''
+        fstationId = ''
+        farchive = ''
+        fband = ''
+        fproclev = ''                                                               # processing correction level
+        facqdate = 0                                                                # acquisition date
+        fprodate = 0                                                                # processing date
+        fcolnum = ''                                                                # collection number
+        fcolcat = ''                                                                # collection category
+        fprod = ''                                                                  # product
+        sname = ''                                                                  # short name
+        #
+        if reLandsat.search(filename):
+            # example LC80090452014008LGN00_B1.TIF
+            sname       = filename[0:2] + "0"+  filename[2]
+            ftype       = "Landsat_untiered"
+            fsensor     = LANDSAT_SENSOR[filename[1]]
+            fsatellite  = LANDSAT_SATELLITE[str(int(filename[2]))]
+            fpath       = filename[3:6]
+            frow        = filename[6:9]
+            facqdate    = ydoy2ymd(int(filename[9:13]) * 1000 + int(filename[13:16]))
+            fstationId  = filename[16:19]
+            farchive    = filename[19:21]
+            if len(filename) > 24:
+                fprod, fband = processLBand(filename[22:].split('.')[0])
+        elif reLandsatCol1.search(filename):
+            # example             LC08_L1TP_140041_20130503_20161018_01_T1_B5.TIF
+            #                     LC08_L1TP_220071_20170207_20170216_01_T1
+            # TOA Reflectance     LC08_L1TP_018060_20140904_20160101_01_T1_toa_*.
+            # Surface reflectance LC08_L1TP_233013_2014265LGN00_sr_*.
+            #                     LXSS_LLLL_PPPRRR_YYYYMMDD_yyyymmdd_CX_TX_prod_band.ext
+            #                     LE07_L1TP_231064_20160109_20161016_01_T1_sr_band1.tif
+            sname       = filename[0:4]
+            ftype       = "Landsat_tiered"
+            fsensor     = LANDSAT_SENSOR[filename[1]]
+            fsatellite  = LANDSAT_SATELLITE[str(int(filename[2:4]))]
+            fproclev    = filename[5:9]
+            fpath       = filename[10:13]
+            frow        = filename[13:16]
+            facqdate    = int(filename[17:25])
+            fprodate    = int(filename[26:34])
+            fcolnum     = filename[35:37]
+            fcolcat     = filename[38:40]
+            if len(filename) > 44:
+                fprod, fband = processLBand(filename[41:].split('.')[0])
+        elif reModis.search(filename):
+            # example MOD13Q1.A2015353.h14v10.005.2016007192511.hdf
+            sname       = filename[0:7]
+            ftype       = "Modis"
+            fsensor     = filename[3:7]
+            fsatellite  = filename[0:3]
+            fpath       = filename[18:20]
+            frow        = filename[21:23]
+            facqdate    = ydoy2ymd(int(filename[9:16]))
+            fprodate    = ydoy2ymd(int(filename[28:35]))
+            fcolnum     = filename[24:27]
+        else:
+            warn("Unrecognized filename: " + filename)
+        return({
+        'filepath':     filepath,
+        'image':        fsatellite + fsensor + fpath + frow + str(facqdate),
+        'type':         ftype,
+        'sensor':       fsensor,
+        'satellite':    fsatellite,
+        'level':        fproclev,
+        'path':         fpath,
+        'row':          frow,
+        'acquisition':  facqdate,
+        'processing':   fprodate,
+        'collection':   fcolnum,
+        'category':     fcolcat,
+        'stationId':    fstationId,
+        'archive':      farchive,
+        'band':         fband,
+        'product':      fprod,
+        'sname':        sname
+        })
 
 
 
@@ -193,20 +284,27 @@ class ImageCol:
                     flist.append(imgf.filepath)
             self.col = self.col + [Image(flist)]
         self.col.sort()
-    def getImagesSeries(self):
-        """Return a python list of ImageSeries objects"""
+    def getImagesSeries(self, ignoreLevel = False):
+        """Return a python list of ImageSeries objects.
+
+        Keyword arguments:
+        ignoreLevel -- Include image's level when testing the image series (default False)
+
+        """
         uimgsSet = set()    # unique image series
         imgslist = []       # list of ImageSeries
+        # get unique ids of ImageSeries
         for img in self.col:
-            imgserId = ImageSeries(img.filepaths).id
+            imgserId = ImageSeries(img.filepaths, ignoreLevel).id
             uimgsSet.add(imgserId)
+        # build a list of filepaths of each ImageSeries
         for uid in uimgsSet:
             flist = []
             for img in self.col:
-                imgsid = ImageSeries(img.filepaths).id
+                imgsid = ImageSeries(img.filepaths, ignoreLevel).id
                 if uid == imgsid:
                     flist = flist + img.filepaths
-            imgslist.append(ImageSeries(flist))
+            imgslist.append(ImageSeries(flist, ignoreLevel))
         return imgslist
 
 
