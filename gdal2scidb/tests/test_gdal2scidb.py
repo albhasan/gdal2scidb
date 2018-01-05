@@ -169,9 +169,6 @@ class ImageCol_TestCase(gdal2sdb_testCase):
 class ImageSeries_TestCase(gdal2sdb_testCase):
     """ Test ImageSeries objects  """
     def test_landsat(self):
-        img_mod = g2s.Image(['/home/scidb/MOD13Q1/2012/MOD13Q1.A2012353.h14v14.006.2015253232547.hdf'])
-        img_lc8_1 = g2s.Image(['/home/scidb/LANDSAT8/SurfaceReflectanceC1/2015/2015-06-22/LC08_L1TP_224066_20150622_20170407_01_T1_sr_band1.tif'])
-        img_lc8_2 = g2s.Image(['/home/scidb/LANDSAT8/SurfaceReflectanceC1/2015/2015-03-16/LC08_L1GT_224066_20150316_20170412_01_T2_sr_band1.tif'])
         infiles = '/home/scidb/LANDSAT8/SurfaceReflectanceC1/2015/2015-06-22/LC08_L1TP_224066_20150622_20170407_01_T1_sr_band1.tif /home/scidb/LANDSAT8/SurfaceReflectanceC1/2015/2015-03-16/LC08_L1GT_224066_20150316_20170412_01_T2_sr_band1.tif'
         self.assertRaises(AssertionError, g2s.ImageSeries, infiles.split(" "))
         g2s.ImageSeries(infiles.split(" "), True)
