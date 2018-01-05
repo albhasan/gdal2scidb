@@ -179,7 +179,7 @@ def getFileNameMetadata(filepath):
     filename = os.path.basename(filepath)
     sensorLandsat = {'C':'OLI/TIRS-Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
     satelliteLandsat = {'4':'Landsat4','5':'Landsat5','7':'Landsat7', '8':'Landsat8'}
-    processingLevelLandsat = {'L1TP':'Precision-and-Terrain-Correction', 'L1GT':'Systematic-Terrain-Correction', 'L1GS':'Systematic-Correction'}
+    processingLevelLandsat = {'L1TP':'L1TP', 'L1GT':'L1GT', 'L1GS':'L1GS'} # processingLevelLandsat = {'L1TP':'Precision-and-Terrain-Correction', 'L1GT':'Systematic-Terrain-Correction', 'L1GS':'Systematic-Correction'}
     collectionCategoryLandsat = {'RT':'Real Time', 'T1':'Tier 1', 'T2':'Tier 2'}
     sensorModis = {'MOD':'Terra', 'MYD':'Aqua'}
     #
