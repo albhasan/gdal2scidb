@@ -5,10 +5,6 @@
 
 IPATH=226                                 # LANDSAT PATH
 IROW=064                                  # LANDSAT ROW
+FIRST=40
 
-
-FILES=$(find -L /home/scidb/LANDSAT8/SurfaceReflectanceC1 -type f | grep "LC08_L1(GT|TP)$IPATH$IROW" | sort | head -n $FIRST)
-
-
-
-
+FILES=$(find -L /home/scidb/LANDSAT8/SurfaceReflectanceC1 -type f | grep -E "LC08_L1(GT|TP)_$IPATH$IROW.*(tif$)" | sort | head -n $FIRST)
