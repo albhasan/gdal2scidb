@@ -30,9 +30,6 @@ class SdbWriter:
             gimg = ""
             lev = -1
             cat = -1
-            if "Landsat" in img.type:
-                lev = g2s.LANDSAT_PROCESSING_LEVEL.keys().index(img.level)
-                cat = g2s.LANDSAT_COLLECTION_CATEGORY.keys().index(img.category)
             # get all the pixels from all bands
             try:
                 if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
@@ -47,6 +44,8 @@ class SdbWriter:
                         band = None
                     gimg = None
                 elif(img.sname[0:2] == "LC"):
+                    lev = g2s.LANDSAT_PROCESSING_LEVEL.keys().index(img.level)
+                    cat = g2s.LANDSAT_COLLECTION_CATEGORY.keys().index(img.category)
                     for imgf in img.col:
                         logging.debug("SdbWriter: Processing subdataset: " + imgf.filepath)
                         band = gdal.Open(imgf.filepath)
