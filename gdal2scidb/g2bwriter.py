@@ -28,8 +28,11 @@ class SdbWriter:
             xto = 0                                                             # where a chunk finishes
             yto = 0
             gimg = ""
-            lev = g2s.LANDSAT_PROCESSING_LEVEL.keys().index(img.level)
-            cat = g2s.LANDSAT_COLLECTION_CATEGORY.keys().index(img.category)
+            lev = -1
+            cat = -1
+            if "Landsat" in img.type:
+                lev = g2s.LANDSAT_PROCESSING_LEVEL.keys().index(img.level)
+                cat = g2s.LANDSAT_COLLECTION_CATEGORY.keys().index(img.category)
             # get all the pixels from all bands
             try:
                 if(img.sname[0:3] == "MOD" or img.sname[0:3] == "MYD"):
@@ -40,7 +43,7 @@ class SdbWriter:
                         xto = band.RasterXSize
                         yto = band.RasterYSize
                         bpix = band.ReadAsArray()
-                        bpixarr.append(bpix.astype(np.int64)) # 
+                        bpixarr.append(bpix.astype(np.int64)) #
                         band = None
                     gimg = None
                 elif(img.sname[0:2] == "LC"):
@@ -50,7 +53,7 @@ class SdbWriter:
                         xto = band.RasterXSize
                         yto = band.RasterYSize
                         bpix = band.ReadAsArray()
-                        bpixarr.append(bpix.astype(np.int64)) # 
+                        bpixarr.append(bpix.astype(np.int64)) #
                         band = None
             except RuntimeError as e:
                 logging.exception("message")
@@ -83,7 +86,7 @@ class SdbWriter:
                     attdat = []                                                 # list of flat bands' pixels of a chunk
                     for bpix in bpixarr:
                         chunkarr = bpix[xc:(xc + xsize), yc:(yc + ysize)]
-                        chunkarrflat = chunkarr.flatten() 
+                        chunkarrflat = chunkarr.flatten()
                         assert len(col_id) == len(chunkarrflat)
                         attdat.append(chunkarrflat)
                     if d2att:
@@ -96,7 +99,7 @@ class SdbWriter:
                     pixflat = np.vstack([crt_id, attdat]).T
                     fname = os.path.join(outputDir, imgser.id + "_" + str(xc) + "_" + str(yc) + ".sdbbin.tmp")
                     ofiles.add(fname)
-                    try: 
+                    try:
                         fsdbbin = open(fname, 'a')
                         pixflat.tofile(fsdbbin)
                         fsdbbin.close()
@@ -112,5 +115,3 @@ class SdbWriter:
         for of in ofiles:
             basefn = os.path.splitext(of)[0]
             os.rename(of, basefn)
-
-
