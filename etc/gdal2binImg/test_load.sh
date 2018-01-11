@@ -14,11 +14,21 @@ MODIS_DIR=/home/scidb/MOD13Q1
 FIRST_CID=$((10#$H * $IMG_SZ))
 FIRST_RID=$((10#$V * $IMG_SZ))
 
+
+# TODO: This fails! 20180911
+# Query was executed successfully
+# UserException in file: src/query/ops/input/InputArray.cpp function: moveNext line: 373
+# Error id: scidb::SCIDB_SE_IMPORT_ERROR::SCIDB_LE_FILE_IMPORT_FAILED
+# Error description: Import error. Import from file '/home/scidb/sdb_chunks/tmp/MOD__13Q1_12_10_960_600.sdbbin' (instance 0) to array 'testG2B' failed at line 8214, column 5, off
+# set 985600, value='(unreadable)': Failed to read file: 0.
+# /home/scidb/MOD13Q1/2004/MOD13Q1.A2004097.h12v10.006.2015154124916.hdf
+# /home/scidb/MOD13Q1/2004/MOD13Q1.A2004353.h12v10.006.2015154142052.hdf
+# /home/scidb/MOD13Q1/2004/MOD13Q1.A2004017.h12v10.006.2015154121146.hdf
 echo "--------------------------------------------------------------------------------"
 echo "Load data using binary data exported from MODIS"
 echo "--------------------------------------------------------------------------------"
 echo "Cleaning..."
-rm /tmp/gdal2scidb_data 2> /dev/null
+rm $OUT_DIR/*.sdbbin
 iquery -aq "remove(testG2B)" 2> /dev/null
 iquery -aq "remove(shadowArray)" 2> /dev/null
 echo "Exporting images' pixels..."
@@ -27,11 +37,16 @@ iquery -aq "CREATE ARRAY testG2B  <col_id:int64, row_id:int64, time_id:int64, nd
 iquery -naq "load(testG2B, '$OUT_DIR/MOD__13Q1_12_10_960_600.sdbbin', -2, '(int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64)', 0, shadowArray)"
 iquery -aq "op_count(testG2B)"
 iquery -aq "scan(testG2B)" | head
+
+
+
+
+
 echo "--------------------------------------------------------------------------------"
 echo "Load data using binary data exported from MODIS (img date as an extra attribute)"
 echo "--------------------------------------------------------------------------------"
 echo "Cleaning..."
-rm /tmp/gdal2scidb_data 2> /dev/null
+rm $OUT_DIR/*.sdbbin
 iquery -aq "remove(testG2B)" 2> /dev/null
 iquery -aq "remove(shadowArray)" 2> /dev/null
 echo "Exporting images' pixels..."
@@ -44,7 +59,7 @@ echo "--------------------------------------------------------------------------
 echo "Load data using binary data exported from MODIS (img date, path, row as an extra attributes)"
 echo "--------------------------------------------------------------------------------"
 echo "Cleaning..."
-rm /tmp/gdal2scidb_data 2> /dev/null
+rm $OUT_DIR/*.sdbbin
 iquery -aq "remove(testG2B)" 2> /dev/null
 iquery -aq "remove(shadowArray)" 2> /dev/null
 echo "Exporting images' pixels..."
@@ -53,3 +68,9 @@ iquery -aq "CREATE ARRAY testG2B  <h:int64, v:int64, col_id:int64, row_id:int64,
 iquery -naq "load(testG2B, '$OUT_DIR/MOD__13Q1_12_10_960_600.sdbbin', -2, '(int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64,int64)', 0, shadowArray)"
 iquery -aq "op_count(testG2B)"
 iquery -aq "scan(testG2B)" | head
+echo "--------------------------------------------------------------------------------"
+echo "Last cleaning..."
+echo "--------------------------------------------------------------------------------"
+rm $OUT_DIR/*.sdbbin
+iquery -aq "remove(testG2B)" 2> /dev/null
+iquery -aq "remove(shadowArray)" 2> /dev/null
