@@ -10,7 +10,7 @@ LANDSAT_PROCESSING_LEVEL = OrderedDict([('L1TP', 'Precision and Terrain Correcti
 LANDSAT_SATELLITE = {'4':'Landsat4','5':'Landsat5','7':'Landsat7', '8':'Landsat8'}
 LANDSAT_SENSOR = {'C':'OLI/TIRS-Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
 MODIS_SENSOR = {'MOD':'Terra', 'MYD':'Aqua'}
-    
+
 
 
 #TODO:
@@ -25,7 +25,7 @@ class ImageFile:
     def __init__(self, filepath):
         assert type(filepath) is str, "ImageFile: filepath is not a string: %r" % filepath
         self.filepath    = filepath
-        md = getFileNameMetadata()
+        md = self.getFileNameMetadata()
         self.image       = md['image']
         self.type        = md['type']
         self.sensor      = md['sensor']
@@ -359,4 +359,3 @@ class ImageSeries:
 #        self.geotransform = geotransform
 #    def __repr__(self):
 #        st = "ImageBand:" + "\n  Image: " + self.image.id + "\n  Driver: " + self.driver + "\n  N Col: " + self.ncol + "\n  N Row: " + self.nrow + "\n  Band type: " + self.bandtype
-  
