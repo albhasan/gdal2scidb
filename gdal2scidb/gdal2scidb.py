@@ -93,7 +93,7 @@ class ImageFile:
             fsatellite  = LANDSAT_SATELLITE[str(int(filename[2]))]
             fpath       = filename[3:6]
             frow        = filename[6:9]
-            facqdate    = ydoy2ymd(int(filename[9:13]) * 1000 + int(filename[13:16]))
+            facqdate    = g2bu.ydoy2ymd(int(filename[9:13]) * 1000 + int(filename[13:16]))
             fstationId  = filename[16:19]
             farchive    = filename[19:21]
             if len(filename) > 24:
@@ -126,8 +126,8 @@ class ImageFile:
             fsatellite  = filename[0:3]
             fpath       = filename[18:20]
             frow        = filename[21:23]
-            facqdate    = ydoy2ymd(int(filename[9:16]))
-            fprodate    = ydoy2ymd(int(filename[28:35]))
+            facqdate    = g2bu.ydoy2ymd(int(filename[9:16]))
+            fprodate    = g2bu.ydoy2ymd(int(filename[28:35]))
             fcolnum     = filename[24:27]
         else:
             warn("Unrecognized filename: " + filename)
