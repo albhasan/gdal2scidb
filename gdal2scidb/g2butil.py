@@ -173,12 +173,12 @@ def n2pos(n, dims):
 
 
 def getFileNameMetadata(filepath):
-        """DEPRECATED. Return a dict made of metadata from a file's name using.
+    """DEPRECATED. Return a dict made of metadata from a file's name using.
 
-        Keyword arguments:
-        filepath -- A string. A path to a file
+    Keyword arguments:
+    filepath -- A string. A path to a file
 
-        """
+    """
     filename = os.path.basename(filepath)
     sensorLandsat = {'C':'OLI/TIRS-Combined', 'O':'OLI-only', 'T':'TIRS-only', 'E':'ETM+', 'T':'TM', 'M':'MSS'}
     satelliteLandsat = {'4':'Landsat4','5':'Landsat5','7':'Landsat7', '8':'Landsat8'}
