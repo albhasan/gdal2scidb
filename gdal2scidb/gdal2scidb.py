@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #gdal2scidb.py
 import os
+import re
 import g2butil as g2bu
 from collections import OrderedDict
 
@@ -48,6 +49,9 @@ class ImageFile:
         self.bandtype    = []
         self.geotransform = ""
         self.id = self.satellite + "_" + self.level + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
+        self.reLandsat =     re.compile('^L[CETM][0-9]{14}(LGN|EDC|XXX|AAA)[0-9]{2}.+\.(tif|TIF)$')
+        self.reLandsatCol1 = re.compile('^L[A-Z][0-9]{2}_[A-Z][0-9][A-Z]{2}_[0-9]{6}_[0-9]{8}_[0-9]{8}_[0-9]{2}_[A-Z][0-9]_([a-zA-Z]|[0-9]|_)*\.(tif|TIF)$')
+        self.reModis =       re.compile('^MOD[0-9]{2}[A-Z][0-9]\.A[0-9]{7}\.h[0-9]{2}v[0-9]{2}\.[0-9]{3}\.[0-9]{13}\.hdf$') # https://lpdaac.usgs.gov/dataset_discovery/modis
     def __repr__(self):
         return "ImageFile: " + self.filepath
     def __lt__(self, other):
@@ -81,7 +85,7 @@ class ImageFile:
         fprod = ''                                                                  # product
         sname = ''                                                                  # short name
         #
-        if reLandsat.search(filename):
+        if self.reLandsat.search(filename):
             # example LC80090452014008LGN00_B1.TIF
             sname       = filename[0:2] + "0"+  filename[2]
             ftype       = "Landsat_untiered"
@@ -94,7 +98,7 @@ class ImageFile:
             farchive    = filename[19:21]
             if len(filename) > 24:
                 fprod, fband = processLBand(filename[22:].split('.')[0])
-        elif reLandsatCol1.search(filename):
+        elif self.reLandsatCol1.search(filename):
             # example             LC08_L1TP_140041_20130503_20161018_01_T1_B5.TIF
             #                     LC08_L1TP_220071_20170207_20170216_01_T1
             # TOA Reflectance     LC08_L1TP_018060_20140904_20160101_01_T1_toa_*.
@@ -114,7 +118,7 @@ class ImageFile:
             fcolcat     = filename[38:40]
             if len(filename) > 44:
                 fprod, fband = processLBand(filename[41:].split('.')[0])
-        elif reModis.search(filename):
+        elif self.reModis.search(filename):
             # example MOD13Q1.A2015353.h14v10.005.2016007192511.hdf
             sname       = filename[0:7]
             ftype       = "Modis"
