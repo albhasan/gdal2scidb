@@ -94,7 +94,7 @@ def main(argv):
         isid = []
         for iser in iserlist:
             isid = isid + [iser.id]
-        logging.error("The given files belong to more than one ImageSeries: " + str(inputFiles))
+        logging.error("The given files belong to more than one ImageSeries: " + str(isid) + "\n" + str(inputFiles))
         raise ValueError("The given files belong to more than one ImageSeries:" + str(isid))
     # Write all the chunks of an image at once
     logging.debug("Calling the writer...")
