@@ -199,6 +199,7 @@ class Image:
                 self.row = imgf.row
                 self.acquisition = imgf.acquisition
                 self.sname = imgf.sname
+                self.category = imgf.category
                 self.id = self.satellite + "_" + self.level + "_" + self.sensor + "_" + self.path + "_" + self.row + "_" + str(self.acquisition)
                 imgfIds.add(self.id)
             if len(imgfIds) > 1:
