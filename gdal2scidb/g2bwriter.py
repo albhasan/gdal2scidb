@@ -14,6 +14,22 @@ class SdbWriter:
     def __repr__(self):
         return "SdbWriter\n"
     def serialize(self, imgser, d2tid, d2att, tile2id, xsize, ysize, coltrans, rowtrans, outputDir, l2att, c2att, logging):
+        """Write an a set of images (an ImageSeries object) into chunks.
+
+        Keyword arguments:
+        imgser    -- An ImageSeries object.
+        d2tid     -- A boolean. Should the date be used to compute the time_id of each image?
+        d2att     -- A boolean. Should the date be added as an extra attribute to the chunk?
+        tile2id   -- A boolean. SHould the image's tile (path & row) be included as extra attributes to the chunk?
+        xsize     -- An integer. The chunk size in the x direction
+        ysize     -- An integer. The chunk size in the y direction
+        coltrans  -- An integer. A translation applied to the columns
+        rowtrans  -- An integer. A translation applied to the rows
+        outputDir -- A string. The path where to store the resulting chunks
+        l2att     -- A boolean. Should the image's level be added to the each chunk?
+        c2att     -- A boolean. Should the image's category be added to the each chunk?
+        logging   -- A logging object
+        """
         assert isinstance(imgser, g2s.ImageSeries), "SdbWriter: Parameter is not an ImageSeries: %r" % str(imgser)
         tid = -1                                                                # time_id
         ofiles = set()                                                          # list of resuntilg files
@@ -41,7 +57,7 @@ class SdbWriter:
                         xto = band.RasterXSize
                         yto = band.RasterYSize
                         bpix = band.ReadAsArray()
-                        bpixarr.append(bpix.astype(np.int64)) #
+                        bpixarr.append(bpix.astype(np.int64))
                         band = None
                     gimg = None
                 elif(img.sname[0:2] == "LC"):
@@ -53,8 +69,11 @@ class SdbWriter:
                         xto = band.RasterXSize
                         yto = band.RasterYSize
                         bpix = band.ReadAsArray()
-                        bpixarr.append(bpix.astype(np.int64)) #
+                        bpixarr.append(bpix.astype(np.int64))
                         band = None
+                else:
+                    logging.exception("Unknown image. Image id: " + img.id)
+                    raise RuntimeError("SdbWriter: Could not get the pixels out of a band")
             except RuntimeError as e:
                 logging.exception("message")
                 logging.exception("Image id: " + img.id)
