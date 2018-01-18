@@ -56,11 +56,13 @@ class SdbWriter:
                         band = None
             except RuntimeError as e:
                 logging.exception("message")
+                logging.exception(img.id)
                 em = str(e)
                 if "not recognized as a supported file format" not in em:
                     raise RuntimeError("SdbWriter: Could not get the pixels out of a band")
             except Exception as e:
                 logging.exception("message")
+                logging.exception(img.id)
                 raise RuntimeError("SdbWriter: Could not get the pixels out of a band")
             finally:
                 if 'band' in locals():
