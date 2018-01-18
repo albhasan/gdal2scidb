@@ -91,8 +91,11 @@ def main(argv):
     icol = g2b.ImageCol(inputFiles)
     iserlist = icol.getImagesSeries(ignoreLevel)
     if len(iserlist) > 1:
+        isid = []
+        for iser in iserlist:
+            isid = isid + [iser.id]
         logging.error("The given files belong to more than one ImageSeries: " + str(inputFiles))
-        raise ValueError("The given files belong to more than one ImageSeries")
+        raise ValueError("The given files belong to more than one ImageSeries:" + str(isid))
     # Write all the chunks of an image at once
     logging.debug("Calling the writer...")
     sdbw = g2bw.SdbWriter()
