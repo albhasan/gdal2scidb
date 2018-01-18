@@ -42,7 +42,7 @@ import g2bwriter as g2bw
 ################################################################################
 
 def main(argv):
-    parser = argparse.ArgumentParser(description = "Export GDAL images to chunked files using SciDB's binary format.")    
+    parser = argparse.ArgumentParser(description = "Export GDAL images to chunked files using SciDB's binary format.")
     parser.add_argument("coltrans",     help = "Translation applied to the column index.")
     parser.add_argument("rowtrans",     help = "Translation applied to the row index.")
     parser.add_argument("xsize",        help = "Chunk size in the x direction.")
@@ -52,8 +52,8 @@ def main(argv):
     parser.add_argument("--tile2id",    help = "Include the image's tile (e.g path & row) as attributes (first two attributes) . Default = False", default = 'False')
     parser.add_argument("--d2tid",      help = "Use the date to compute the time_id. Otherwise use the time-ordered cardinal position of the image in the inputFiles. Default = True", default = 'True')
     parser.add_argument("--d2att",      help = "Add the image date as an int yyyymmdd attribute (last attribute). Default = False", default = 'False')
-    parser.add_argument("--l2att",      help = "Add the image level as attribute. Default = False", default = 'False')
-    parser.add_argument("--c2att",      help = "Add the image category as attribute. Default = False", default = 'False')
+    parser.add_argument("--l2att",      help = "Add the image level as attribute (Landsat levels L1TP, L1GT, and L1GS are added as 0,1, or 2 accordingly). Default = False", default = 'False')
+    parser.add_argument("--c2att",      help = "Add the image category as attribute (Landsat categories Tier1, Tier2, & Real Time are added as 0,1, or 2 accordingly). Default = False", default = 'False')
     parser.add_argument("--ignoreLevel",help = "Ignore the image's processing level when building ImageSeries. Default = False", default = 'False')
     parser.add_argument("--log",        help = "Log level. Default = WARNING", default = 'WARNING')
     # Get parameters
@@ -103,4 +103,3 @@ def main(argv):
 
 if __name__ == "__main__":
    main(sys.argv[1:])
-
