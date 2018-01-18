@@ -66,8 +66,8 @@ class SdbWriter:
                     for imgf in img.col:
                         logging.debug("SdbWriter: Processing subdataset: " + imgf.filepath)
                         band = gdal.Open(imgf.filepath)
-                        yto = band.RasterXSize # xto = band.RasterXSize
-                        xto = band.RasterYSize # yto = band.RasterYSize
+                        yto = band.RasterXSize # GDAL reports lines and columns instead of
+                        xto = band.RasterYSize #
                         bpix = band.ReadAsArray()
                         bpixarr.append(bpix.astype(np.int64))
                         band = None
