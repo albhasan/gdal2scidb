@@ -97,7 +97,7 @@ class ImageFile:
             fstationId  = filename[16:19]
             farchive    = filename[19:21]
             if len(filename) > 24:
-                fprod, fband = processLBand(filename[22:].split('.')[0])
+                fprod, fband = g2bu.processLBand(filename[22:].split('.')[0])
         elif self.reLandsatCol1.search(filename):
             # example             LC08_L1TP_140041_20130503_20161018_01_T1_B5.TIF
             #                     LC08_L1TP_220071_20170207_20170216_01_T1
@@ -117,7 +117,7 @@ class ImageFile:
             fcolnum     = filename[35:37]
             fcolcat     = filename[38:40]
             if len(filename) > 44:
-                fprod, fband = processLBand(filename[41:].split('.')[0])
+                fprod, fband = g2bu.processLBand(filename[41:].split('.')[0])
         elif self.reModis.search(filename):
             # example MOD13Q1.A2015353.h14v10.005.2016007192511.hdf
             sname       = filename[0:7]
