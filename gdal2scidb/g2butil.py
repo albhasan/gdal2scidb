@@ -553,3 +553,13 @@ def getPixelImages(filepaths, x, y, xchunk, ychunk, dimpos):
     except:
         raise
     return(res)
+
+
+
+## Get a valid filename out of a (possible) invalid one
+#
+# @param filename  A string. Tha file name to validate. It should not include the file's extension
+# @return          A string
+def getValidFilename(filename):
+    res = "".join(x for x in filename if x.isalnum())
+    return(res)
