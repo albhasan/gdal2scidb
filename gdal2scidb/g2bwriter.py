@@ -66,8 +66,8 @@ class SdbWriter:
                     for imgf in img.col:
                         logging.debug("SdbWriter: Processing subdataset: " + imgf.filepath)
                         band = gdal.Open(imgf.filepath)
-                        yto = band.RasterXSize # GDAL reports lines and columns instead of
-                        xto = band.RasterYSize #
+                        xto = band.RasterXSize
+                        yto = band.RasterYSize
                         bpix = band.ReadAsArray()
                         bpixarr.append(bpix.astype(np.int64))
                         band = None
@@ -106,7 +106,7 @@ class SdbWriter:
                     assert len(col_id) == len(row_id)
                     attdat = []                                                 # list of flat bands' pixels of a chunk
                     for bpix in bpixarr:
-                        chunkarr = bpix[xc:(xc + xsize), yc:(yc + ysize)]
+                        chunkarr = bpix[yc:(yc + ysize), xc:(xc + xsize)]       # chunkarr = bpix[xc:(xc + xsize), yc:(yc + ysize)]
                         chunkarrflat = chunkarr.flatten()
                         assert len(col_id) == len(chunkarrflat)
                         attdat.append(chunkarrflat)
