@@ -118,7 +118,7 @@ class SdbWriter:
                         attdat.append(np.repeat(cat, len(col_id)).astype(np.int8))
                     logging.debug("SdbWriter: Stacking the bands' chunk into one np array")
                     pixflat = np.vstack([crt_id, attdat]).T
-                    fname = os.path.join(outputDir, g2bu.getValidFilename(imgser.id) + "_" + str(xc) + "_" + str(yc) + ".sdbbin.tmp")
+                    fname = os.path.join(outputDir, g2bu.getValidFilename(imgser.id + "_" + str(xc) + "_" + str(yc) + ".sdbbin.tmp"))
                     ofiles.add(fname)
                     try:
                         fsdbbin = open(fname, 'a')
