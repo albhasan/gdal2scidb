@@ -22,4 +22,3 @@ FILES=$(find -L /home/scidb/MOD13Q1 -type f | grep "MOD13Q1\.A[0-9]\{7\}\.h"$H"v
 python $SCRIPT_FOLDER/gdal2binImg.py --d2tid true --d2att false --tile2id false --log error $FIRST_CID $FIRST_RID $CHUNKSIZE $CHUNKSIZE $OUT_DIR $FILES
 
 exit 0
-
