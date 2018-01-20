@@ -17,6 +17,7 @@
 # ...
 # $35    path to SciDB binary file
 ################################################################################
+BIN_FILENAME=p
 # number of SciDB instances in each machine
 SDB_INSTANCES_MACHINE=7
 # number of SciDB instances in the whole cluster
@@ -44,18 +45,18 @@ if [ "$#" -eq $SDB_INSTANCES ]; then
     for f in "$@"; do
         min=$(( $count % $SDB_INSTANCES_MACHINE ))
         mip=`echo $(( $count / $SDB_INSTANCES_MACHINE )) | cut -f1 -d "."`
-        cp "$f" $SDB_INSTANCES_PATH/$mip/$min/p # &
+        cp "$f" $SDB_INSTANCES_PATH/$mip/$min/$BIN_FILENAME
         count=`expr $count + 1`
     done
     # echo "Running SciDB query..."
     # MAX_ERRORS: A 35-instance SciDB loading 40x40 chunks is loading 36K time series in each query. MAX_ERRORS = 1000 is a ~3% rate of error
-    iquery -naq "insert(redimension(cast(input($SDBBIN_SCHEMA, 'p', -1, $SDBBIN_FORMAT, 0, shadowArray), $SDB_1D_SCHEMA), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
+    iquery -naq "insert(redimension(cast(input($SDBBIN_SCHEMA, '"$BIN_FILENAME"', -1, $SDBBIN_FORMAT, 0, shadowArray), $SDB_1D_SCHEMA), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
     # echo "Deleting files..."
     countdel=0
     for f in "$@"; do
         min=$(( $countdel % $SDB_INSTANCES_MACHINE ))
         mip=`echo $(( $countdel / $SDB_INSTANCES_MACHINE )) | cut -f1 -d "."`
-        rm $SDB_INSTANCES_PATH/$mip/$min/p
+        rm $SDB_INSTANCES_PATH/$mip/$min/$BIN_FILENAME
         countdel=`expr $countdel + 1`
         echo "$f" >> load_parallel.log
     done
@@ -65,15 +66,14 @@ else
     #-------------------------------------------------------------------------------
     for f in "$@"; do
         # echo "Copying file..."
-        cp "$f" $SDB_INSTANCES_PATH/0/0/p
+        cp "$f" $SDB_INSTANCES_PATH/0/0/$BIN_FILENAME
         # echo "Running SciDB query..."
         # MAX_ERRORS: A single-instance SciDB loading a 40x40 chunk is loading 1.6K time series in each query. MAX_ERRORS = 50 is a ~3% rate of error
-        iquery -naq "insert(redimension(cast(input($SDBBIN_SCHEMA, '"$SDB_INSTANCES_PATH/0/0/p"', -2, $SDBBIN_FORMAT, 0, shadowArray), $SDB_1D_SCHEMA), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
+        iquery -naq "insert(redimension(cast(input($SDBBIN_SCHEMA, '"$SDB_INSTANCES_PATH/0/0/$BIN_FILENAME"', -2, $SDBBIN_FORMAT, 0, shadowArray), $SDB_1D_SCHEMA), $SDB_3D_ARRAY), $SDB_3D_ARRAY)" > /dev/null
         # echo "Deleting file..."
-        rm $SDB_INSTANCES_PATH/0/0/p
+        rm $SDB_INSTANCES_PATH/0/0/$BIN_FILENAME
         echo "$f" >> load_parallel.log
     done
 fi
 
 exit 0
-
