@@ -13,7 +13,7 @@ export V=08                                 # MODIS TILE V
 export SDB_INSTANCES=35                     # SciDB instances in the whole cluster
 
 # create a list of files to process and feed them to GNU PARALLEL to avoid
-find /home/scidb/sdb_chunks -type f | grep "MOD__13Q1_"$H"_"$V"_" | sort > fileslist_h"$H"v"$V".txt
+find -L /home/scidb/sdb_chunks -type f | grep "MOD__13Q1_"$H"_"$V"_" | sort > fileslist_h"$H"v"$V".txt
 parallel --eta --jobs 1 -n $SDB_INSTANCES --arg-file fileslist_h"$H"v"$V".txt bash load_parallel.sh
 
 

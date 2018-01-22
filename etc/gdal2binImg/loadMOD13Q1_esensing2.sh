@@ -24,22 +24,12 @@ FIRST_RID=$((10#$V * $IMG_SZ))       # compute the row_id of the first pixel of 
 # Get the path of the files to process
 FILES=$(find -L /home/scidb/MOD13Q1 -type f | grep "MOD13Q1\.A[0-9]\{7\}\.h"$H"v"$V"\.006\.[0-9]\{13\}\.hdf$" | sort | head -n $FIRST)
 
+echo $FILES
+#/home/scidb/MOD13Q1/2000/MOD13Q1.A2000049.h13v09.006.2015136104529.hdf /home/scidb/MOD13Q1/2000/MOD13Q1.A2000065.h13v09.006.2015136021942.hdf
+
 # Build chunks from the images
 python $SCRIPT_FOLDER/gdal2binImg.py --d2tid true --d2att false --tile2id false --log error $FIRST_CID $FIRST_RID $CHUNKSIZE $CHUNKSIZE $OUT_DIR $FILES
 
-
-
-
-
 # create a list of files to process and feed them to GNU PARALLEL to avoid
-find /home/scidb/sdb_chunks -type f | grep "MOD__13Q1_"$H"_"$V"_" | sort > fileslist_h"$H"v"$V".txt
-parallel --eta --jobs 1 -n $SDB_INSTANCES --arg-file fileslist_h"$H"v"$V".txt bash load_parallel.sh
-
-
-
-
-
-
-
 #find /home/scidb/sdb_chunks -type f | grep "MOD__13Q1_"$H"_"$V"_" | sort > fileslist_h"$H"v"$V".txt
-parallel --eta --jobs 1 -n $SDB_INSTANCES --arg-file fileslist_h"$H"v"$V".txt bash load_parallel.sh
+parallel --eta --jobs 1 -n $SDB_INSTANCES --arg-file fileslist_h"$H"v"$V".txt bash $SCRIPT_FOLDER/etc/gdal2binImg/load_parallel.sh
