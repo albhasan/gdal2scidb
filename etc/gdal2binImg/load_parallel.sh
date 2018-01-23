@@ -19,7 +19,7 @@
 # ...
 # $35    path to SciDB binary file
 ################################################################################
-BIN_FILENAME="$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32).sdbbin"        # generate a pseudo random file name
+BIN_FILENAME="$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32).sdbbin"        # generate a pseudo random file name of 32 characters
 # number of SciDB instances in each machine
 SDB_INSTANCES_MACHINE=7
 # number of SciDB instances in the whole cluster
