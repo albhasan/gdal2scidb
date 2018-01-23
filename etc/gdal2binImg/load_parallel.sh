@@ -2,7 +2,9 @@
 ################################################################################
 # SCIDB LOADER IMAGE HELPER
 #-------------------------------------------------------------------------------
-# Load in parallel a SDB_INSTANCES number of SciDB binary files
+# Load in parallel a SDB_INSTANCES number of SciDB binary files.
+# The input SciDB binary files are copied to the SciDB's instances' directories and then renamed
+# Then a SciDB load (linear or parallel, depending on the number of input files) is called
 #-------------------------------------------------------------------------------
 # NOTE:
 # - Do not use pipes because not all partition formats support them
@@ -17,7 +19,7 @@
 # ...
 # $35    path to SciDB binary file
 ################################################################################
-BIN_FILENAME=p
+BIN_FILENAME="$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32).sdbbin"        # generate a pseudo random file name
 # number of SciDB instances in each machine
 SDB_INSTANCES_MACHINE=7
 # number of SciDB instances in the whole cluster
