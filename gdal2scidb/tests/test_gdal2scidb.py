@@ -12,6 +12,7 @@ class gdal2sdb_testCase(unittest.TestCase):
         self.inputFiles1 = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sensor_azimuth_band4.tif"
         self.inputFiles2 = "/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band1.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band2.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-01-11/LC08_L1GT_226064_20150111_20170414_01_T2_sensor_azimuth_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-11-11/LC08_L1TP_226064_20151111_20170402_01_T2_sr_band3.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-11-11/LC08_L1TP_226064_20151111_20170402_01_T2_sr_band4.tif /home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-11-11/LC08_L1TP_226064_20151111_20170402_01_T2_sensor_azimuth_band4.tif"
         self.inputFiles3 = "/home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140330_20170424_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140314_20170425_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140415_20170423_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20150112_20170415_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20160131_20170330_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20160319_20170328_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20131224_20170427_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20150301_20170412_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20130412_20170505_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20150418_20170409_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140210_20170425_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20150128_20170413_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20130514_20170504_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140226_20170425_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20140125_20170426_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20160216_20170329_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20151230_20170331_01_T2_B1.TIF /home/alber/Documents/data/LANDSAT/sample/LC08_L1GT_233066_20141211_20170416_01_T2_B1.TIF"
+        self.inputFiles4 = "/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v07.006.2015149070621.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v08.006.2015149070549.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v09.006.2015149070546.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h10v07.006.2015149070600.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h10v08.006.2015149070652.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h10v09.006.2015149070653.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h10v10.006.2015149070617.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h10v11.006.2015149071707.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h11v07.006.2015149070608.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h11v08.006.2015149070644.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v07.006.2015149070621.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v08.006.2015149070549.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v09.006.2015149070546.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h10v07.006.2015149070600.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h10v08.006.2015149070652.hdf /dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h10v09.006.2015149070653.hdf"
     #def tearDown(self):
 
 
@@ -133,6 +134,29 @@ class Image_TestCase(gdal2sdb_testCase):
         self.assertEqual(img.id, "Landsat8_Systematic-Terrain-Correction_OLI/TIRS-Combined_226_064_20150111")
         self.assertRaises(ValueError, g2s.Image, self.inputFiles2.split(" "))
         self.assertRaises(ValueError, g2s.Image, self.inputFiles3.split(" "))
+    def test_creation_modis(self):
+        self.assertRaises(ValueError, g2s.Image, self.inputFiles4.split(" "))
+    def test_tid_modis(self):
+        img1 = g2s.Image("/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v07.006.2015149070621.hdf")
+        self.assertEqual(img1.tid, 12)
+        img2 = g2s.Image("/dados1/modisOriginal/MYD13Q1.A2015009.h10v11.006.2015295082855.hdf")
+        self.assertEqual(img2.tid, 299)
+        #
+        MYD_imgs = "MYD13Q1.A2002201.h09v07.006.2015149070621.hdf MYD13Q1.A2002217.h09v07.006.2015150072435.hdf MYD13Q1.A2002233.h09v07.006.2015150082506.hdf MYD13Q1.A2002249.h09v07.006.2015150213455.hdf MYD13Q1.A2002265.h09v07.006.2015151112240.hdf".split(" ")
+        MYD_tids = range(12, 12 + len(MYD_imgs))
+        for i in range(0, len(MYD_imgs)):
+            img = g2s.Image(MYD_imgs[i])
+            self.assertEqual(img.tid, MYD_tids[i])
+        MYD_imgs = "/net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003009.h09v07.006.2015154120433.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003025.h09v07.006.2015154130406.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003041.h09v07.006.2015155183029.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003057.h09v07.006.2015157002919.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003073.h09v07.006.2015157003709.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003089.h09v07.006.2015157051115.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003105.h09v07.006.2015158152139.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003121.h09v07.006.2015158153743.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003137.h09v07.006.2015158153805.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003153.h09v07.006.2015158183627.hdf".split(" ")
+        MYD_tids = range(23, 23 + len(MYD_imgs))
+        for i in range(0, len(MYD_imgs)):
+            img = g2s.Image(MYD_imgs[i])
+            self.assertEqual(img.tid, MYD_tids[i])
+        MOD_imgs = "/dados1/modisOriginal//MOD13Q1.A2000049.h09v07.006.2015136104539.hdf /dados1/modisOriginal//MOD13Q1.A2000065.h09v07.006.2015136021937.hdf /dados1/modisOriginal//MOD13Q1.A2000081.h09v07.006.2015136040647.hdf /dados1/modisOriginal//MOD13Q1.A2000097.h09v07.006.2015136040649.hdf".split(" ")
+        MOD_tids = range(3, 3 + len(MYD_imgs))
+        for i in range(0, len(MOD_imgs)):
+            img = g2s.Image(MOD_imgs[i])
+            self.assertEqual(img.tid, MOD_imgs[i])
 
 
 
@@ -212,7 +236,7 @@ class ImageSeries_TestCase(gdal2sdb_testCase):
 #img1 = imglist[1]
 #
 #imgslist = imgfc.getImageSeries()
-#imgslist    
+#imgslist
 #
 #imgslist = ImageSeries(["/home/scidb/LANDSAT/landsat8Original/SurfaceReflectanceC1/2015/2015-11-11/LC08_L1TP_226064_20151111_20170402_01_T2_sr_band6.tif"])
 #imgslist
