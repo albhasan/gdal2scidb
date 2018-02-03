@@ -25,7 +25,7 @@ class ImageFile_testCase(gdal2sdb_testCase):
         self.assertEqual(imgf.type, 'Landsat_tiered')
         self.assertEqual(imgf.sensor, 'OLI/TIRS-Combined')
         self.assertEqual(imgf.satellite, 'Landsat8')
-        self.assertEqual(imgf.level, 'Precision-and-Terrain-Correction')
+        self.assertEqual(imgf.level, 'L1TP')
         self.assertEqual(imgf.path, '226')
         self.assertEqual(imgf.row, '066')
         self.assertEqual(imgf.acquisition, 20150706)
@@ -131,7 +131,7 @@ class Image_TestCase(gdal2sdb_testCase):
     def test_creation_landsat(self):
         """ Test object creation """
         img = g2s.Image(self.inputFiles1.split(" "))
-        self.assertEqual(img.id, "Landsat8_Systematic-Terrain-Correction_OLI/TIRS-Combined_226_064_20150111")
+        self.assertEqual(img.id, "Landsat8_L1GT_OLI/TIRS-Combined_226_064_20150111")
         self.assertRaises(ValueError, g2s.Image, self.inputFiles2.split(" "))
         self.assertRaises(ValueError, g2s.Image, self.inputFiles3.split(" "))
     def test_creation_modis(self):
