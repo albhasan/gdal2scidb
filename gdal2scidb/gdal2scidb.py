@@ -4,7 +4,7 @@ import os
 import re
 import g2butil as g2bu
 from collections import OrderedDict
-
+import warnings
 
 LANDSAT_COLLECTION_CATEGORY = OrderedDict([('T1','Tier 1'), ('T2','Tier 2'), ('RT','Real Time')])
 LANDSAT_PROCESSING_LEVEL = OrderedDict([('L1TP', 'Precision and Terrain Correction'), ('L1GT', 'Systematic Terrain Correction'), ('L1GS', 'SystematicCorrection')])
@@ -28,7 +28,7 @@ class ImageFile:
         self.filepath    = filepath
         self.reLandsat     = re.compile('^L[CETM][0-9]{14}(LGN|EDC|XXX|AAA)[0-9]{2}.+\.(tif|TIF)$')
         self.reLandsatCol1 = re.compile('^L[A-Z][0-9]{2}_[A-Z][0-9][A-Z]{2}_[0-9]{6}_[0-9]{8}_[0-9]{8}_[0-9]{2}_[A-Z][0-9]_([a-zA-Z]|[0-9]|_)*\.(tif|TIF)$')
-        self.reModis       = re.compile('^MOD[0-9]{2}[A-Z][0-9]\.A[0-9]{7}\.h[0-9]{2}v[0-9]{2}\.[0-9]{3}\.[0-9]{13}\.hdf$') # https://lpdaac.usgs.gov/dataset_discovery/modis
+        self.reModis       = re.compile('^(MOD|MYD)[0-9]{2}[A-Z][0-9]\.A[0-9]{7}\.h[0-9]{2}v[0-9]{2}\.[0-9]{3}\.[0-9]{13}\.hdf$') # https://lpdaac.usgs.gov/dataset_discovery/modis
         md = self.getFileNameMetadata()
         self.image       = md['image']
         self.type        = md['type']
@@ -130,7 +130,7 @@ class ImageFile:
             fprodate    = g2bu.ydoy2ymd(int(filename[28:35]))
             fcolnum     = filename[24:27]
         else:
-            warn("Unrecognized filename: " + filename)
+            warnings.warn("Unrecognized filename: " + filename)
         return({
         'filepath':     self.filepath,
         'image':        fsatellite + fsensor + fpath + frow + str(facqdate),
@@ -235,6 +235,10 @@ class Image:
             yearly = True
         elif self.sname == 'MOD13Q1':
             origin = 20000101
+            period = 16
+            yearly = True
+        elif self.sname == 'MYD13Q1':
+            origin = 20020109
             period = 16
             yearly = True
         elif self.sname == 'LD5Original-DigitalNumber' or self.sname == "LC05":
