@@ -137,9 +137,9 @@ class Image_TestCase(gdal2sdb_testCase):
     def test_creation_modis(self):
         self.assertRaises(ValueError, g2s.Image, self.inputFiles4.split(" "))
     def test_tid_modis(self):
-        img1 = g2s.Image("/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v07.006.2015149070621.hdf")
+        img1 = g2s.Image(["/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2002201.h09v07.006.2015149070621.hdf"])
         self.assertEqual(img1.tid, 12)
-        img2 = g2s.Image("/dados1/modisOriginal/MYD13Q1.A2015009.h10v11.006.2015295082855.hdf")
+        img2 = g2s.Image(["/dados1/modisOriginal/MYD13Q1.A2015009.h10v11.006.2015295082855.hdf"])
         self.assertEqual(img2.tid, 299)
         #
         MYD_imgs = "MYD13Q1.A2002201.h09v07.006.2015149070621.hdf MYD13Q1.A2002217.h09v07.006.2015150072435.hdf MYD13Q1.A2002233.h09v07.006.2015150082506.hdf MYD13Q1.A2002249.h09v07.006.2015150213455.hdf MYD13Q1.A2002265.h09v07.006.2015151112240.hdf".split(" ")
