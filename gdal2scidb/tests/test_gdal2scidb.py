@@ -31,7 +31,7 @@ class ImageFile_testCase(gdal2sdb_testCase):
         self.assertEqual(imgf.acquisition, 20150706)
         self.assertEqual(imgf.processing, 20170407)
         self.assertEqual(imgf.collection, '01')
-        self.assertEqual(imgf.category, 'Tier 1')
+        self.assertEqual(imgf.category, 'T1')
         self.assertEqual(imgf.stationId, '')
         self.assertEqual(imgf.archive, '')
         self.assertEqual(imgf.band, 'band03')
