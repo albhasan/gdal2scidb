@@ -145,17 +145,17 @@ class Image_TestCase(gdal2sdb_testCase):
         MYD_imgs = "MYD13Q1.A2002201.h09v07.006.2015149070621.hdf MYD13Q1.A2002217.h09v07.006.2015150072435.hdf MYD13Q1.A2002233.h09v07.006.2015150082506.hdf MYD13Q1.A2002249.h09v07.006.2015150213455.hdf MYD13Q1.A2002265.h09v07.006.2015151112240.hdf".split(" ")
         MYD_tids = range(12, 12 + len(MYD_imgs))
         for i in range(0, len(MYD_imgs)):
-            img = g2s.Image(MYD_imgs[i])
+            img = g2s.Image([MYD_imgs[i]])
             self.assertEqual(img.tid(), MYD_tids[i])
         MYD_imgs = "/net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003009.h09v07.006.2015154120433.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003025.h09v07.006.2015154130406.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003041.h09v07.006.2015155183029.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003057.h09v07.006.2015157002919.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003073.h09v07.006.2015157003709.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003089.h09v07.006.2015157051115.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003105.h09v07.006.2015158152139.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003121.h09v07.006.2015158153743.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003137.h09v07.006.2015158153805.hdf /net/150.163.2.38/dados1/modisOriginal/MYD13Q1/MYD13Q1.A2003153.h09v07.006.2015158183627.hdf".split(" ")
         MYD_tids = range(23, 23 + len(MYD_imgs))
         for i in range(0, len(MYD_imgs)):
-            img = g2s.Image(MYD_imgs[i])
+            img = g2s.Image([MYD_imgs[i]])
             self.assertEqual(img.tid(), MYD_tids[i])
         MOD_imgs = "/dados1/modisOriginal//MOD13Q1.A2000049.h09v07.006.2015136104539.hdf /dados1/modisOriginal//MOD13Q1.A2000065.h09v07.006.2015136021937.hdf /dados1/modisOriginal//MOD13Q1.A2000081.h09v07.006.2015136040647.hdf /dados1/modisOriginal//MOD13Q1.A2000097.h09v07.006.2015136040649.hdf".split(" ")
         MOD_tids = range(3, 3 + len(MYD_imgs))
         for i in range(0, len(MOD_imgs)):
-            img = g2s.Image(MOD_imgs[i])
+            img = g2s.Image([MOD_imgs[i]])
             self.assertEqual(img.tid(), MOD_imgs[i])
 
 
