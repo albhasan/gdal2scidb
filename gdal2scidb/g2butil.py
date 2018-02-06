@@ -421,7 +421,7 @@ def ymd2tid(ymd, origin, period, yearly):
     dtor = datetime.datetime(ory, orm, or_d)
     if yearly:
         dy = 1 + 365/period                                                     # periods per year
-        dtor = datetime.datetime(ymdy, 1, 1)
+        dtor = datetime.datetime(ymdy, orm, or_d)
     ndays = (dtymd - dtor).days                                                 # days from origin to ymd
     if ndays % period == 0:
         res = ndays/period + (ymdy - ory) * dy
