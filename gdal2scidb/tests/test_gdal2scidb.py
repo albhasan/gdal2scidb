@@ -152,11 +152,11 @@ class Image_TestCase(gdal2sdb_testCase):
         for i in range(0, len(MYD_imgs)):
             img = g2s.Image([MYD_imgs[i]])
             self.assertEqual(img.tid(), MYD_tids[i])
-        MOD_imgs = "/dados1/modisOriginal//MOD13Q1.A2000049.h09v07.006.2015136104539.hdf /dados1/modisOriginal//MOD13Q1.A2000065.h09v07.006.2015136021937.hdf /dados1/modisOriginal//MOD13Q1.A2000081.h09v07.006.2015136040647.hdf /dados1/modisOriginal//MOD13Q1.A2000097.h09v07.006.2015136040649.hdf".split(" ")
+        MOD_imgs = "/dados1/modisOriginal/MOD13Q1.A2000049.h09v07.006.2015136104539.hdf /dados1/modisOriginal/MOD13Q1.A2000065.h09v07.006.2015136021937.hdf /dados1/modisOriginal/MOD13Q1.A2000081.h09v07.006.2015136040647.hdf /dados1/modisOriginal/MOD13Q1.A2000097.h09v07.006.2015136040649.hdf".split(" ")
         MOD_tids = range(3, 3 + len(MOD_imgs))
         for i in range(0, len(MOD_imgs)):
             img = g2s.Image([MOD_imgs[i]])
-            self.assertEqual(img.tid(), MOD_imgs[i])
+            self.assertEqual(img.tid(), MOD_tids[i])
 
 
 
