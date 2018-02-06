@@ -157,6 +157,16 @@ class Image_TestCase(gdal2sdb_testCase):
         for i in range(0, len(MOD_imgs)):
             img = g2s.Image([MOD_imgs[i]])
             self.assertEqual(img.tid(), MOD_tids[i])
+        MOD_imgs = "/dados1/modisOriginal/MOD13Q1.A2002001.h10v09.006.2015146145532.hdf /dados1/modisOriginal/MOD13Q1.A2002017.h10v09.006.2015146121533.hdf /dados1/modisOriginal/MOD13Q1.A2002033.h10v09.006.2015146145531.hdf /dados1/modisOriginal/MOD13Q1.A2002049.h10v09.006.2015146124959.hdf /dados1/modisOriginal/MOD13Q1.A2002065.h10v09.006.2015147120803.hdf /dados1/modisOriginal/MOD13Q1.A2002081.h10v09.006.2015147122647.hdf".split(" ")
+        MOD_tids = range(46, 46 + len(MOD_imgs))
+        for i in range(0, len(MOD_imgs)):
+            img = g2s.Image([MOD_imgs[i]])
+            self.assertEqual(img.tid(), MOD_tids[i])
+        MOD_imgs = "/dados1/modisOriginal/MOD13Q1.A2002289.h10v09.006.2015152040529.hdf /dados1/modisOriginal/MOD13Q1.A2002305.h10v09.006.2015152041151.hdf /dados1/modisOriginal/MOD13Q1.A2002321.h10v09.006.2015152181359.hdf /dados1/modisOriginal/MOD13Q1.A2002337.h10v09.006.2015153053050.hdf /dados1/modisOriginal/MOD13Q1.A2002353.h10v09.006.2015153020755.hdf".split(" ")
+        MOD_tids = range(46 + 23 - 5, 46 + 23 - 5 + len(MOD_imgs))
+        for i in range(0, len(MOD_imgs)):
+            img = g2s.Image([MOD_imgs[i]])
+            self.assertEqual(img.tid(), MOD_tids[i])
 
 
 
